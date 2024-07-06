@@ -9,6 +9,7 @@
 		address: string;
 		fbname: string;
 		role: string;
+    password:string;
 	}
 
 	interface employeedata {
@@ -25,7 +26,8 @@
 			number: '',
 			address: '',
 			fbname: '',
-			role: ''
+			role: '',
+      password:''
 		};
 		data.data = [...data.data, newEmployee];
 	}
@@ -114,6 +116,12 @@ $: data.data.forEach(employee => {
 
                           <h2>
                             <input type="text" name="employeeRole" class="input input-bordered w-full max-w-xs" bind:value={Employee.role} />
+                          </h2>
+
+                          <h6 class="text-lg font-bold" >Password</h6>
+
+                          <h2>
+                            <input type="password" name="employeePassword" class="input input-bordered w-full max-w-xs" bind:value={Employee.password} />
                           </h2>
                         </div>
 

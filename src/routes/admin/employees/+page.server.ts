@@ -29,6 +29,7 @@ export const actions = {
         const employeeAddress = form.get('employeeAddress');
         const employeeFBName = form.get('employeeFBName');
         const employeeRole = form.get('employeeRole');
+		const employeePassword = form.get('employeePassword')
 
         console.log(form);
         console.log("save clicked");
@@ -49,15 +50,16 @@ export const actions = {
                         number = ?,
                         address = ?,
                         fbname = ?,
-                        role = ?
+                        role = ?,
+						password = ?
                     WHERE id = ?`,
-                    [employeeName, employeeNumber, employeeAddress, employeeFBName, employeeRole, employeeID]
+                    [employeeName, employeeNumber, employeeAddress, employeeFBName, employeeRole, employeePassword,employeeID]
                 );
             } else {
                 // Insert new employee
                 await connection.execute(`
-                    INSERT INTO employee (id, name, number, address, fbname, role) VALUES (?, ?, ?, ?, ?, ?)`,
-                    [employeeID, employeeName, employeeNumber, employeeAddress, employeeFBName, employeeRole]
+                    INSERT INTO employee (id, name, number, address, fbname, password, role) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                    [employeeID, employeeName, employeeNumber, employeeAddress, employeeFBName, employeePassword ,employeeRole]
                 );
             }
 
