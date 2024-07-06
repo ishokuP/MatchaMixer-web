@@ -17,18 +17,6 @@
 
 	export let data: employeedata = { data: [] };
 
-	function addNewEvent() {
-		const newEmployee: Employee = {
-			id: Math.floor(Math.random() * 100000),
-			name: '',
-			email: '',
-			number: '',
-			address: '',
-			fbname: '',
-			role: ''
-		};
-		data.data = [...data.data, newEmployee];
-	}
 
   let modalOpenState = {};
 
@@ -37,21 +25,10 @@
     }
 
 
-// Whenever new data is added, ensure we have a modal state for each employee
-$: data.data.forEach(employee => {
-    if (!(employee.id in modalOpenState)) {
-        modalOpenState[employee.id] = false;
-    }
-});
-
 </script>
 <h2 class="text-4xl font-extrabold">Employees</h2>
 
-<div class="sticky top-4 z-50 p-4 ">
-  <button class="btn w-40" on:click={addNewEvent}>
-    + Add Employee
-  </button>
-</div>
+
 <br>
 <div class="w-auto">
 	<table class="table">
@@ -71,14 +48,14 @@ $: data.data.forEach(employee => {
               <td>{Employee.address}</td>
               <td>{Employee.role}</td>
               <td>
-                <form method="post" action="?/update" use:enhance>
+                <form method="post"  use:enhance>
                   <div class="modal" class:modal-open={modalOpenState[Employee.id]}>
                     <div class="modal-box">
                       <div>
                         <h6 class="text-lg font-bold" >ID</h6>
 
                         <h2>
-                          <input type="text" name="employeeID" class="input input-bordered w-full max-w-xs"  bind:value={Employee.id}  readonly/>
+                          <input type="text" name="employeeName" class="input input-bordered w-full max-w-xs"  bind:value={Employee.id}  readonly/>
                         </h2>
                       </div>
                       <br>
@@ -87,19 +64,19 @@ $: data.data.forEach(employee => {
                           <h6 class="text-lg font-bold" >Name</h6>
                           <h2>
 
-                            <input type="text" name="employeeName" class="input input-bordered w-full max-w-xs" bind:value={Employee.name} />
+                            <input type="text" name="employeeName" class="input input-bordered w-full max-w-xs" bind:value={Employee.name} readonly/>
                           </h2>
 
                           <h6 class="text-lg font-bold" >Number</h6>
 
                           <h2>
-                            <input type="text" name="employeeNumber"class="input input-bordered w-full max-w-xs"  bind:value={Employee.number} />
+                            <input type="text" name="employeeName"class="input input-bordered w-full max-w-xs"  bind:value={Employee.number} readonly/>
                           </h2>
 
                           <h6 class="text-lg font-bold" >Address</h6>
 
                           <h2>
-                            <input type="text" name="employeeAddress" class="input input-bordered w-full max-w-xs" bind:value={Employee.address} />
+                            <input type="text" name="employeeName" class="input input-bordered w-full max-w-xs" bind:value={Employee.address} readonly/>
                           </h2>
 
                         </div>
@@ -107,24 +84,22 @@ $: data.data.forEach(employee => {
                           <h6 class="text-lg font-bold" >FB Name</h6>
 
                           <h2>
-                            <input type="text" name="employeeFBName" class="input input-bordered w-full max-w-xs" bind:value={Employee.fbname} />
+                            <input type="text" name="employeeName" class="input input-bordered w-full max-w-xs" bind:value={Employee.fbname} readonly />
                           </h2>
 
                           <h6 class="text-lg font-bold" >Role</h6>
 
                           <h2>
-                            <input type="text" name="employeeRole" class="input input-bordered w-full max-w-xs" bind:value={Employee.role} />
+                            <input type="text" name="employeeName" class="input input-bordered w-full max-w-xs" bind:value={Employee.role} readonly/>
                           </h2>
                         </div>
 
                       </div>
                       <br>
-                        <div class="modal-action flex w-full justify-between">
-                            <button class="btn btn-primary" on:click={() => toggleModal(Employee.id)} formaction="?/delete">Delete</button>
-                            <div class="flex space-x-4">
-                                <button class="btn btn-primary" on:click={() => toggleModal(Employee.id)}>Save Changes</button>
+                        <div class="modal-action flex w-full">
+                            <div class="flex space-x-4 justify-end">
                                 <button type="button"class="btn btn-error" on:click={() => toggleModal(Employee.id)}>Close</button>
-                            </div>
+`                            </div>
                         </div>
                     </div>
                 </div>

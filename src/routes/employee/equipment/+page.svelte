@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { onMount } from 'svelte';
+
 
 	interface Equipment {
 		id: string;
@@ -16,33 +16,6 @@
 
 	export let data: EquipmentData = { data: [] };
 	let editModes = {};
-	let currentDeletingEvent = null;
-	let confirmationDelete;
-
-	function addNewEvent() {
-		const newEquipment: Equipment = {
-			id: 'new' + Math.random().toString(16).slice(2),
-			name: '',
-			status: '',
-			Econdition: '',
-			AssignedEvents: ''
-		};
-		data.data = [...data.data, newEquipment];
-	}
-
-	function handleEditSaveToggle(event, equipID) {
-		if (editModes[equipID]) {
-			editModes[equipID] = false;
-		} else {
-			event.preventDefault();
-			editModes[equipID] = true;
-		}
-	}
-
-	function promptDelete(equipID) {
-		currentDeletingEvent = equipID;
-		confirmationDelete.showModal();
-	}
 
 	function inputClasses(isEditMode) {
 		if (isEditMode) {
@@ -55,24 +28,7 @@
 
 <h2 class="text-4xl font-extrabold">Equipments</h2>
 
-<dialog bind:this={confirmationDelete} class="modal">
-	<form method="post" action="?/delete" use:enhance>
-		<input type="hidden" name="equipID" value={currentDeletingEvent} />
-		<div class="modal-box">
-			<h3 class="text-lg font-bold">Confirm Delete</h3>
-			<p class="py-4">Are you sure you want to delete this Equipment?</p>
-			<div class="modal-action">
-				<button type="submit" class="btn btn-error">Delete</button>
-				<button type="button" class="btn" on:click={() => confirmationDelete.close()}>Cancel</button
-				>
-			</div>
-		</div>
-	</form>
-</dialog>
 
-<div class="sticky top-4 z-50 p-4">
-	<button class="btn w-40" on:click={addNewEvent}> + Add Equipment </button>
-</div>
 <div class="flex flex-wrap justify-center">
 	{#each data.data as equipment}
 		<div class="card mx-2.5 my-2.5 w-96 bg-base-100">
@@ -133,22 +89,7 @@
 						</div>
 					</div>
 
-					<div class="card-actions justify-end">
-						<button
-							type="submit"
-							class="btn btn-primary flex-1"
-							on:click={(e) => handleEditSaveToggle(e, equipment.id)}
-						>
-							{editModes[equipment.id] ? 'Save' : 'Edit'}
-						</button>
 
-						<button
-							class="btn btn-error flex-1"
-							on:click|preventDefault={() => promptDelete(equipment.id)}
-						>
-							Delete
-						</button>
-					</div>
 				</form>
 			</div>
 		</div>

@@ -4,10 +4,12 @@ export async function load() {
   let mysqlconn = await mysqlconnFn();
   try {
     const results = await mysqlconn
-      .query("SELECT * FROM event_management_system.event;")
+      .query("SELECT * FROM services;")
       .then(function ([rows,fields]) {
+              //  console.log(fields);
         return rows;
       });
+    // console.log(results)
     return {
       data: results
     };
@@ -17,3 +19,4 @@ export async function load() {
     return error;
   }
 }
+

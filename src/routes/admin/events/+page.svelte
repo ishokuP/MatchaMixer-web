@@ -95,8 +95,7 @@
 			additionalRequests: '',
 			equipmentNeeded: [],
 			service: 0,
-			employeeAssigned: 0,
-			
+			employeeAssigned: 0
 		};
 		data.eventResults = [...data.eventResults, newEvent];
 		data.employeeResults[newEvent.eventID] = [];
@@ -154,10 +153,44 @@
 		value: equip.id,
 		label: equip.name
 	}));
-	
-</script>
-<h2 class="text-4xl font-extrabold">Events</h2>
 
+	function formatDate(dateString) {
+		const date = new Date(dateString);
+		return date.toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		});
+	}
+</script>
+
+<style>
+	.select-disabled {
+    background-color: green;
+    color: green;
+	font-weight: bold;
+}
+.open-left {
+		position: absolute;
+		right: 100%; /* Align the right edge of the dropdown with the left edge of the button */
+		top: 0; /* Align the top of the dropdown with the top of the button */
+	}
+</style>
+
+<h2 class="text-4xl font-extrabold">Events</h2>
+<div class="sticky top-4 z-50 flex items-center justify-between p-4">
+	<button class="btn w-40" on:click={addNewEvent}> + Add Event </button>
+
+	<details class="dropdown">
+		<summary class="btn w-40">+ Filter</summary>
+		<ul class="open-left menu dropdown-content z-[1] rounded-box bg-base-100 p-2 shadow">
+			<form method="POST" action="?/pickdate" use:enhance>
+				<DatePicker bind:value={selectedDate} />
+				<input type="hidden" name="selectedDate" bind:value={selectedDate} />
+			</form>
+		</ul>
+	</details>
+</div>
 <dialog bind:this={confirmationDelete} class="modal">
 	<form method="post" action="?/delete">
 		<input type="hidden" name="eventID" value={currentDeletingEvent} />
@@ -173,15 +206,6 @@
 	</form>
 </dialog>
 
-
-<form method="POST" action="?/pickdate" use:enhance>
-	<DatePicker bind:value={selectedDate} />
-	<input type="hidden" name="selectedDate" bind:value={selectedDate} />
-	<button>Filter</button>
-</form>
-
-<p>{selectedDate}</p>
-
 <div class="flex flex-col space-y-4">
 	{#each data.eventResults as event}
 		<div class="collapse bg-base-200">
@@ -189,24 +213,24 @@
 			<div class="collapse-title text-xl">
 				<span class="font-medium">
 					{formatTime(event.eventTime)}
+					{formatDate(event.eventDate)}
 				</span>
 				{event.eventName} @ {event.eventVenue}
 			</div>
 			<div class="collapse-content">
-				<div class="card bg-neutral text-neutral-content">
-					<div class="card-body">
+				<div class="card bg-secondary">
+					<div class="card-body bg-primary">
 						<form method="post" action="?/update" use:enhance>
 							<input type="text" hidden name="eventID" bind:value={event.eventID} />
 							<input type="text" hidden name="eventDate" bind:value={event.eventDate} />
 							<input type="text" hidden name="paymentID" bind:value={event.paymentID} />
-							<p>{event.paymentID}</p>
 
 							<input
 								type="text"
 								name="eventName"
 								bind:value={event.eventName}
 								readonly={!editModes[event.eventID]}
-								class={inputClasses(editModes[event.eventID])}
+								class="{inputClasses(editModes[event.eventID])} w-full text-2xl font-bold"
 							/>
 							<br />
 							<input
@@ -214,25 +238,23 @@
 								name="clientName"
 								bind:value={event.eventClientName}
 								readonly={!editModes[event.eventID]}
-								class={inputClasses(editModes[event.eventID])}
+								class="{inputClasses(editModes[event.eventID])} base w-full"
 							/>
 
 							<div class="flex w-full flex-col border-opacity-50">
 								<div class="card grid rounded-box p-5">
 									<div class="flex flex-row space-x-4">
-										<div>
-											<h1>date</h1>
-											<p>{event.eventDate}</p>
+										<div class="flex flex-col space-y-4">
+											<h3 class="text-2xl font-bold">Date</h3>
 											<h2>
-												<DateInput 
-												bind:value={event.eventDate}
-
-												disabled={!editModes[event.eventID]} 
-												format="MM/dd/yyyy"
+												<DateInput
+													bind:value={event.eventDate}
+													disabled={!editModes[event.eventID]}
+													format="MM/dd/yyyy"
 												/>
 											</h2>
 
-											<h1>time</h1>
+											<h1 class="text-2xl font-bold">Time</h1>
 											<h2>
 												<input
 													type="time"
@@ -243,7 +265,7 @@
 												/>
 											</h2>
 
-											<h1>venue</h1>
+											<h1 class="text-2xl font-bold">Venue</h1>
 											<h2>
 												<input
 													type="text"
@@ -253,7 +275,7 @@
 													class={inputClasses(editModes[event.eventID])}
 												/>
 											</h2>
-											<h1>Event Type</h1>
+											<h1 class="text-2xl font-bold">Event Type</h1>
 											<h2>
 												<input
 													type="text"
@@ -264,8 +286,8 @@
 												/>
 											</h2>
 										</div>
-										<div>
-											<h1>contact</h1>
+										<div class="flex flex-col space-y-4">
+											<h1 class="text-2xl font-bold">Contact</h1>
 											<h2>
 												<input
 													type="text"
@@ -276,7 +298,7 @@
 												/>
 											</h2>
 
-											<h1>total</h1>
+											<h1 class="text-2xl font-bold">Total</h1>
 											<h2>
 												<span>PHP</span>
 												<input
@@ -288,8 +310,8 @@
 												/>
 											</h2>
 										</div>
-										<div>
-											<h1>Staff Assigned</h1>
+										<div class="flex flex-col space-y-4">
+											<h1 class="text-2xl font-bold">Staff Assigned</h1>
 
 											<Select
 												{items}
@@ -298,9 +320,11 @@
 												bind:value={staffSelections[event.eventID]}
 												placeholder="Select employees"
 												disabled={!editModes[event.eventID]}
-											/>
+										containerStyles="background-color: transparent; color: black; opacity: 1; outline: none; border:none;"
+												
+												/>
 
-											<h1>Payment Status</h1>
+											<h1 class="text-2xl font-bold">Payment Status</h1>
 											<h2>
 												<input
 													type="text"
@@ -313,7 +337,7 @@
 										</div>
 									</div>
 									<div class="pt-6">
-										<h1>Additional Request</h1>
+										<h1 class="text-2xl font-bold">Additional Request</h1>
 										<h2>
 											<input
 												type="text"
@@ -325,16 +349,19 @@
 										</h2>
 									</div>
 									<div class="pt-6">
-										<h1>Equipment Needed</h1>
+										<h1 class="text-2xl font-bold">Equipment Needed</h1>
 
 										<Select
-											items={equipmentItems}
-											multiple={true}
-											name="equipmentNeeded"
-											bind:value={equipmentSelections[event.eventID]}
-											placeholder="Select equipment"
-											disabled={!editModes[event.eventID]}
-										/>
+										items={equipmentItems}
+										multiple={true}
+										name="equipmentNeeded"
+										bind:value={equipmentSelections[event.eventID]}
+										placeholder="Select equipment"
+										disabled={!editModes[event.eventID]}
+										containerStyles="background-color: transparent; color: black; opacity: 1; outline: none; border:none;"
+									/>
+									
+									
 									</div>
 								</div>
 
@@ -361,17 +388,4 @@
 			</div>
 		</div>
 	{/each}
-	<button class="btn bg-base-200" on:click={addNewEvent}>
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			fill="none"
-			viewBox="0 0 24 24"
-			stroke-width="1.5"
-			stroke="currentColor"
-			class="size-6"
-		>
-			<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-		</svg>
-		Add Event
-	</button>
 </div>

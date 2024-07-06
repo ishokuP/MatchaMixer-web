@@ -1,172 +1,313 @@
 <script lang="ts">
+	import { DateInput, DatePicker } from 'date-picker-svelte';
+	import { enhance } from '$app/forms';
+	import Select from 'svelte-select';
+	import { onMount } from 'svelte';
 	interface Event {
-		eventID: string;
-		paymentID: string;
+		eventID: number;
 		eventName: string;
-		eventType: string;
-		clientName: string;
-		clientNum: string;
-		eventDate: string;
-		eventTime: string;
-		eventVenue: string;
-		packageType: string;
-		addOn: string;
-		staff1: string;
-		staff2: string;
-		staff3: string;
-		staff4: string;
-		equipNeeded: string;
-		additionalReq: string;
-		paymentStatus: string;
+		eventDate: Date; // Date of the event
+		eventTime: string; // Time of the event
+		eventClientName: string; // Name of the client hosting the event
+		eventClientContact: string; // Contact information for the client
+		eventVenue: string; // Venue where the event is held
+		eventType: string; // Type of the event (e.g., Wedding, Corporate)
+		equipmentNeeded: string[]; // List of equipment needed for the event
+		paymentID: number; // Associated payment ID
+		paymentStatus: string; // Status of the payment (e.g., Paid, Due)
+		paymentCost: string; // Cost of the event
+		additionalRequests: string; // Any additional requests or requirements
+		service: number; // Service package associated with the event
+		employeeAssigned: number; // ID of the employee assigned to the event
 	}
 
-	interface Data {
-		data: Event[];
+	interface Employee {
+		employeeID: number;
+		employeeName: string;
+		employeeRole: string;
+		email: string;
+		contactNumber: string;
+	}
+	interface allEmployOriginal {
+		id: number;
+		name: number;
+	}
+	interface allEquipOriginal {
+		id: number;
+		name: number;
 	}
 
-	export let data: Data = { data: [] };
+	interface Equipment {
+		equipmentID: string;
+		equipmentName: string;
+		equipmentStatus: string;
+		equipmentCondition: string;
+	}
+
+	export let data: {
+		eventResults: Event[];
+		employeeResults: { [key: number]: Employee[] };
+		equipmentResults: { [key: number]: Equipment[] };
+		allEmployees: allEmployOriginal[];
+		allEquipment: allEquipOriginal[];
+	};
+
+	// console.log(data.allEquipment);
 
 	function formatTime(time: string): string {
 		const [hours, minutes] = time.split(':');
 		const hour = parseInt(hours, 10);
 		const suffix = hour >= 12 ? 'PM' : 'AM';
-		const hour12 = hour % 12 || 12; 
+		const hour12 = hour % 12 || 12;
 		return `${hour12}:${minutes} ${suffix}`;
 	}
-	function formatDate(dateString: string): string {
-		const date = new Date(dateString);
+	let editModes = {};
 
-		const options: Intl.DateTimeFormatOptions = {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric',
-			timeZone: 'UTC'
-		};
-		return date.toLocaleDateString('en-US', options);
+
+	function inputClasses(isEditMode) {
+		if (isEditMode) {
+			return 'input input-bordered w-full';
+		} else {
+			return 'bg-transparent border-0 p-0 cursor-default text-base leading-normal';
+		}
 	}
 
-    let editModes = {}
+	
 
-    function toggleEditMode(eventID) {
-        if (editModes[eventID]) {
-            editModes[eventID] = false;
-        } else {
-            editModes[eventID] = true;
-        }
-    }
+	let selectedDate;
 
-	function getCurrentFormattedDate(): string {
-        const date = new Date();
-        return date.toISOString().split('T')[0]; // Splits the ISO string and takes only the date part.
-    }
+	let staffSelections = {};
+	let equipmentSelections = {};
 
-    function getCurrentFormattedTime(): string {
-        const date = new Date();
-        let hours = date.getHours().toString().padStart(2, '0'); // Formats hours to two digits
-        let minutes = date.getMinutes().toString().padStart(2, '0'); // Formats minutes to two digits
-        return `${hours}:${minutes}`;
-    }
-	function addNewEvent() {
-        const newEvent: Event = {
-            eventID: 'new' + Math.random().toString(16).slice(2), // Generate a pseudo-random ID
-            paymentID: '',
-            eventName: 'New Event',
-            eventType: '',
-            clientName: '',
-            clientNum: '',
-            eventDate: getCurrentFormattedDate(),
-            eventTime: getCurrentFormattedTime(),
-            eventVenue: 'New Venue',
-            packageType: '',
-            addOn: '',
-            staff1: '',
-            staff2: '',
-            staff3: '',
-            staff4: '',
-            equipNeeded: '',
-            additionalReq: '',
-            paymentStatus: ''
-        };
-        data.data = [...data.data, newEvent];
-    }
+	function prepareStaffSelected(eventID) {
+		return (
+			data.employeeResults[eventID]?.map((emp) => ({
+				value: emp.employeeID,
+				label: `${emp.employeeName}`
+			})) ?? []
+		);
+	}
+
+	function prepareEquipmentSelected(eventID) {
+		return (
+			data.equipmentResults[eventID]?.map((equip) => ({
+				value: equip.equipmentID,
+				label: equip.equipmentName
+			})) ?? []
+		);
+	}
+
+	onMount(() => {
+		Object.keys(data.employeeResults).forEach((eventID) => {
+			staffSelections[eventID] = prepareStaffSelected(eventID);
+			equipmentSelections[eventID] = prepareEquipmentSelected(eventID);
+		});
+	});
+
+	// Function to handle toggle between edit and save
+	
+	// Prepare items for the select component for both staff and equipment
+	let items = data.allEmployees.map((emp) => ({
+		value: emp.id,
+		label: emp.name
+	}));
+	let equipmentItems = data.allEquipment.map((equip) => ({
+		value: equip.id,
+		label: equip.name
+	}));
+
+	function formatDate(dateString) {
+		const date = new Date(dateString);
+		return date.toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		});
+	}
 </script>
 
-<h1>employee events</h1>
-<br />
+
+
+<h2 class="text-4xl font-extrabold">Events</h2>
+<div class="sticky top-4 z-50 flex items-center justify-end p-4">
+
+	<details class="dropdown">
+		<summary class="btn w-40">+ Filter</summary>
+		<ul class="open-left menu dropdown-content z-[1] rounded-box bg-base-100 p-2 shadow">
+			<form method="POST" action="?/pickdate" use:enhance>
+				<DatePicker bind:value={selectedDate} />
+				<input type="hidden" name="selectedDate" bind:value={selectedDate} />
+			</form>
+		</ul>
+	</details>
+</div>
+
 
 <div class="flex flex-col space-y-4">
-	{#each data.data as event}
+	{#each data.eventResults as event}
 		<div class="collapse bg-base-200">
 			<input type="checkbox" name="my-accordion-1" />
 			<div class="collapse-title text-xl">
 				<span class="font-medium">
 					{formatTime(event.eventTime)}
+					{formatDate(event.eventDate)}
 				</span>
 				{event.eventName} @ {event.eventVenue}
 			</div>
 			<div class="collapse-content">
-				<div class="card bg-neutral text-neutral-content">
-					<div class="card-body">
-						<h2 class="card-title">{event.eventName}</h2>
-						<p>{event.clientName}</p>
-						<div class="flex w-full flex-col border-opacity-50">
-							
-							<div class="card grid rounded-box p-5">
+				<div class="card bg-secondary">
+					<div class="card-body bg-primary">
+						<form method="post" action="?/update" use:enhance>
+							<input type="text" hidden name="eventID" bind:value={event.eventID} />
+							<input type="text" hidden name="eventDate" bind:value={event.eventDate} />
+							<input type="text" hidden name="paymentID" bind:value={event.paymentID} />
 
-								<div class="flex flex-row space-x-4">
-									<div>
-										<h1>date</h1>
-										<h2>{formatDate(event.eventDate)}</h2>
-	
-										<h1>time</h1>
-										<h2>{event.eventTime}</h2>
-	
-										<h1>venue</h1>
-										<h2>{event.eventVenue}</h2>
+							<input
+								type="text"
+								name="eventName"
+								bind:value={event.eventName}
+								readonly={!editModes[event.eventID]}
+								class="{inputClasses(editModes[event.eventID])} w-full text-2xl font-bold"
+							/>
+							<br />
+							<input
+								type="text"
+								name="clientName"
+								bind:value={event.eventClientName}
+								readonly={!editModes[event.eventID]}
+								class="{inputClasses(editModes[event.eventID])} base w-full"
+							/>
+
+							<div class="flex w-full flex-col border-opacity-50">
+								<div class="card grid rounded-box p-5">
+									<div class="flex flex-row space-x-4">
+										<div class="flex flex-col space-y-4">
+											<h3 class="text-2xl font-bold">Date</h3>
+											<h2>
+												<DateInput
+													bind:value={event.eventDate}
+													disabled={!editModes[event.eventID]}
+													format="MM/dd/yyyy"
+												/>
+											</h2>
+
+											<h1 class="text-2xl font-bold">Time</h1>
+											<h2>
+												<input
+													type="time"
+													name="eventTime"
+													bind:value={event.eventTime}
+													readonly={!editModes[event.eventID]}
+													class={inputClasses(editModes[event.eventID])}
+												/>
+											</h2>
+
+											<h1 class="text-2xl font-bold">Venue</h1>
+											<h2>
+												<input
+													type="text"
+													name="eventVenue"
+													bind:value={event.eventVenue}
+													readonly={!editModes[event.eventID]}
+													class={inputClasses(editModes[event.eventID])}
+												/>
+											</h2>
+											<h1 class="text-2xl font-bold">Event Type</h1>
+											<h2>
+												<input
+													type="text"
+													name="eventType"
+													bind:value={event.eventType}
+													readonly={!editModes[event.eventID]}
+													class={inputClasses(editModes[event.eventID])}
+												/>
+											</h2>
+										</div>
+										<div class="flex flex-col space-y-4">
+											<h1 class="text-2xl font-bold">Contact</h1>
+											<h2>
+												<input
+													type="text"
+													name="clientNum"
+													bind:value={event.eventClientContact}
+													readonly={!editModes[event.eventID]}
+													class={inputClasses(editModes[event.eventID])}
+												/>
+											</h2>
+
+											<h1 class="text-2xl font-bold">Total</h1>
+											<h2>
+												<span>PHP</span>
+												<input
+													type="text"
+													name="paymentCost"
+													bind:value={event.paymentCost}
+													readonly={!editModes[event.eventID]}
+													class={inputClasses(editModes[event.eventID])}
+												/>
+											</h2>
+										</div>
+										<div class="flex flex-col space-y-4">
+											<h1 class="text-2xl font-bold">Staff Assigned</h1>
+
+											<Select
+												{items}
+												multiple={true}
+												name="employeesNeeded"
+												bind:value={staffSelections[event.eventID]}
+												placeholder="Select employees"
+												disabled={!editModes[event.eventID]}
+										containerStyles="background-color: transparent; color: black; opacity: 1; outline: none; border:none;"
+												
+												/>
+
+											<h1 class="text-2xl font-bold">Payment Status</h1>
+											<h2>
+												<input
+													type="text"
+													name="paymentStatus"
+													bind:value={event.paymentStatus}
+													readonly={!editModes[event.eventID]}
+													class={inputClasses(editModes[event.eventID])}
+												/> <br />
+											</h2>
+										</div>
 									</div>
-									<div>
-										<h1>contact</h1>
-										<h2>{event.clientNum}</h2>
-	
-										<h1>package</h1>
-										<h2>{event.packageType}</h2>
-	
-										<h1>total</h1>
-										<h2>{event.paymentStatus}</h2>
+									<div class="pt-6">
+										<h1 class="text-2xl font-bold">Additional Request</h1>
+										<h2>
+											<input
+												type="text"
+												name="additionalReq"
+												bind:value={event.additionalRequests}
+												readonly={!editModes[event.eventID]}
+												class={inputClasses(editModes[event.eventID])}
+											/>
+										</h2>
 									</div>
-									<div>
-										<h1>Staff Assigned</h1>
-										{#if event.staff1}
-											<h2>{event.staff1}</h2>
-										{/if}
-										{#if event.staff2}
-											<h2>{event.staff2}</h2>
-										{/if}
-										{#if event.staff3}
-											<h2>{event.staff3}</h2>
-										{/if}
-										{#if event.staff4}
-											<h2>{event.staff4}</h2>
-										{/if}
-	
-										<h1>Payment Status</h1>
-										<h2>{event.paymentStatus}</h2>
+									<div class="pt-6">
+										<h1 class="text-2xl font-bold">Equipment Needed</h1>
+
+										<Select
+										items={equipmentItems}
+										multiple={true}
+										name="equipmentNeeded"
+										bind:value={equipmentSelections[event.eventID]}
+										placeholder="Select equipment"
+										disabled={!editModes[event.eventID]}
+										containerStyles="background-color: transparent; color: black; opacity: 1; outline: none; border:none;"
+									/>
+									
+									
 									</div>
 								</div>
-								<div class="pt-6">
-									<h1>specified requests</h1>
-									<h2>{event.additionalReq}</h2>
-								</div>
+
+
 							</div>
-
-
-						</div>
-
+						</form>
 					</div>
 				</div>
 			</div>
 		</div>
 	{/each}
-
 </div>
-

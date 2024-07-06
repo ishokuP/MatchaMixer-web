@@ -63,15 +63,16 @@ const config = {
 	daisyui:{
 		themes:[{
 			matcha: {
-				'primary': '#6b8e23', // Matcha green
-				'secondary': '#d2b48c', // Light tan
-				'accent': '#8fbc8f', // Darker matcha
-				'neutral': '#3d4451', // Neutral dark
-				'base-100': '#ffffff', // Base light
-				'info': '#3b82f6', // Info blue
-				'success': '#16a34a', // Success green
-				'warning': '#d97706', // Warning orange
-				'error': '#dc2626', // Error red
+				'primary': '#2e3c18', 
+				'secondary': '#dfe8d7', 
+				'accent': '#e4edb6', 
+				'neutral': '#3d4451', 
+				'base-100': '#F0F4EF', 
+				'info': '#317256', 
+				'success': '#4CAF50', 
+				'warning': '#CDDC39', 
+				'error': '#FF5252', 
+
 			}
 		},
 			"dark",

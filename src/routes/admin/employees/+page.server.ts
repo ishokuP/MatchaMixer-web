@@ -18,24 +18,70 @@ export async function load() {
 	}
 }
 
+
 /** @type {import('./$types').Actions} */
 export const actions = {
-	update : async ({request}) =>{
-	  const formUpdated = await request.formData();
-	  const formID = formUpdated.get('eventID');
-  
-	  // TODO Add query
-	  console.log(formUpdated)
-	  console.log("save clicked")
-	  return { status: 303, headers: { Location: '/' } };
-	},
-	delete : async ({request}) =>{
-	  const formDeleted = await request.formData();
-	  const formID = formDeleted.get('eventID');
-	  console.log(formID) 
-	  console.log("delete clicked")
-  
-	  // TODO Add query
-	  return { status: 303, headers: { Location: '/' } };
-	}
-  };
+    update: async ({ request }) => {
+        const form = await request.formData();
+        const employeeID = form.get('employeeID');
+        const employeeName = form.get('employeeName');
+        const employeeNumber = form.get('employeeNumber');
+        const employeeAddress = form.get('employeeAddress');
+        const employeeFBName = form.get('employeeFBName');
+        const employeeRole = form.get('employeeRole');
+
+        console.log(form);
+        console.log("save clicked");
+
+        try {
+            const connection = await mysqlconnFn();
+
+            // Check if the employeeID exists
+            const [existingEmployee] = await connection.query(
+                `SELECT 1 FROM employee WHERE id = ?`, [employeeID]
+            );
+
+            if (existingEmployee.length > 0) {
+                // Update existing employee
+                await connection.execute(`
+                    UPDATE employee SET
+                        name = ?,
+                        number = ?,
+                        address = ?,
+                        fbname = ?,
+                        role = ?
+                    WHERE id = ?`,
+                    [employeeName, employeeNumber, employeeAddress, employeeFBName, employeeRole, employeeID]
+                );
+            } else {
+                // Insert new employee
+                await connection.execute(`
+                    INSERT INTO employee (id, name, number, address, fbname, role) VALUES (?, ?, ?, ?, ?, ?)`,
+                    [employeeID, employeeName, employeeNumber, employeeAddress, employeeFBName, employeeRole]
+                );
+            }
+
+            return { status: 200 };
+        } catch (error) {
+            console.error('Failed to update employee:', error);
+            return { status: 500, body: { error: 'Failed to update employee.' } };
+        }
+    },
+    delete: async ({ request }) => {
+        const form = await request.formData();
+        const employeeID = form.get('employeeID');
+
+        console.log(form);
+        console.log("delete clicked");
+
+        try {
+            const connection = await mysqlconnFn();
+            await connection.execute(`DELETE FROM employee WHERE id = ?`, [employeeID]);
+
+            return { status: 200 };
+        } catch (error) {
+            console.error('Failed to delete employee:', error);
+            return { status: 500, body: { error: 'Failed to delete employee.' } };
+        }
+    }
+};

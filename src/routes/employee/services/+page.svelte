@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 
 	interface services {
-		id: number;
+		id: string;
 		name: string;
 		type: string;
 		price: string;
@@ -15,18 +15,6 @@
 	}
 
 	export let data: servicesdata = { data: [] };
-
-	function addNewEvent() {
-		const newService: services = {
-			id: Math.floor(Math.random() * 100000),
-			name: '',
-			type: '',
-			price: '',
-			inclusion: '',
-			rate: 0
-		};
-		data.data = [...data.data, newService];
-	}
 
 	let modalOpenState = {};
 
@@ -43,9 +31,7 @@
 </script>
 
 <h2 class="text-4xl font-extrabold">Services</h2>
-<div class="sticky top-4 z-50 p-4">
-	<button class="btn w-40" on:click={addNewEvent}> + Add Service </button>
-</div>
+
 <div class="flex flex-wrap">
 	{#each data.data as service}
 		<div class=" mx-2.5 my-2.5 w-full self-auto p-2">
@@ -97,6 +83,7 @@
 													name="serviceName"
 													class="input input-bordered w-full max-w-xs"
 													bind:value={service.name}
+													readonly
 												/>
 											</h2>
 											<h6 class="text-lg font-bold">Type</h6>
@@ -106,6 +93,7 @@
 													name="serviceType"
 													class="input input-bordered w-full max-w-xs"
 													bind:value={service.type}
+													readonly
 												/>
 											</h2>
 										</div>
@@ -118,6 +106,7 @@
 													name="servicePrice"
 													class="input input-bordered w-full max-w-xs"
 													bind:value={service.price}
+													readonly
 												/>
 											</h2>
 
@@ -128,6 +117,7 @@
 													name="serviceRate"
 													class="input input-bordered w-full max-w-xs"
 													bind:value={service.rate}
+													readonly
 												/>
 											</h2>
 										</div>
@@ -141,20 +131,15 @@
 												name="serviceInclusion"
 												class="input input-bordered w-full"
 												bind:value={service.inclusion}
+												readonly
 											/>
 										</h2>
 									</div>
 									<br /><br />
-									<div class="modal-action flex w-full justify-between">
-										<button
-											class="btn btn-primary"
-											on:click={() => toggleModal(service.id)}
-											formaction="?/delete">Delete</button
-										>
+									<div class="modal-action flex w-full justify-end">
+	
 										<div class="flex space-x-4">
-											<button class="btn btn-primary" on:click={() => toggleModal(service.id)}
-												>Save Changes</button
-											>
+
 											<button type="button"class="btn btn-error" on:click={() => toggleModal(service.id)}
 												>Close</button
 											>
