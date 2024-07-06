@@ -131,15 +131,7 @@
 <h2 class="text-4xl font-extrabold">Events</h2>
 <div class="sticky top-4 z-50 flex items-center justify-end p-4">
 
-	<details class="dropdown">
-		<summary class="btn w-40">+ Filter</summary>
-		<ul class="open-left menu dropdown-content z-[1] rounded-box bg-base-100 p-2 shadow">
-			<form method="POST" action="?/pickdate" use:enhance>
-				<DatePicker bind:value={selectedDate} />
-				<input type="hidden" name="selectedDate" bind:value={selectedDate} />
-			</form>
-		</ul>
-	</details>
+
 </div>
 
 
