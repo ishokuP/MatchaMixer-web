@@ -49,6 +49,7 @@
 		}
 	}
 </script>
+<h2 class="text-4xl font-extrabold">Equipments</h2>
 
 <dialog bind:this={confirmationDelete} class="modal">
 	<form method="post" action="?/delete">
@@ -65,10 +66,14 @@
 	</form>
 </dialog>
 
-<!-- TODO fix spacing -->
-<div class="flex flex-wrap justify-center space-x-10 space-y-3">
+<div class="sticky top-4 z-50 p-4 ">
+	<button class="btn w-40" on:click={addNewEvent}>
+	  + Add Equipment
+	</button>
+  </div>
+<div class="flex flex-wrap justify-center ">
 	{#each data.data as equipment}
-		<div class="card w-96 bg-base-100">
+		<div class="card w-96 bg-base-100 mx-2.5 my-2.5">
 			<figure>
 				<img
 					src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
@@ -129,19 +134,5 @@
 		</div>
 	{/each}
 
-	<div class="card h-96 w-96 bg-base-100 shadow-xl">
-		<button class="btn h-full w-full bg-base-200" on:click={addNewEvent}>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke-width="1.5"
-				stroke="currentColor"
-				class="size-6"
-			>
-				<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-			</svg>
-			Add Event
-		</button>
-	</div>
+
 </div>

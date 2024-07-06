@@ -1,16 +1,19 @@
 <script lang="ts">
+	import { DateInput, DatePicker } from 'date-picker-svelte';
 	import { enhance } from '$app/forms';
+	import Select from 'svelte-select';
+	import { onMount } from 'svelte';
 	interface Event {
 		eventID: number;
 		eventName: string;
-		eventDate: string; // Date of the event
+		eventDate: Date; // Date of the event
 		eventTime: string; // Time of the event
 		eventClientName: string; // Name of the client hosting the event
 		eventClientContact: string; // Contact information for the client
 		eventVenue: string; // Venue where the event is held
 		eventType: string; // Type of the event (e.g., Wedding, Corporate)
 		equipmentNeeded: string[]; // List of equipment needed for the event
-		paymentID: string; // Associated payment ID
+		paymentID: number; // Associated payment ID
 		paymentStatus: string; // Status of the payment (e.g., Paid, Due)
 		paymentCost: string; // Cost of the event
 		additionalRequests: string; // Any additional requests or requirements
@@ -29,6 +32,10 @@
 		id: number;
 		name: number;
 	}
+	interface allEquipOriginal {
+		id: number;
+		name: number;
+	}
 
 	interface Equipment {
 		equipmentID: string;
@@ -42,9 +49,10 @@
 		employeeResults: { [key: number]: Employee[] };
 		equipmentResults: { [key: number]: Equipment[] };
 		allEmployees: allEmployOriginal[];
+		allEquipment: allEquipOriginal[];
 	};
 
-	// console.log(data.employeeResults);
+	// console.log(data.allEquipment);
 
 	function formatTime(time: string): string {
 		const [hours, minutes] = time.split(':');
@@ -54,18 +62,6 @@
 		return `${hour12}:${minutes} ${suffix}`;
 	}
 	let editModes = {};
-	let dropdownValues = {};
-
-	function handleEditSaveToggle(event, eventID) {
-		event.preventDefault();
-		editModes[eventID] = !editModes[eventID];
-		if (!dropdownValues[eventID]) {
-			dropdownValues[eventID] = new Array(4).fill('');
-			data.employeeResults[eventID].forEach((emp, index) => {
-				if (index < 4) dropdownValues[eventID][index] = emp.employeeName;
-			});
-		}
-	}
 
 	let confirmationDelete;
 	let currentDeletingEvent = null;
@@ -87,26 +83,80 @@
 		const newEvent: Event = {
 			eventID: Math.floor(Math.random() * 100000),
 			eventName: 'New Event',
-			eventDate: new Date().toISOString().split('T')[0],
+			eventDate: new Date(),
 			eventTime: '12:00:00',
 			eventClientName: '',
 			eventClientContact: '',
 			eventVenue: '',
 			eventType: '',
-			paymentID: '',
+			paymentID: Math.floor(Math.random() * 100000),
 			paymentStatus: 'Unpaid',
 			paymentCost: '0',
 			additionalRequests: '',
 			equipmentNeeded: [],
 			service: 0,
-			employeeAssigned: 0
+			employeeAssigned: 0,
+			
 		};
 		data.eventResults = [...data.eventResults, newEvent];
 		data.employeeResults[newEvent.eventID] = [];
 		data.equipmentResults[newEvent.eventID] = [];
 		editModes[newEvent.eventID] = true;
 	}
+
+	let selectedDate;
+
+	let staffSelections = {};
+	let equipmentSelections = {};
+
+	function prepareStaffSelected(eventID) {
+		return (
+			data.employeeResults[eventID]?.map((emp) => ({
+				value: emp.employeeID,
+				label: `${emp.employeeName}`
+			})) ?? []
+		);
+	}
+
+	function prepareEquipmentSelected(eventID) {
+		return (
+			data.equipmentResults[eventID]?.map((equip) => ({
+				value: equip.equipmentID,
+				label: equip.equipmentName
+			})) ?? []
+		);
+	}
+
+	onMount(() => {
+		Object.keys(data.employeeResults).forEach((eventID) => {
+			staffSelections[eventID] = prepareStaffSelected(eventID);
+			equipmentSelections[eventID] = prepareEquipmentSelected(eventID);
+		});
+	});
+
+	// Function to handle toggle between edit and save
+	function handleEditSaveToggle(event, eventID) {
+		editModes[eventID] = !editModes[eventID];
+		if (editModes[eventID]) {
+			// Going into edit mode, prevent form submission
+			event.preventDefault();
+		} else {
+			// Saving changes, allow form submission
+			// Here, you don't call preventDefault, and the form should submit
+		}
+	}
+	// Prepare items for the select component for both staff and equipment
+	let items = data.allEmployees.map((emp) => ({
+		value: emp.id,
+		label: emp.name
+	}));
+	let equipmentItems = data.allEquipment.map((equip) => ({
+		value: equip.id,
+		label: equip.name
+	}));
+	
 </script>
+<h2 class="text-4xl font-extrabold">Events</h2>
 
 <dialog bind:this={confirmationDelete} class="modal">
 	<form method="post" action="?/delete">
@@ -123,9 +173,14 @@
 	</form>
 </dialog>
 
-<h1>Date</h1>
-<br />
-<input type="date" />
+
+<form method="POST" action="?/pickdate" use:enhance>
+	<DatePicker bind:value={selectedDate} />
+	<input type="hidden" name="selectedDate" bind:value={selectedDate} />
+	<button>Filter</button>
+</form>
+
+<p>{selectedDate}</p>
 
 <div class="flex flex-col space-y-4">
 	{#each data.eventResults as event}
@@ -143,7 +198,8 @@
 						<form method="post" action="?/update" use:enhance>
 							<input type="text" hidden name="eventID" bind:value={event.eventID} />
 							<input type="text" hidden name="eventDate" bind:value={event.eventDate} />
-							<input type="text" hidden name="employeeNames" bind:value={event.paymentID} />
+							<input type="text" hidden name="paymentID" bind:value={event.paymentID} />
+							<p>{event.paymentID}</p>
 
 							<input
 								type="text"
@@ -166,12 +222,13 @@
 									<div class="flex flex-row space-x-4">
 										<div>
 											<h1>date</h1>
+											<p>{event.eventDate}</p>
 											<h2>
-												<input
-													type="date"
-													name="eventDate"
-													class="input input-bordered w-full"
-													bind:value={event.eventDate}
+												<DateInput 
+												bind:value={event.eventDate}
+
+												disabled={!editModes[event.eventID]} 
+												format="MM/dd/yyyy"
 												/>
 											</h2>
 
@@ -224,7 +281,7 @@
 												<span>PHP</span>
 												<input
 													type="text"
-													name="paymentStatus"
+													name="paymentCost"
 													bind:value={event.paymentCost}
 													readonly={!editModes[event.eventID]}
 													class={inputClasses(editModes[event.eventID])}
@@ -232,19 +289,16 @@
 											</h2>
 										</div>
 										<div>
-											<!-- Other form fields -->
 											<h1>Staff Assigned</h1>
 
-											{#each data.eventResults as event}
-												<select name="employees" class="select w-full max-w-xs">
-													<option disabled value="">Select an employee</option>
-													{#each data.allEmployees as allEmployee}
-														<option value={allEmployee.name}>
-															{allEmployee.name}
-														</option>
-													{/each}
-												</select>
-											{/each}
+											<Select
+												{items}
+												multiple={true}
+												name="employeesNeeded"
+												bind:value={staffSelections[event.eventID]}
+												placeholder="Select employees"
+												disabled={!editModes[event.eventID]}
+											/>
 
 											<h1>Payment Status</h1>
 											<h2>
@@ -272,17 +326,15 @@
 									</div>
 									<div class="pt-6">
 										<h1>Equipment Needed</h1>
-										<h2>
-											{#each data.equipmentResults[event.eventID] as equipment}
-												<input
-													type="text"
-													name="equipNeeded"
-													bind:value={equipment.equipmentName}
-													readonly={!editModes[event.eventID]}
-													class={inputClasses(editModes[event.eventID])}
-												/>
-											{/each}
-										</h2>
+
+										<Select
+											items={equipmentItems}
+											multiple={true}
+											name="equipmentNeeded"
+											bind:value={equipmentSelections[event.eventID]}
+											placeholder="Select equipment"
+											disabled={!editModes[event.eventID]}
+										/>
 									</div>
 								</div>
 

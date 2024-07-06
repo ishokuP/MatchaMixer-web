@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 
 	interface Employee {
-		id: string;
+		id: number;
 		name: string;
 		email: string;
 		number: string;
@@ -19,7 +19,7 @@
 
 	function addNewEvent() {
 		const newEmployee: Employee = {
-			id: '',
+			id: Math.floor(Math.random() * 100000),
 			name: '',
 			email: '',
 			number: '',
@@ -45,15 +45,22 @@ $: data.data.forEach(employee => {
 });
 
 </script>
+<h2 class="text-4xl font-extrabold">Employees</h2>
 
-<div class="overflow-x-auto">
+<div class="sticky top-4 z-50 p-4 ">
+  <button class="btn w-40" on:click={addNewEvent}>
+    + Add Employee
+  </button>
+</div>
+<br>
+<div class="w-auto">
 	<table class="table">
 		<thead>
 			<tr>
-				<th></th>
+				<th>ID</th>
 				<th>Name</th>
 				<th>Job</th>
-				<th>role</th>
+				<th>Role</th>
 			</tr>
 		</thead>
     <tbody>
@@ -68,44 +75,50 @@ $: data.data.forEach(employee => {
                   <div class="modal" class:modal-open={modalOpenState[Employee.id]}>
                     <div class="modal-box">
                       <div>
-                        <h1>ID</h1>
+                        <h6 class="text-lg font-bold" >ID</h6>
+
                         <h2>
-                          <input type="text" name="employeeName" bind:value={Employee.id}  readonly/>
+                          <input type="text" name="employeeName" class="input input-bordered w-full max-w-xs"  bind:value={Employee.id}  readonly/>
                         </h2>
                       </div>
-                      <div class="flex flex-wrap space-x-4">
+                      <br>
+                      <div class="flex space-x-4">
                         <div>
-                          <h1>Name</h1>
+                          <h6 class="text-lg font-bold" >Name</h6>
                           <h2>
-                            <input type="text" name="employeeName" bind:value={Employee.name} />
+
+                            <input type="text" name="employeeName" class="input input-bordered w-full max-w-xs" bind:value={Employee.name} />
                           </h2>
+
+                          <h6 class="text-lg font-bold" >Number</h6>
+
+                          <h2>
+                            <input type="text" name="employeeName"class="input input-bordered w-full max-w-xs"  bind:value={Employee.number} />
+                          </h2>
+
+                          <h6 class="text-lg font-bold" >Address</h6>
+
+                          <h2>
+                            <input type="text" name="employeeName" class="input input-bordered w-full max-w-xs" bind:value={Employee.address} />
+                          </h2>
+
                         </div>
                         <div>
-                          <h1>number</h1>
+                          <h6 class="text-lg font-bold" >FB Name</h6>
+
                           <h2>
-                            <input type="text" name="employeeName" bind:value={Employee.number} />
+                            <input type="text" name="employeeName" class="input input-bordered w-full max-w-xs" bind:value={Employee.fbname} />
+                          </h2>
+
+                          <h6 class="text-lg font-bold" >Role</h6>
+
+                          <h2>
+                            <input type="text" name="employeeName" class="input input-bordered w-full max-w-xs" bind:value={Employee.role} />
                           </h2>
                         </div>
-                        <div>
-                          <h1>Address</h1>
-                          <h2>
-                            <input type="text" name="employeeName" bind:value={Employee.address} />
-                          </h2>
-                        </div>
-                        <div>
-                          <h1>fbname</h1>
-                          <h2>
-                            <input type="text" name="employeeName" bind:value={Employee.fbname} />
-                          </h2>
-                        </div>
-                        <div>
-                          <h1>Role</h1>
-                          <h2>
-                            <input type="text" name="employeeName" bind:value={Employee.role} />
-                          </h2>
-                        </div>
+
                       </div>
-    
+                      <br>
                         <div class="modal-action flex w-full justify-between">
                             <button class="btn btn-primary" on:click={() => toggleModal(Employee.id)} formaction="?/delete">Delete</button>
                             <div class="flex space-x-4">
@@ -125,23 +138,10 @@ $: data.data.forEach(employee => {
   
 
 		<tfoot>
-			<button class="btn h-full w-full bg-base-200" on:click={addNewEvent}>
-				<div class="card-body w-full">
-					<div class="card-actions justify-center">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-6"
-						>
-							<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-						</svg>
-						Add Employee
-					</div>
-				</div>
-			</button>
+
 		</tfoot>
 	</table>
+
+  
 </div>
+

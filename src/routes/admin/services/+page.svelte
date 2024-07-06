@@ -42,11 +42,15 @@
 	});
 </script>
 
-<h1>services</h1>
-
-<div class="flex flex-wrap">
+<h2 class="text-4xl font-extrabold">Services</h2>
+<div class="sticky top-4 z-50 p-4 ">
+	<button class="btn w-40" on:click={addNewEvent}>
+	  + Add Service
+	</button>
+  </div>
+<div class="flex flex-wrap ">
 	{#each data.data as service}
-		<div class="w-1/2 self-auto p-2">
+		<div class=" w-full self-auto p-2 mx-2.5  my-2.5">
 			<div class="card bg-base-100 shadow-xl lg:card-side">
 				<figure>
 					<img
@@ -128,25 +132,7 @@
 			</div>
 		</div>
 	{/each}
-	<div class="h-1/2 w-1/2 self-auto p-2">
-		<div class="card bg-base-100 shadow-xl lg:card-side">
-			<button class="btn h-full w-full bg-base-200" on:click={addNewEvent}>
-				<div class="card-body w-full">
-					<div class="card-actions justify-center">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-6"
-						>
-							<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-						</svg>
-						Add Event
-					</div>
-				</div>
-			</button>
-		</div>
-	</div>
+
 </div>
+
+
