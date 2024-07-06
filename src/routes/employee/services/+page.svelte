@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 
 	interface services {
-		id: string;
+		id: number;
 		name: string;
 		type: string;
 		price: string;

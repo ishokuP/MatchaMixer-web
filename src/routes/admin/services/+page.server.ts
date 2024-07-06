@@ -6,10 +6,8 @@ export async function load() {
     const results = await mysqlconn
       .query("SELECT * FROM services;")
       .then(function ([rows,fields]) {
-              //  console.log(fields);
         return rows;
       });
-    // console.log(results)
     return {
       data: results
     };
