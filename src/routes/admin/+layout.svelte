@@ -33,10 +33,11 @@ function setTheme(theme) {
     <div class="drawer-side">
       <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
       <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
-        <li><a href="/admin/events"class="btn btn-ghost">Events</a></li>
-        <li><a href="/admin/equipment"class="btn btn-ghost">Equipments</a></li>
-        <li><a href="/admin/employees" class="btn btn-ghost">Employees</a></li>
-        <li><a href="/admin/services" class="btn btn-ghost">Services</a></li>
+        <br><br>
+        <li><a href="/admin/events"class="btn btn-ghost text-xl">Events</a></li>
+        <li><a href="/admin/equipment"class="btn btn-ghost text-xl">Equipments</a></li>
+        <li><a href="/admin/employees" class="btn btn-ghost text-xl">Employees</a></li>
+        <li><a href="/admin/services" class="btn btn-ghost text-xl">Services</a></li>
         <div class="flex-grow"></div>
         <!-- TODO Add a settings icon to logout n sh -->
         <div class="flex justify-between items-center">

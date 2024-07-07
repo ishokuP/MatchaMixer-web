@@ -118,12 +118,27 @@ $: data.data.forEach(employee => {
                             <input type="text" name="employeeRole" class="input input-bordered w-full max-w-xs" bind:value={Employee.role} />
                           </h2>
 
-                          <h6 class="text-lg font-bold" >Password</h6>
-
-                          <h2>
-                            <input type="password" name="employeePassword" class="input input-bordered w-full max-w-xs" bind:value={Employee.password} />
-                          </h2>
                         </div>
+
+
+                      </div>
+                      <br>
+                      <div class="w-full">
+
+                        <h6 class="text-lg font-bold" >Email</h6>
+
+                        <h2>
+                          <input type="text" name="employeeEmail" class="input input-bordered w-full " bind:value={Employee.email} />
+                        </h2>
+                          
+                        <h6 class="text-lg font-bold" >Password</h6>
+
+                        <h2>
+                          <input type="password" name="employeePassword" class="input input-bordered w-full " bind:value={Employee.password} />
+                        </h2>
+
+                        <br>
+
 
                       </div>
                       <br>
