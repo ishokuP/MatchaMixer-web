@@ -18,16 +18,29 @@
 	let editModes = {};
 	let currentDeletingEvent = null;
 	let confirmationDelete;
+	let confirmationAdd; // Bind the dialog element
+	let newEquipment = {
+		id: '',
+		name: '',
+		status: '',
+		Econdition: '',
+		AssignedEvents: ''
+	};
 
 	function addNewEvent() {
-		const newEquipment: Equipment = {
-			id: 'new' + Math.random().toString(16).slice(2),
+		// Generate a new ID
+		newEquipment.id = 'new' + Math.random().toString(16).slice(2);
+		// Logic to add the equipment to your data
+		data.data = [...data.data, { ...newEquipment }];
+		// Reset the newEquipment object after adding
+		newEquipment = {
+			id: '',
 			name: '',
 			status: '',
 			Econdition: '',
 			AssignedEvents: ''
 		};
-		data.data = [...data.data, newEquipment];
+		confirmationAdd.close();
 	}
 
 	function handleEditSaveToggle(event, equipID) {
@@ -70,15 +83,68 @@
 	</form>
 </dialog>
 
+<dialog bind:this={confirmationAdd} class="modal">
+	<form on:submit|preventDefault={addNewEvent}>
+		<div class="modal-box">
+			<h3 class="text-lg font-bold">Add New Equipment</h3>
+			<div class="py-4">
+				<label class="block mb-2">
+					Name:
+					<input
+						type="text"
+						bind:value={newEquipment.name}
+						class="input input-bordered w-full"
+						placeholder="Enter equipment name"
+						required
+					/>
+				</label>
+				<label class="block mb-2">
+					Status:
+					<input
+						type="text"
+						bind:value={newEquipment.status}
+						class="input input-bordered w-full"
+						placeholder="Enter status"
+						required
+					/>
+				</label>
+				<label class="block mb-2">
+					Condition:
+					<input
+						type="text"
+						bind:value={newEquipment.Econdition}
+						class="input input-bordered w-full"
+						placeholder="Enter condition"
+						required
+					/>
+				</label>
+			</div>
+			<div class="modal-action">
+				<button type="submit" class="btn btn-success">Add Equipment</button>
+				<button
+					type="button"
+					class="btn"
+					on:click={() => confirmationAdd.close()}
+				>
+					Cancel
+				</button>
+			</div>
+		</div>
+	</form>
+</dialog>
+
 <div class="sticky top-4 z-50 p-4">
-	<button class="btn w-40" on:click={addNewEvent}> + Add Equipment </button>
+	<button class="btn w-40" on:click={() => confirmationAdd.showModal()}>
+		+ Add Equipment
+	</button>
 </div>
+
 <div class="flex flex-wrap justify-center">
 	{#each data.data as equipment}
 		<div class="card mx-2.5 my-2.5 w-96 bg-base-100">
 			<figure>
 				<img
-					src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
+					src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
 					alt="Equipment"
 				/>
 			</figure>
@@ -128,7 +194,7 @@
 									{/each}
 								</ul>
 							{:else}
-								<span>None</span>
+								<br><span>None</span>
 							{/if}
 						</div>
 					</div>
