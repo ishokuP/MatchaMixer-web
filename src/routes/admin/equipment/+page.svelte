@@ -88,6 +88,7 @@
 		<div class="modal-box">
 			<h3 class="text-lg font-bold">Add New Equipment</h3>
 			<div class="py-4">
+				<!-- Equipment Name -->
 				<label class="block mb-2">
 					Name:
 					<input
@@ -98,26 +99,43 @@
 						required
 					/>
 				</label>
+
+				<!-- Equipment Status Dropdown -->
 				<label class="block mb-2">
 					Status:
-					<input
-						type="text"
+					<select
 						bind:value={newEquipment.status}
-						class="input input-bordered w-full"
-						placeholder="Enter status"
+						class="select select-bordered w-full"
 						required
-					/>
+					>
+						<option value="In-Studio">In-Studio</option>
+						<option value="Deployed">Deployed</option>
+						<option value="For Repair">For Repair</option>
+						<option value="For Replacement">For Replacement</option>
+						<option value="For Testing">For Testing</option>
+						<option value="Lost">Lost</option>
+						<option value="Retired">Retired</option>
+					</select>
 				</label>
+
+				<!-- Equipment Condition Dropdown -->
 				<label class="block mb-2">
 					Condition:
-					<input
-						type="text"
+					<select
 						bind:value={newEquipment.Econdition}
-						class="input input-bordered w-full"
-						placeholder="Enter condition"
+						class="select select-bordered w-full"
 						required
-					/>
+					>
+						<option value="Good-to-Go">Good-to-Go</option>
+						<option value="Requires Cleaning">Requires Cleaning</option>
+						<option value="Minor Damage">Minor Damage</option>
+						<option value="Needs Repair">Needs Repair</option>
+						<option value="End-of-Life">End-of-Life</option>
+						<option value="Under Inspection">Under Inspection</option>
+					</select>
 				</label>
+
+
 			</div>
 			<div class="modal-action">
 				<button type="submit" class="btn btn-success">Add Equipment</button>
