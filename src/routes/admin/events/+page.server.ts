@@ -52,9 +52,14 @@ interface LoadResult {
 	allEquipment: allEquipOriginal[];
 }
 
-function parseDate(dateString: string): Date {
-	const [year, month, day] = dateString.split('-').map(Number);
-	return new Date(year, month - 1, day);
+function parseDate(dateString: string | undefined): string {
+    // Check if the dateString is defined and not empty
+    if (dateString && typeof dateString === 'string') {
+        return dateString.split(' ')[0]; // Just an example: split by space to get the date part
+    } else {
+        console.error('Invalid date string:', dateString); // Optional: log the error
+        return ''; // Return a default value or handle the error as needed
+    }
 }
 function getStringValue(formData: FormData, key: string, defaultValue: string = ''): string {
 	const value = formData.get(key);
@@ -74,8 +79,8 @@ export async function load(): Promise<LoadResult> {
 				`
             SELECT 
                 E.eventID,
-                DATE_FORMAT(E.eventDate, '%Y-%m-%d') AS eventDate,
-                E.eventTime,
+                DATE_FORMAT(E.eventStart, '%Y-%m-%d %H:%i:%s') AS eventStart,
+                DATE_FORMAT(E.eventEnd, '%Y-%m-%d %H:%i:%s') AS eventEnd,
                 E.eventName,
                 E.eventClientName,
                 E.eventClientContact,
@@ -183,8 +188,11 @@ export const actions = {
             };
         }
         const eventName = getStringValue(form, 'eventName');
-        const eventDateRaw = getStringValue(form, 'eventDate');
-        const eventDate = formatDateToMySQL(eventDateRaw);  // Ensure this conversion is correct
+        const eventStartRaw = getStringValue(form, 'eventStart');
+        const eventEndRaw = getStringValue(form, 'eventEnd');
+        const eventStart = formatDateToMySQL(eventStartRaw)
+        const eventEnd = formatDateToMySQL(eventEndRaw);
+        // const eventDate = formatDateToMySQL(eventDateRaw);  // Ensure this conversion is correct
         const eventTime = getStringValue(form, 'eventTime');
         const eventClientName = getStringValue(form, 'clientName');
         const eventClientContact = getStringValue(form, 'clientNum');
@@ -235,17 +243,17 @@ export const actions = {
             if (!eventExists.length) {
                 // Insert new event if it doesn't exist
                 await connection.query(
-                    `INSERT INTO events (eventID, eventName, eventDate, eventTime, eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID)
+                    `INSERT INTO events (eventID, eventName, eventDate, eventTime, eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID, eventEnd)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                    [eventID, eventName, eventDate, eventTime, eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID]
+                    [eventID, eventStart, eventName, eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID, eventEnd]
                 );
             } else {
                 // Update existing event details
                 await connection.query(
                     `UPDATE events SET
                     eventName = ?,
-                    eventDate = ?,
-                    eventTime = ?,
+                    eventStart = ?,
+                    eventEnd = ?,
                     eventClientName = ?,
                     eventClientContact = ?,
                     eventVenue = ?,
@@ -253,7 +261,7 @@ export const actions = {
                     additionalRequests = ?,
                     paymentID = ?
                     WHERE eventID = ?`,
-                    [eventName, eventDate, eventTime, eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID, eventID]
+                    [eventName, eventStart,eventEnd , eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID, eventID]
                 );
             }
 

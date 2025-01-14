@@ -1,13 +1,18 @@
 <script lang="ts">
-	import { DateInput, DatePicker } from 'date-picker-svelte';
 	import { enhance } from '$app/forms';
 	import Select from 'svelte-select';
 	import { onMount } from 'svelte';
+	let startDate = null;
+	let endDate = null;
+
+	function formatDate2(date) {
+		return date ? date.toLocaleDateString('en-US') : 'None';
+	}
 	interface Event {
 		eventID: number;
 		eventName: string;
-		eventDate: Date; // Date of the event
-		eventTime: string; // Time of the event
+		eventStart: Date; // Date of the event
+		eventEnd: Date; // Date of the event
 		eventClientName: string; // Name of the client hosting the event
 		eventClientContact: string; // Contact information for the client
 		eventVenue: string; // Venue where the event is held
@@ -83,8 +88,8 @@
 		const newEvent: Event = {
 			eventID: Math.floor(Math.random() * 100000),
 			eventName: 'New Event',
-			eventDate: new Date(),
-			eventTime: '12:00:00',
+			eventStart: new Date(),
+			eventEnd: new Date(),
 			eventClientName: '',
 			eventClientContact: '',
 			eventVenue: '',
@@ -154,34 +159,22 @@
 		label: equip.name
 	}));
 
-	function formatDate(dateString) {
-		const date = new Date(dateString);
-		return date.toLocaleDateString('en-US', {
+	function formatDateTime(date: Date): string {
+		const options: Intl.DateTimeFormatOptions = {
 			year: 'numeric',
 			month: 'long',
-			day: 'numeric'
-		});
+			day: 'numeric',
+			hour: 'numeric',
+			minute: 'numeric',
+			hour12: true // You can set this to false for 24-hour format
+		};
+		return date.toLocaleString('en-US', options);
 	}
 </script>
-
-<style>
-	.select-disabled {
-    background-color: green;
-    color: green;
-	font-weight: bold;
-}
-.open-left {
-		position: absolute;
-		right: 100%; /* Align the right edge of the dropdown with the left edge of the button */
-		top: 0; /* Align the top of the dropdown with the top of the button */
-	}
-</style>
 
 <h2 class="text-4xl font-extrabold">Events</h2>
 <div class="sticky top-4 z-50 flex items-center justify-between p-4">
 	<button class="btn w-40" on:click={addNewEvent}> + Add Event </button>
-
-
 </div>
 <dialog bind:this={confirmationDelete} class="modal">
 	<form method="post" action="?/delete">
@@ -204,8 +197,7 @@
 			<input type="checkbox" name="my-accordion-1" />
 			<div class="collapse-title text-xl">
 				<span class="font-medium">
-					{formatTime(event.eventTime)}
-					{formatDate(event.eventDate)}
+					{formatDateTime(new Date(event.eventStart))}
 				</span>
 				{event.eventName} @ {event.eventVenue}
 			</div>
@@ -214,7 +206,6 @@
 					<div class="card-body bg-primary">
 						<form method="post" action="?/update" use:enhance>
 							<input type="text" hidden name="eventID" bind:value={event.eventID} />
-							<input type="text" hidden name="eventDate" bind:value={event.eventDate} />
 							<input type="text" hidden name="paymentID" bind:value={event.paymentID} />
 
 							<input
@@ -223,6 +214,7 @@
 								bind:value={event.eventName}
 								readonly={!editModes[event.eventID]}
 								class="{inputClasses(editModes[event.eventID])} w-full text-2xl font-bold"
+								placeholder="Event Name"
 							/>
 							<br />
 							<input
@@ -231,6 +223,7 @@
 								bind:value={event.eventClientName}
 								readonly={!editModes[event.eventID]}
 								class="{inputClasses(editModes[event.eventID])} base w-full"
+								placeholder="Client Name"
 							/>
 
 							<div class="flex w-full flex-col border-opacity-50">
@@ -238,24 +231,29 @@
 									<div class="flex flex-row space-x-4">
 										<div class="flex flex-col space-y-4">
 											<h3 class="text-2xl font-bold">Date</h3>
-											<h2>
-												<DateInput
-													bind:value={event.eventDate}
-													disabled={!editModes[event.eventID]}
-													format="MM/dd/yyyy"
-												/>
-											</h2>
-
-											<h1 class="text-2xl font-bold">Time</h1>
-											<h2>
-												<input
-													type="time"
-													name="eventTime"
-													bind:value={event.eventTime}
-													readonly={!editModes[event.eventID]}
-													class={inputClasses(editModes[event.eventID])}
-												/>
-											</h2>
+											<div class="mb-64 md:w-1/2">
+												<div class="flex space-x-4">
+													<div>
+														<label for="eventEnd" class="block text-xl font-bold">Start Date</label
+														>
+														<input
+															type="datetime-local"
+															name="eventStart"
+															bind:value={event.eventStart}
+															readonly={!editModes[event.eventID]}
+														/>
+													</div>
+													<div>
+														<label for="eventEnd" class="block text-xl font-bold">End Date</label>
+														<input
+															type="datetime-local"
+															name="eventEnd"
+															bind:value={event.eventEnd}
+															readonly={!editModes[event.eventID]}
+														/>
+													</div>
+												</div>
+											</div>
 
 											<h1 class="text-2xl font-bold">Venue</h1>
 											<h2>
@@ -312,9 +310,8 @@
 												bind:value={staffSelections[event.eventID]}
 												placeholder="Select employees"
 												disabled={!editModes[event.eventID]}
-										containerStyles="background-color: transparent; color: black; opacity: 1; outline: none; border:none;"
-												
-												/>
+												containerStyles="background-color: transparent; color: black; opacity: 1; outline: none; border:none;"
+											/>
 
 											<h1 class="text-2xl font-bold">Payment Status</h1>
 											<h2>
@@ -344,16 +341,14 @@
 										<h1 class="text-2xl font-bold">Equipment Needed</h1>
 
 										<Select
-										items={equipmentItems}
-										multiple={true}
-										name="equipmentNeeded"
-										bind:value={equipmentSelections[event.eventID]}
-										placeholder="Select equipment"
-										disabled={!editModes[event.eventID]}
-										containerStyles="background-color: transparent; color: black; opacity: 1; outline: none; border:none;"
-									/>
-									
-									
+											items={equipmentItems}
+											multiple={true}
+											name="equipmentNeeded"
+											bind:value={equipmentSelections[event.eventID]}
+											placeholder="Select equipment"
+											disabled={!editModes[event.eventID]}
+											containerStyles="background-color: transparent; color: black; opacity: 1; outline: none; border:none;"
+										/>
 									</div>
 								</div>
 
@@ -381,3 +376,37 @@
 		</div>
 	{/each}
 </div>
+
+<style>
+	.select-disabled {
+		background-color: green;
+		color: green;
+		font-weight: bold;
+	}
+	.open-left {
+		position: absolute;
+		right: 100%; /* Align the right edge of the dropdown with the left edge of the button */
+		top: 0; /* Align the top of the dropdown with the top of the button */
+	}
+	/* Ensure the date input has a visible background and icon */
+	input[type='datetime-local'] {
+		background-color: white; /* White background for the input */
+		color: #333; /* Set text color for the input */
+		font-size: 1rem; /* Font size */
+		padding: 0.5rem;
+		border-radius: 0.25rem;
+		border: 1px solid #ccc; /* Border color */
+	}
+
+	/* Style the date icon (for Webkit browsers) */
+	input[type='datetime-local']::-webkit-calendar-picker-indicator {
+		background-color: #4caf50; /* Example color for the icon */
+		color: white; /* Ensure the icon itself has a contrasting color */
+	}
+
+	/* For Firefox */
+	input[type='datetime-local']::-moz-calendar-picker-indicator {
+		background-color: #4caf50; /* Example color for the icon */
+		color: white; /* Ensure the icon itself has a contrasting color */
+	}
+</style>

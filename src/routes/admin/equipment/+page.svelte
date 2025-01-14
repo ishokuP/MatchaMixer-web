@@ -27,21 +27,9 @@
 		AssignedEvents: ''
 	};
 
-	function addNewEvent() {
-		// Generate a new ID
-		newEquipment.id = 'new' + Math.random().toString(16).slice(2);
-		// Logic to add the equipment to your data
-		data.data = [...data.data, { ...newEquipment }];
-		// Reset the newEquipment object after adding
-		newEquipment = {
-			id: '',
-			name: '',
-			status: '',
-			Econdition: '',
-			AssignedEvents: ''
-		};
+	const closeModal = () => {
 		confirmationAdd.close();
-	}
+	};
 
 	function handleEditSaveToggle(event, equipID) {
 		if (editModes[equipID]) {
@@ -84,7 +72,7 @@
 </dialog>
 
 <dialog bind:this={confirmationAdd} class="modal">
-	<form on:submit|preventDefault={addNewEvent}>
+	<form method="post" action="?/update" use:enhance>
 		<div class="modal-box">
 			<h3 class="text-lg font-bold">Add New Equipment</h3>
 			<div class="py-4">
@@ -96,6 +84,7 @@
 						bind:value={newEquipment.name}
 						class="input input-bordered w-full"
 						placeholder="Enter equipment name"
+						name="equipName"
 						required
 					/>
 				</label>
@@ -107,6 +96,7 @@
 						bind:value={newEquipment.status}
 						class="select select-bordered w-full"
 						required
+						name="equipStatus"
 					>
 						<option value="In-Studio">In-Studio</option>
 						<option value="Deployed">Deployed</option>
@@ -125,6 +115,7 @@
 						bind:value={newEquipment.Econdition}
 						class="select select-bordered w-full"
 						required
+						name="equipCondition"
 					>
 						<option value="Good-to-Go">Good-to-Go</option>
 						<option value="Requires Cleaning">Requires Cleaning</option>
@@ -134,27 +125,19 @@
 						<option value="Under Inspection">Under Inspection</option>
 					</select>
 				</label>
-
-
 			</div>
 			<div class="modal-action">
-				<button type="submit" class="btn btn-success">Add Equipment</button>
-				<button
-					type="button"
-					class="btn"
-					on:click={() => confirmationAdd.close()}
+				<button type="submit" class="btn btn-success" on:click={() => confirmationAdd.close()}
+					>Add Equipment</button
 				>
-					Cancel
-				</button>
+				<button type="button" class="btn" on:click={() => confirmationAdd.close()}> Cancel </button>
 			</div>
 		</div>
 	</form>
 </dialog>
 
 <div class="sticky top-4 z-50 p-4">
-	<button class="btn w-40" on:click={() => confirmationAdd.showModal()}>
-		+ Add Equipment
-	</button>
+	<button class="btn w-40" on:click={() => confirmationAdd.showModal()}> + Add Equipment </button>
 </div>
 
 <div class="flex flex-wrap justify-center">
@@ -212,7 +195,7 @@
 									{/each}
 								</ul>
 							{:else}
-								<br><span>None</span>
+								<br /><span>None</span>
 							{/if}
 						</div>
 					</div>

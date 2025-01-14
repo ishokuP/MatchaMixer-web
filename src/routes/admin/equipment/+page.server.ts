@@ -43,7 +43,13 @@ export async function load() {
 export const actions = {
     update: async ({ request }) => {
         const form = await request.formData();
-        const equipmentID = form.get('equipID');
+        function generateRandomID(): number {
+            return Math.floor(Math.random() * 1000000);  // Generates a random number between 0 and 999,999
+        }
+        
+        // Use the function to generate a random equipmentID
+        const equipmentID = generateRandomID();
+        
         const name = form.get('equipName');
         const status = form.get('equipStatus');
         const Econdition = form.get('equipCondition');
@@ -106,6 +112,36 @@ export const actions = {
             return { 
                 status: 500, 
                 body: { error: 'Failed to save equipment.' } 
+            };
+        }
+    },
+    add: async ({ request }) => {
+        const form = await request.formData();
+        const name = form.get('equipName');
+        const status = form.get('equipStatus');
+        const Econdition = form.get('equipCondition');
+
+        console.log("Form Data for New Equipment:", { name, status, Econdition });
+
+        try {
+            const connection = await mysqlconnFn();
+
+            // Insert new equipment into the database
+            const [result] = await connection.execute(`
+                INSERT INTO equipments (name, status, Econdition)
+                VALUES (?, ?, ?)`, [name, status, Econdition]);
+
+            console.log("New equipment added successfully");
+
+            return {
+                status: 200,
+                headers: { Location: '/success' }
+            };
+        } catch (error) {
+            console.error('Failed to add new equipment:', error);
+            return { 
+                status: 500, 
+                body: { error: 'Failed to add new equipment.' } 
             };
         }
     }
