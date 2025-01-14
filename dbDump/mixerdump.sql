@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
--- Host: localhost    Database: mixertest
+-- Host: localhost    Database: matchamixer
 -- ------------------------------------------------------
--- Server version	8.0.33
+-- Server version	9.1.0
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -32,7 +32,7 @@ CREATE TABLE `employee` (
   `password` varchar(255) DEFAULT NULL,
   `role` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=72426 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `employee` (
 
 LOCK TABLES `employee` WRITE;
 /*!40000 ALTER TABLE `employee` DISABLE KEYS */;
-INSERT INTO `employee` VALUES (1,'John Doe','john.doe@example.com','9876543210','1234 Main St','johnfb','pass123','Manager'),(2,'Jane Doe','jane.doe@example.com','0123456789','5678 Second St','janefb','pass456','Coordinator'),(3,'Jim Beam','jim.beam@example.com','2345678901','9101 Third St','jimfb','pass789','Planner'),(4,'Julia Styles','julia.styles@example.com','3456789012','1234 Fourth St','juliafb','pass012','Staff'),(72425,'Admin User','admin@example.com','1234567890','1234 Admin St','adminfb','adminpassword','Admin');
+INSERT INTO `employee` VALUES (1,'Alice Johnson','alice.j@example.com','1234567890','123 Maple Street','AliceJ','password123','Manager'),(2,'Bob Smith','bob.smith@example.com','9876543210','456 Oak Avenue','BobS','securepass','Technician'),(3,'Charlie Brown','charlie.b@example.com','4567891230','789 Pine Road','CharlieB','mypassword','Assistant');
 /*!40000 ALTER TABLE `employee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -70,7 +70,7 @@ CREATE TABLE `equipments` (
 
 LOCK TABLES `equipments` WRITE;
 /*!40000 ALTER TABLE `equipments` DISABLE KEYS */;
-INSERT INTO `equipments` VALUES ('CAM5','asdvae','awevaea','svdad',5),('equip50429','aevaea','evaeva','e23evw',NULL),('LIG4','Stage Lighting','In repair','Poor',4),('MIC2','Microphones','In use','Fair',2),('new40765829e2f12','blah','blah','blah',NULL),('new8fcf04fb84b65','aweavea','evaeaea','eavae',NULL),('PRJ3','Projector','Available','Excellent',3),('SPK1','Speakers','Available','Good',1);
+INSERT INTO `equipments` VALUES ('21559','woooo','Deployed','Requires Cleaning',NULL),('384922','aa','Deployed','Good-to-Go',NULL),('571477','aa','Deployed','Requires Cleaning',NULL),('943091','asd','Deployed','Requires Cleaning',NULL);
 /*!40000 ALTER TABLE `equipments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -85,7 +85,7 @@ CREATE TABLE `eventemployee` (
   `eventID` int NOT NULL,
   `employeeID` int NOT NULL,
   PRIMARY KEY (`eventID`,`employeeID`),
-  KEY `employeeID` (`employeeID`),
+  KEY `eventemployee_ibfk_2` (`employeeID`),
   CONSTRAINT `eventemployee_ibfk_1` FOREIGN KEY (`eventID`) REFERENCES `events` (`eventID`),
   CONSTRAINT `eventemployee_ibfk_2` FOREIGN KEY (`employeeID`) REFERENCES `employee` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -97,7 +97,7 @@ CREATE TABLE `eventemployee` (
 
 LOCK TABLES `eventemployee` WRITE;
 /*!40000 ALTER TABLE `eventemployee` DISABLE KEYS */;
-INSERT INTO `eventemployee` VALUES (1,1),(2,1),(1,2),(2,2),(1,3);
+INSERT INTO `eventemployee` VALUES (1,1),(1,2);
 /*!40000 ALTER TABLE `eventemployee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -112,7 +112,7 @@ CREATE TABLE `eventequipment` (
   `eventID` int NOT NULL,
   `equipmentID` varchar(255) NOT NULL,
   PRIMARY KEY (`eventID`,`equipmentID`),
-  KEY `equipmentID` (`equipmentID`),
+  KEY `eventequipment_ibfk_2` (`equipmentID`),
   CONSTRAINT `eventequipment_ibfk_1` FOREIGN KEY (`eventID`) REFERENCES `events` (`eventID`),
   CONSTRAINT `eventequipment_ibfk_2` FOREIGN KEY (`equipmentID`) REFERENCES `equipments` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -124,7 +124,7 @@ CREATE TABLE `eventequipment` (
 
 LOCK TABLES `eventequipment` WRITE;
 /*!40000 ALTER TABLE `eventequipment` DISABLE KEYS */;
-INSERT INTO `eventequipment` VALUES (1,'CAM5'),(5,'CAM5'),(1,'equip50429'),(1,'LIG4'),(5,'LIG4'),(1,'MIC2'),(2,'MIC2'),(1,'PRJ3'),(5,'PRJ3'),(1,'SPK1'),(2,'SPK1'),(5,'SPK1');
+INSERT INTO `eventequipment` VALUES (1,'943091');
 /*!40000 ALTER TABLE `eventequipment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -137,8 +137,7 @@ DROP TABLE IF EXISTS `events`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `events` (
   `eventID` int NOT NULL,
-  `eventDate` date DEFAULT NULL,
-  `eventTime` time DEFAULT NULL,
+  `eventStart` datetime DEFAULT NULL,
   `eventName` varchar(255) DEFAULT NULL,
   `eventClientName` varchar(255) DEFAULT NULL,
   `eventClientContact` varchar(255) DEFAULT NULL,
@@ -149,7 +148,10 @@ CREATE TABLE `events` (
   `additionalRequests` varchar(255) DEFAULT NULL,
   `service` int DEFAULT NULL,
   `employeeAssigned` int DEFAULT NULL,
+  `duration` int DEFAULT NULL,
+  `eventEnd` datetime DEFAULT NULL,
   PRIMARY KEY (`eventID`),
+  UNIQUE KEY `eventType` (`eventType`),
   KEY `paymentID` (`paymentID`),
   KEY `service` (`service`),
   KEY `employeeAssigned` (`employeeAssigned`),
@@ -165,7 +167,7 @@ CREATE TABLE `events` (
 
 LOCK TABLES `events` WRITE;
 /*!40000 ALTER TABLE `events` DISABLE KEYS */;
-INSERT INTO `events` VALUES (1,'2024-08-23','14:00:00','Alice and Bob Wedding','Alice Johnson','1234567890','Venue A','Wedding','SPK1','PMT1','Need extra chairs',1,1),(2,'2024-07-12','16:00:00','Corporate Gala','Bob Smith','0987654321','Venue B','Corporate Event','MIC2','PMT2','',2,2),(3,'2024-07-14','18:00:00','Charlie’s Birthday Bash','Charlie Brown','5556667777','Venue C','Birthday Party','PRJ3','PMT3','Special cake order',3,3),(4,'2024-07-16','20:00:00','Concert for Diana','Diana Prince','9998887777','Venue D','Concert','LIG4','PMT4','Extra stage setup',4,4),(5,'2024-07-18','17:00:00','Evan and Emma Anniversary','Evan Rogers','1112223333','Venue E','Anniversary','CAM5','PMT5','Include fireworks',5,1);
+INSERT INTO `events` VALUES (1,'2025-01-15 00:00:00','Annual Conference','John Doe','1234567890','Grand Hall','Conference','Sound System, Lighting Rig','PAY001','VIP setup',1,1,120,'2025-01-15 00:00:00');
 /*!40000 ALTER TABLE `events` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -190,7 +192,7 @@ CREATE TABLE `payments` (
 
 LOCK TABLES `payments` WRITE;
 /*!40000 ALTER TABLE `payments` DISABLE KEYS */;
-INSERT INTO `payments` VALUES ('PMT1','Paid','2000'),('PMT2','Due','1500'),('PMT3','Paid','1800'),('PMT4','Due','2200'),('PMT5','Paid','2500');
+INSERT INTO `payments` VALUES ('PAY001','Paid','5000');
 /*!40000 ALTER TABLE `payments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -209,7 +211,7 @@ CREATE TABLE `services` (
   `inclusion` varchar(255) DEFAULT NULL,
   `rate` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=53157 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -218,9 +220,13 @@ CREATE TABLE `services` (
 
 LOCK TABLES `services` WRITE;
 /*!40000 ALTER TABLE `services` DISABLE KEYS */;
-INSERT INTO `services` VALUES (1,'Catering',1,500,'Full meal service','5'),(2,'Security',2,300,'Event security personnel','4'),(3,'Photography',3,700,'Full event photography','5'),(4,'Music DJ',4,450,'Includes DJ equipment','4'),(5,'Decorations',5,350,'Venue decorations','3');
+INSERT INTO `services` VALUES (1,'Audio Setup',1,3000,'Microphones, Speakers','Hourly'),(2,'Lighting Setup',2,2000,'LED Lights, Stage Effects','Daily');
 /*!40000 ALTER TABLE `services` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'matchamixer'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -231,4 +237,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-07-07  6:14:17
+-- Dump completed on 2025-01-14 14:51:22
