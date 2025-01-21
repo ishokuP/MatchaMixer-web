@@ -3,7 +3,6 @@ import { redirect } from "@sveltejs/kit";
 
 interface Event {
 	eventID: number;
-	eventDate: Date;
 	eventTime: string;
 	eventName: string;
 	eventClientName: string;
@@ -65,12 +64,25 @@ function getStringValue(formData: FormData, key: string, defaultValue: string = 
 	const value = formData.get(key);
 	return value !== null && value !== undefined ? value.toString() : defaultValue;
 }
-function formatDateToMySQL(dateStr) {
-    const date = new Date(dateStr);
-    // Adjust for timezone offset to get the correct date
-    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-    return date.toISOString().slice(0, 10);  // Extracts and returns 'YYYY-MM-DD'
-}
+function convertToMySQLDateTime(datetimeInput) {
+    const date = new Date(datetimeInput);
+  
+    if (!isNaN(date.getTime())) {
+      // Ensure the input is valid
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+      
+      // Return formatted MySQL datetime string: 'YYYY-MM-DD HH:MM:SS'
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    } else {
+      throw new Error('Invalid date string');
+    }
+  }
+  
 export async function load(): Promise<LoadResult> {
 	let mysqlconn = await mysqlconnFn();
 	try {
@@ -190,8 +202,8 @@ export const actions = {
         const eventName = getStringValue(form, 'eventName');
         const eventStartRaw = getStringValue(form, 'eventStart');
         const eventEndRaw = getStringValue(form, 'eventEnd');
-        const eventStart = formatDateToMySQL(eventStartRaw)
-        const eventEnd = formatDateToMySQL(eventEndRaw);
+        const eventStart = convertToMySQLDateTime(eventStartRaw)
+        const eventEnd = convertToMySQLDateTime(eventEndRaw);
         // const eventDate = formatDateToMySQL(eventDateRaw);  // Ensure this conversion is correct
         const eventTime = getStringValue(form, 'eventTime');
         const eventClientName = getStringValue(form, 'clientName');
@@ -243,9 +255,9 @@ export const actions = {
             if (!eventExists.length) {
                 // Insert new event if it doesn't exist
                 await connection.query(
-                    `INSERT INTO events (eventID, eventName, eventDate, eventTime, eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID, eventEnd)
+                    `INSERT INTO events (eventID, eventName, eventStart, eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID, eventEnd)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                    [eventID, eventStart, eventName, eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID, eventEnd]
+                    [eventID, eventName, eventStart, eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID, eventEnd]
                 );
             } else {
                 // Update existing event details
@@ -265,11 +277,87 @@ export const actions = {
                 );
             }
 
-            // Clear and reassign employees
+            for (const employee of employeesNeeded) {
+                const [overlapResult] = await connection.query(
+                    `SELECT COUNT(*) AS overlapCount
+                    FROM eventemployee EE
+                    JOIN events E ON EE.eventID = E.eventID
+                    WHERE EE.employeeID = ?
+                    AND (
+                        (E.eventStart < ? AND E.eventEnd > ?)
+                    )`,
+                    [employee.value, eventEnd, eventStart]
+                );
+            
+                if (overlapResult[0].overlapCount > 0) {
+                    throw new Error(
+                        `Employee ID ${employee.value} is already assigned to another event that overlaps with this time range.`
+                    );
+                }
+            }
+            
+            for (const equipment of equipmentNeeded) {
+                const [overlappingEvents] = await connection.query(
+                    `SELECT COUNT(*) AS count
+                    FROM eventequipment EEQ
+                    JOIN events E ON EEQ.eventID = E.eventID
+                    WHERE EEQ.equipmentID = ?
+                    AND (
+                        (E.eventStart <= ? AND E.eventEnd > ?) OR
+                        (E.eventStart < ? AND E.eventEnd >= ?)
+                    )
+                    AND E.eventID != ?`,
+                    [equipment.value, eventEnd, eventStart, eventEnd, eventStart, eventID]
+                );
+            
+                if (overlappingEvents[0].count > 0) {
+                    throw new Error(`Equipment ID ${equipment.value} is already assigned to an overlapping event.`);
+                }
+            }
+
+            // Enforce the "no more than 3 events per day" rule
+            for (const employee of employeesNeeded) {
+                const [eventCount] = await connection.query(
+                    `SELECT COUNT(*) AS count
+                    FROM eventemployee EE
+                    JOIN events E ON EE.eventID = E.eventID
+                    WHERE EE.employeeID = ? 
+                    AND DATE(E.eventStart) = (
+                        SELECT DATE(eventStart) FROM events WHERE eventID = ?
+                    )`,
+                    [employee.value, eventID]
+                );
+
+                if (eventCount[0].count >= 3) {
+                    throw new Error(`Employee ID ${employee.value} is already assigned to 3 events on the same day.`);
+                }
+            }
+
+            // Clear and reassign employees if the rule is satisfied
             await connection.query(`DELETE FROM eventemployee WHERE eventID = ?`, [eventID]);
             for (const employee of employeesNeeded) {
                 await connection.query(`INSERT INTO eventemployee (eventID, employeeID) VALUES (?, ?)`, [eventID, employee.value]);
             }
+
+
+            // Enforce the "no more than 3 events per day" rule for equipment
+            for (const equipment of equipmentNeeded) {
+                const [eventCount] = await connection.query(
+                    `SELECT COUNT(*) AS count
+                    FROM eventequipment EEQ
+                    JOIN events E ON EEQ.eventID = E.eventID
+                    WHERE EEQ.equipmentID = ?
+                    AND DATE(E.eventStart) = (
+                        SELECT DATE(eventStart) FROM events WHERE eventID = ?
+                    )`,
+                    [equipment.value, eventID]
+                );
+
+                if (eventCount[0].count >= 3) {
+                    throw new Error(`Equipment ID ${equipment.value} is already assigned to 3 events on the same day.`);
+                }
+            }
+
 
             // Clear and reassign equipment
             await connection.query(`DELETE FROM eventequipment WHERE eventID = ?`, [eventID]);

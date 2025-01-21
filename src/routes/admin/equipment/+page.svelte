@@ -166,6 +166,7 @@
 							</h2>
 						</div>
 						<div>
+							<p><b>Status</b></p>
 							<input
 								type="text"
 								name="equipStatus"
@@ -176,6 +177,7 @@
 							/>
 						</div>
 						<div>
+							<p><b>Condition</b></p>
 							<input
 								type="text"
 								name="equipCondition"
