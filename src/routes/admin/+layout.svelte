@@ -74,6 +74,13 @@
 						><span class="title" style="margin-right: 75px;">Services</span></a
 					>
 				</li>
+				<li class="categories-title">
+					<a href="/admin/finances" class="sidebar-title btn btn-ghost"
+						><img src="/finances.png" alt="placeholder logo" class="categories-img" /><span
+							class="middle-dot">&middot;</span
+						><span class="title" style="margin-right: 75px;">Finances</span></a
+					>
+				</li>
 			</div>
 
 			<div class="flex-grow"></div>
