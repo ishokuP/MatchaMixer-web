@@ -409,8 +409,7 @@
 		background-color: #4caf50; /* Example color for the icon */
 		color: white; /* Ensure the icon itself has a contrasting color */
 	}
-	input,
-	select {
+	input {
 		background-color: transparent;
 		font-size: 1.125rem;
 		font-weight: 600;
@@ -423,15 +422,6 @@
 		background-color: transparent;
 		cursor: default;
 		border: none;
-	}
-
-	input::placeholder,
-	select::placeholder {
-		opacity: 1;
-	}
-
-	.select-container .select {
-		background-color: transparent !important;
 	}
 
 	input.edit-mode {

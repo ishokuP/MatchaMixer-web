@@ -1,13 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 
-	interface MonthlyFinanceReport {
-		id: number;
-		title: string;
-		summary: string;
-		totalRevenue: number;
-	}
-
 	interface EmployeePayout {
 		id: number;
 		eventName: string;
@@ -17,30 +10,53 @@
 	}
 
 	interface FinanceData {
-		monthlyFinanceReports: MonthlyFinanceReport[];
 		employeePayouts: EmployeePayout[];
 	}
 
 	export let data: FinanceData = {
-		monthlyFinanceReports: [],
 		employeePayouts: []
 	};
 
-	let modalOpenState = {};
-
-	function toggleModal(id: number) {
-		modalOpenState[id] = !modalOpenState[id];
-	}
-
-	function addFinanceReport() {
-		const newReport: MonthlyFinanceReport = {
-			id: Math.floor(Math.random() * 100000),
-			title: '',
-			summary: '',
-			totalRevenue: 0
-		};
-		data.monthlyFinanceReports = [...data.monthlyFinanceReports, newReport];
-	}
+	// dummy data		
+	$: data = {
+		employeePayouts: [
+			{
+				id: 1001,
+				eventName: 'Annual Company Retreat',
+				name: 'Alice Johnson',
+				payoutAmount: 1500,
+				status: 'Paid'
+			},
+			{
+				id: 1002,
+				eventName: 'Quarterly Sales Bonus',
+				name: 'Bob Smith',
+				payoutAmount: 2000,
+				status: 'Unpaid'
+			},
+			{
+				id: 1003,
+				eventName: 'Project X Completion Bonus',
+				name: 'Charlie Davis',
+				payoutAmount: 2500,
+				status: 'Paid'
+			},
+			{
+				id: 1004,
+				eventName: 'Holiday Bonus',
+				name: 'Diana Evans',
+				payoutAmount: 1800,
+				status: 'Unpaid'
+			},
+			{
+				id: 1005,
+				eventName: 'Customer Service Excellence Award',
+				name: 'Edward Brown',
+				payoutAmount: 1200,
+				status: 'Paid'
+			}
+		]
+	};
 
 	function addEmployeePayout() {
 		const newPayout: EmployeePayout = {
@@ -56,96 +72,12 @@
 	function removeEmployeePayout(id: number) {
 		data.employeePayouts = data.employeePayouts.filter((payout) => payout.id !== id);
 	}
-
-	$: {
-		data = {
-			monthlyFinanceReports: data?.monthlyFinanceReports || [],
-			employeePayouts: data?.employeePayouts || []
-		};
-
-		data.monthlyFinanceReports.forEach((item) => {
-			if (!(item.id in modalOpenState)) modalOpenState[item.id] = false;
-		});
-
-		data.employeePayouts.forEach((item) => {
-			if (!(item.id in modalOpenState)) modalOpenState[item.id] = false;
-		});
-	}
 </script>
 
 <h2 class="text-4xl font-extrabold">Finance Management</h2>
 
 <div class="space-y-8">
 	<!-- Monthly Finance Reports -->
-	<div>
-		<h3 class="text-2xl font-bold">Monthly Finance Reports</h3>
-		<button class="btn btn-primary my-4" on:click={addFinanceReport}>+ Add Finance Report</button>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Title</th>
-					<th>Summary</th>
-					<th>Total Revenue</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each data.monthlyFinanceReports as report (report.id)}
-					<tr>
-						<td>{report.id}</td>
-						<td>{report.title}</td>
-						<td>{report.summary}</td>
-						<td>{report.totalRevenue}</td>
-						<td>
-							<button class="btn" on:click={() => toggleModal(report.id)}>Details</button>
-							<div class="modal" class:modal-open={modalOpenState[report.id]}>
-								<div class="modal-box">
-									<form>
-										<h3 class="text-lg font-bold">Edit Monthly Finance Report</h3>
-										<div class="form-control">
-											<label for="report-title-{report.id}" class="label">Title</label>
-											<input
-												id="report-title-{report.id}"
-												type="text"
-												class="input input-bordered"
-												bind:value={report.title}
-											/>
-										</div>
-										<div class="form-control">
-											<label for="report-summary-{report.id}" class="label">Summary</label>
-											<input
-												id="report-summary-{report.id}"
-												type="text"
-												class="input input-bordered"
-												bind:value={report.summary}
-											/>
-										</div>
-										<div class="form-control">
-											<label for="report-total-revenue-{report.id}" class="label"
-												>Total Revenue</label
-											>
-											<input
-												id="report-total-revenue-{report.id}"
-												type="number"
-												class="input input-bordered"
-												bind:value={report.totalRevenue}
-											/>
-										</div>
-										<div class="modal-action">
-											<button class="btn btn-primary">Save Changes</button>
-											<button class="btn btn-error" formaction="?/delete">Delete</button>
-											<button class="btn" on:click={() => toggleModal(report.id)}>Close</button>
-										</div>
-									</form>
-								</div>
-							</div>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-	</div>
 
 	<!-- Employee Payouts -->
 	<h3 class="text-2xl font-bold">Employee Payouts</h3>
@@ -168,7 +100,7 @@
 					<td class="w-48 p-3">{payout.eventName}</td>
 					<td class="w-48 p-3">{payout.name}</td>
 					<td class="w-32 p-3">{payout.payoutAmount}</td>
-					<td class="w-320 p-3">
+					<td class="w-32 p-3">
 						<button
 							class="btn w-full font-bold {payout.status === 'Paid'
 								? 'text-xl font-extrabold'
