@@ -78,9 +78,9 @@
 
 	function inputClasses(isEditMode) {
 		if (isEditMode) {
-			return 'input input-bordered w-full';
+			return 'input input-bordered w-full edit-mode'; // Apply the edit-mode class
 		} else {
-			return 'bg-transparent border-0 p-0 cursor-default text-base leading-normal';
+			return 'input read-only'; // Apply the read-only class
 		}
 	}
 
@@ -196,182 +196,183 @@
 		<div class="collapse bg-base-200">
 			<input type="checkbox" name="my-accordion-1" />
 			<div class="collapse-title text-xl">
-				<span class="font-medium">
-					{formatDateTime(new Date(event.eventStart))}
-				</span>
+				<span class="font-medium">{formatDateTime(new Date(event.eventStart))}</span>
 				{event.eventName} @ {event.eventVenue}
 			</div>
 			<div class="collapse-content">
-				<div class="card bg-secondary">
-					<div class="card-body bg-primary">
-						<form method="post" action="?/update" use:enhance>
-							<input type="text" hidden name="eventID" bind:value={event.eventID} />
-							<input type="text" hidden name="paymentID" bind:value={event.paymentID} />
+				<form method="post" action="?/update" use:enhance>
+					<input type="text" hidden name="eventID" bind:value={event.eventID} />
+					<input type="text" hidden name="paymentID" bind:value={event.paymentID} />
+					<div class="grid grid-cols-1 gap-4 rounded-lg bg-secondary p-4">
+						<!-- Event Name (Full row, first row) -->
+						<input
+							type="text"
+							name="eventName"
+							bind:value={event.eventName}
+							readonly={!editModes[event.eventID]}
+							class="{inputClasses(editModes[event.eventID])} base w-full"
+							placeholder="Event Name"
+							style="font-size: 2rem; font-weight: 700;"
+						/>
 
-							<input
-								type="text"
-								name="eventName"
-								bind:value={event.eventName}
-								readonly={!editModes[event.eventID]}
-								class="{inputClasses(editModes[event.eventID])} w-full text-2xl font-bold"
-								placeholder="Event Name"
-							/>
-							<br />
-							<input
-								type="text"
-								name="clientName"
-								bind:value={event.eventClientName}
-								readonly={!editModes[event.eventID]}
-								class="{inputClasses(editModes[event.eventID])} base w-full"
-								placeholder="Client Name"
-							/>
-
-							<div class="flex w-full flex-col border-opacity-50">
-								<div class="card grid rounded-box p-5">
-									<div class="flex flex-row space-x-4">
-										<div class="flex flex-col space-y-4">
-											<h3 class="text-2xl font-bold">Date</h3>
-											<div class="mb-64 md:w-1/2">
-												<div class="flex space-x-4">
-													<div>
-														<label for="eventEnd" class="block text-xl font-bold">Start Date</label
-														>
-														<input
-															type="datetime-local"
-															name="eventStart"
-															bind:value={event.eventStart}
-															readonly={!editModes[event.eventID]}
-														/>
-													</div>
-													<div>
-														<label for="eventEnd" class="block text-xl font-bold">End Date</label>
-														<input
-															type="datetime-local"
-															name="eventEnd"
-															bind:value={event.eventEnd}
-															readonly={!editModes[event.eventID]}
-														/>
-													</div>
-												</div>
-											</div>
-
-											<h1 class="text-2xl font-bold">Venue</h1>
-											<h2>
-												<input
-													type="text"
-													name="eventVenue"
-													bind:value={event.eventVenue}
-													readonly={!editModes[event.eventID]}
-													class={inputClasses(editModes[event.eventID])}
-												/>
-											</h2>
-											<h1 class="text-2xl font-bold">Event Type</h1>
-											<h2>
-												<input
-													type="text"
-													name="eventType"
-													bind:value={event.eventType}
-													readonly={!editModes[event.eventID]}
-													class={inputClasses(editModes[event.eventID])}
-												/>
-											</h2>
-										</div>
-										<div class="flex flex-col space-y-4">
-											<h1 class="text-2xl font-bold">Contact</h1>
-											<h2>
-												<input
-													type="text"
-													name="clientNum"
-													bind:value={event.eventClientContact}
-													readonly={!editModes[event.eventID]}
-													class={inputClasses(editModes[event.eventID])}
-												/>
-											</h2>
-
-											<h1 class="text-2xl font-bold">Total</h1>
-											<h2>
-												<span>PHP</span>
-												<input
-													type="text"
-													name="paymentCost"
-													bind:value={event.paymentCost}
-													readonly={!editModes[event.eventID]}
-													class={inputClasses(editModes[event.eventID])}
-												/>
-											</h2>
-										</div>
-										<div class="flex flex-col space-y-4">
-											<h1 class="text-2xl font-bold">Staff Assigned</h1>
-
-											<Select
-												{items}
-												multiple={true}
-												name="employeesNeeded"
-												bind:value={staffSelections[event.eventID]}
-												placeholder="Select employees"
-												disabled={!editModes[event.eventID]}
-												containerStyles="background-color: transparent; color: black; opacity: 1; outline: none; border:none;"
-											/>
-
-											<h1 class="text-2xl font-bold">Payment Status</h1>
-											<h2>
-												<input
-													type="text"
-													name="paymentStatus"
-													bind:value={event.paymentStatus}
-													readonly={!editModes[event.eventID]}
-													class={inputClasses(editModes[event.eventID])}
-												/> <br />
-											</h2>
-										</div>
-									</div>
-									<div class="pt-6">
-										<h1 class="text-2xl font-bold">Additional Request</h1>
-										<h2>
-											<input
-												type="text"
-												name="additionalReq"
-												bind:value={event.additionalRequests}
-												readonly={!editModes[event.eventID]}
-												class={inputClasses(editModes[event.eventID])}
-											/>
-										</h2>
-									</div>
-									<div class="pt-6">
-										<h1 class="text-2xl font-bold">Equipment Needed</h1>
-
-										<Select
-											items={equipmentItems}
-											multiple={true}
-											name="equipmentNeeded"
-											bind:value={equipmentSelections[event.eventID]}
-											placeholder="Select equipment"
-											disabled={!editModes[event.eventID]}
-											containerStyles="background-color: transparent; color: black; opacity: 1; outline: none; border:none;"
-										/>
-									</div>
-								</div>
-
-								<div class="card-actions flex w-full justify-between">
-									<button
-										type="submit"
-										class="btn btn-primary flex-1"
-										on:click={(e) => handleEditSaveToggle(e, event.eventID)}
-									>
-										{editModes[event.eventID] ? 'Save' : 'Edit'}
-									</button>
-
-									<button
-										class="btn btn-error flex-1"
-										on:click|preventDefault={() => promptDelete(event.eventID)}
-									>
-										Delete
-									</button>
-								</div>
-							</div>
-						</form>
+						<!-- Client Name (Full row, second row) -->
+						<input
+							type="text"
+							name="clientName"
+							bind:value={event.eventClientName}
+							readonly={!editModes[event.eventID]}
+							class="{inputClasses(editModes[event.eventID])} base w-full"
+							placeholder="Client Name"
+							style="font-size: 1.5rem; font-weight: 600; margin-top: -1rem; height: 2rem"
+						/>
 					</div>
-				</div>
+
+					<!-- Other fields in multi-column layout -->
+					<div class="grid grid-cols-3 gap-4 rounded-lg bg-secondary p-4">
+						<!-- Date - Start Date -->
+						<div>
+							<label for="eventStart" class="block text-xl font-bold">Start Date</label>
+							<input
+								type="datetime-local"
+								name="eventStart"
+								bind:value={event.eventStart}
+								readonly={!editModes[event.eventID]}
+							/>
+						</div>
+
+						<!-- End Date -->
+						<div>
+							<label for="eventEnd" class="block text-xl font-bold">End Date</label>
+							<input
+								type="datetime-local"
+								name="eventEnd"
+								bind:value={event.eventEnd}
+								readonly={!editModes[event.eventID]}
+							/>
+						</div>
+
+						<div></div>
+
+						<!-- Venue -->
+						<div>
+							<h1 class="font-bold">Venue</h1>
+							<input
+								type="text"
+								name="eventVenue"
+								bind:value={event.eventVenue}
+								readonly={!editModes[event.eventID]}
+								class={inputClasses(editModes[event.eventID])}
+							/>
+						</div>
+
+						<!-- Event Type -->
+						<div>
+							<h1 class="font-bold">Event Type</h1>
+							<input
+								type="text"
+								name="eventType"
+								bind:value={event.eventType}
+								readonly={!editModes[event.eventID]}
+								class={inputClasses(editModes[event.eventID])}
+							/>
+						</div>
+
+						<div></div>
+
+						<!-- Contact -->
+						<div>
+							<h1 class="font-bold">Contact</h1>
+							<input
+								type="text"
+								name="clientNum"
+								bind:value={event.eventClientContact}
+								readonly={!editModes[event.eventID]}
+								class={inputClasses(editModes[event.eventID])}
+							/>
+						</div>
+
+						<!-- Total PHP -->
+						<div>
+							<h1 class="font-bold">Total PHP</h1>
+							<input
+								type="text"
+								name="paymentCost"
+								bind:value={event.paymentCost}
+								readonly={!editModes[event.eventID]}
+								class={inputClasses(editModes[event.eventID])}
+							/>
+						</div>
+
+						<!-- Payment Status (di pa dropdown)-->
+						<div>
+							<h1 class="font-bold">Payment Status</h1>
+							<input
+								type="text"
+								name="paymentStatus"
+								bind:value={event.paymentStatus}
+								readonly={!editModes[event.eventID]}
+								class={inputClasses(editModes[event.eventID])}
+							/>
+						</div>
+
+						<!-- Staff Assigned -->
+						<div class="col-span-3">
+							<h1 class="font-bold">Staff Assigned</h1>
+							<Select
+								{items}
+								multiple={true}
+								name="employeesNeeded"
+								bind:value={staffSelections[event.eventID]}
+								placeholder="Select employees"
+								disabled={!editModes[event.eventID]}
+								containerStyles="background-color: transparent; color: black; opacity: 1; outline: none; border:none;"
+							/>
+						</div>
+
+						<!-- Equipment Needed -->
+						<div class="col-span-3">
+							<h1 class="font-bold">Equipment Needed</h1>
+							<Select
+								items={equipmentItems}
+								multiple={true}
+								name="equipmentNeeded"
+								bind:value={equipmentSelections[event.eventID]}
+								placeholder="Select equipment"
+								disabled={!editModes[event.eventID]}
+								containerStyles="background: #ebedef00 !important; color: black; opacity: 1; outline: none; border:none;"
+							/>
+						</div>
+
+						<!-- Additional Request -->
+						<div class="col-span-3">
+							<h1 class="font-bold">Additional Request</h1>
+							<input
+								type="text"
+								name="additionalReq"
+								bind:value={event.additionalRequests}
+								readonly={!editModes[event.eventID]}
+								class={inputClasses(editModes[event.eventID])}
+							/>
+						</div>
+					</div>
+
+					<!-- Buttons -->
+					<div class="mt-4 flex justify-between">
+						<button
+							type="submit"
+							class="btn btn-primary flex-1"
+							on:click={(e) => handleEditSaveToggle(e, event.eventID)}
+						>
+							{editModes[event.eventID] ? 'Save' : 'Edit'}
+						</button>
+						<button
+							class="btn btn-error flex-1"
+							on:click|preventDefault={() => promptDelete(event.eventID)}
+						>
+							Delete
+						</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	{/each}
@@ -390,12 +391,11 @@
 	}
 	/* Ensure the date input has a visible background and icon */
 	input[type='datetime-local'] {
-		background-color: white; /* White background for the input */
-		color: #333; /* Set text color for the input */
+		/* White background for the input */
 		font-size: 1rem; /* Font size */
 		padding: 0.5rem;
 		border-radius: 0.25rem;
-		border: 1px solid #ccc; /* Border color */
+		border: 1px solid; /* Border color */
 	}
 
 	/* Style the date icon (for Webkit browsers) */
@@ -408,5 +408,39 @@
 	input[type='datetime-local']::-moz-calendar-picker-indicator {
 		background-color: #4caf50; /* Example color for the icon */
 		color: white; /* Ensure the icon itself has a contrasting color */
+	}
+	input,
+	select {
+		background-color: transparent;
+		font-size: 1.125rem;
+		font-weight: 600;
+		padding: 0.5rem;
+		border: none;
+		width: 100%;
+	}
+
+	input[readonly] {
+		background-color: transparent;
+		cursor: default;
+		border: none;
+	}
+
+	input::placeholder,
+	select::placeholder {
+		opacity: 1;
+	}
+
+	.select-container .select {
+		background-color: transparent !important;
+	}
+
+	input.edit-mode {
+		border: 1px solid;
+	}
+
+	h1,
+	label {
+		font-weight: 900;
+		font-size: 20px;
 	}
 </style>
