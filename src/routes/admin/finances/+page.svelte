@@ -14,16 +14,9 @@
 		payoutAmount: number;
 	}
 
-	interface MonthlyBill {
-		id: number;
-		biller: string;
-		totalBillAmount: number;
-	}
-
 	interface FinanceData {
 		monthlyFinanceReports: MonthlyFinanceReport[];
 		employeePayouts: EmployeePayout[];
-		monthlyBills: MonthlyBill[];
 	}
 
 	export let data: FinanceData = {
@@ -57,20 +50,11 @@
 		data.employeePayouts = [...data.employeePayouts, newPayout];
 	}
 
-	function addMonthlyBill() {
-		const newBill: MonthlyBill = {
-			id: Math.floor(Math.random() * 100000),
-			biller: '',
-			totalBillAmount: 0
-		};
-		data.monthlyBills = [...data.monthlyBills, newBill];
-	}
 
 	$: {
 		data = {
 			monthlyFinanceReports: data?.monthlyFinanceReports || [],
 			employeePayouts: data?.employeePayouts || [],
-			monthlyBills: data?.monthlyBills || []
 		};
 
 		data.monthlyFinanceReports.forEach((item) => {
@@ -78,10 +62,6 @@
 		});
 
 		data.employeePayouts.forEach((item) => {
-			if (!(item.id in modalOpenState)) modalOpenState[item.id] = false;
-		});
-
-		data.monthlyBills.forEach((item) => {
 			if (!(item.id in modalOpenState)) modalOpenState[item.id] = false;
 		});
 	}
@@ -208,64 +188,6 @@
 											<button class="btn btn-primary">Save Changes</button>
 											<button class="btn btn-error" formaction="?/delete">Delete</button>
 											<button class="btn" on:click={() => toggleModal(payout.id)}>Close</button>
-										</div>
-									</form>
-								</div>
-							</div>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-	</div>
-
-	<!-- Monthly Bills -->
-	<div>
-		<h3 class="text-2xl font-bold">Monthly Bills</h3>
-		<button class="btn btn-primary my-4" on:click={addMonthlyBill}>+ Add Monthly Bill</button>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Biller</th>
-					<th>Total Bill Amount</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each data.monthlyBills as bill (bill.id)}
-					<tr>
-						<td>{bill.id}</td>
-						<td>{bill.biller}</td>
-						<td>{bill.totalBillAmount}</td>
-						<td>
-							<button class="btn" on:click={() => toggleModal(bill.id)}>Details</button>
-							<div class="modal" class:modal-open={modalOpenState[bill.id]}>
-								<div class="modal-box">
-									<form>
-										<h3 class="text-lg font-bold">Edit Monthly Bill</h3>
-										<div class="form-control">
-											<label for="bill-biller-{bill.id}" class="label">Biller</label>
-											<input
-												id="bill-biller-{bill.id}"
-												type="text"
-												class="input input-bordered"
-												bind:value={bill.biller}
-											/>
-										</div>
-										<div class="form-control">
-											<label for="bill-total-{bill.id}" class="label">Total Bill Amount</label>
-											<input
-												id="bill-total-{bill.id}"
-												type="number"
-												class="input input-bordered"
-												bind:value={bill.totalBillAmount}
-											/>
-										</div>
-										<div class="modal-action">
-											<button class="btn btn-primary">Save Changes</button>
-											<button class="btn btn-error" formaction="?/delete">Delete</button>
-											<button class="btn" on:click={() => toggleModal(bill.id)}>Close</button>
 										</div>
 									</form>
 								</div>
