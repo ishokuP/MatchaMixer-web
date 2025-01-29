@@ -10,8 +10,10 @@
 
 	interface EmployeePayout {
 		id: number;
+		eventName: string;
 		name: string;
 		payoutAmount: number;
+		status: 'Paid' | 'Unpaid';
 	}
 
 	interface FinanceData {
@@ -21,8 +23,7 @@
 
 	export let data: FinanceData = {
 		monthlyFinanceReports: [],
-		employeePayouts: [],
-		monthlyBills: []
+		employeePayouts: []
 	};
 
 	let modalOpenState = {};
@@ -44,17 +45,22 @@
 	function addEmployeePayout() {
 		const newPayout: EmployeePayout = {
 			id: Math.floor(Math.random() * 100000),
+			eventName: '',
 			name: '',
-			payoutAmount: 0
+			payoutAmount: 0,
+			status: 'Unpaid'
 		};
 		data.employeePayouts = [...data.employeePayouts, newPayout];
 	}
 
+	function removeEmployeePayout(id: number) {
+		data.employeePayouts = data.employeePayouts.filter((payout) => payout.id !== id);
+	}
 
 	$: {
 		data = {
 			monthlyFinanceReports: data?.monthlyFinanceReports || [],
-			employeePayouts: data?.employeePayouts || [],
+			employeePayouts: data?.employeePayouts || []
 		};
 
 		data.monthlyFinanceReports.forEach((item) => {
@@ -142,60 +148,43 @@
 	</div>
 
 	<!-- Employee Payouts -->
-	<div>
-		<h3 class="text-2xl font-bold">Employee Payouts</h3>
-		<button class="btn btn-primary my-4" on:click={addEmployeePayout}>+ Add Employee Payout</button>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Name</th>
-					<th>Payout Amount</th>
-					<th></th>
+	<h3 class="text-2xl font-bold">Employee Payouts</h3>
+	<button class="btn btn-primary my-4" on:click={addEmployeePayout}>+ Add Employee Payout</button>
+	<table class="table">
+		<thead>
+			<tr class="border-b-2">
+				<th class="w-20 p-3 text-xl font-extrabold">ID</th>
+				<th class="w-48 p-3 text-xl font-extrabold">Event Name</th>
+				<th class="w-48 p-3 text-xl font-extrabold">Employee Name</th>
+				<th class="w-32 p-3 text-xl font-extrabold">Amount</th>
+				<th class="w-32 p-3 text-xl font-extrabold">Status</th>
+				<th class="w-40 p-3 text-xl font-extrabold">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{#each data.employeePayouts as payout (payout.id)}
+				<tr class="border-b-2">
+					<td class="w-20 p-3">{payout.id}</td>
+					<td class="w-48 p-3">{payout.eventName}</td>
+					<td class="w-48 p-3">{payout.name}</td>
+					<td class="w-32 p-3">{payout.payoutAmount}</td>
+					<td class="w-320 p-3">
+						<button
+							class="btn w-full font-bold {payout.status === 'Paid'
+								? 'text-xl font-extrabold'
+								: ''}"
+							on:click={() => (payout.status = payout.status === 'Paid' ? 'Unpaid' : 'Paid')}
+						>
+							{payout.status}
+						</button>
+					</td>
+					<td class="w-40 p-3">
+						<button class="btn btn-error w-full" on:click={() => removeEmployeePayout(payout.id)}
+							>Clear</button
+						>
+					</td>
 				</tr>
-			</thead>
-			<tbody>
-				{#each data.employeePayouts as payout (payout.id)}
-					<tr>
-						<td>{payout.id}</td>
-						<td>{payout.name}</td>
-						<td>{payout.payoutAmount}</td>
-						<td>
-							<button class="btn" on:click={() => toggleModal(payout.id)}>Details</button>
-							<div class="modal" class:modal-open={modalOpenState[payout.id]}>
-								<div class="modal-box">
-									<form>
-										<h3 class="text-lg font-bold">Edit Employee Payout</h3>
-										<div class="form-control">
-											<label for="payout-name-{payout.id}" class="label">Name</label>
-											<input
-												id="payout-name-{payout.id}"
-												type="text"
-												class="input input-bordered"
-												bind:value={payout.name}
-											/>
-										</div>
-										<div class="form-control">
-											<label for="payout-amount-{payout.id}" class="label">Payout Amount</label>
-											<input
-												id="payout-amount-{payout.id}"
-												type="number"
-												class="input input-bordered"
-												bind:value={payout.payoutAmount}
-											/>
-										</div>
-										<div class="modal-action">
-											<button class="btn btn-primary">Save Changes</button>
-											<button class="btn btn-error" formaction="?/delete">Delete</button>
-											<button class="btn" on:click={() => toggleModal(payout.id)}>Close</button>
-										</div>
-									</form>
-								</div>
-							</div>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-	</div>
+			{/each}
+		</tbody>
+	</table>
 </div>
