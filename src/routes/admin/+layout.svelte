@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 
 	let currentTheme = 'light';
 
@@ -13,6 +14,9 @@
 		localStorage.setItem('theme', theme);
 		currentTheme = theme;
 	}
+
+	let user = { name: "Admin", profilePic: "/profile-placeholder.png" }; // Replace with actual user data
+
 </script>
 
 <div class="drawer lg:drawer-open">
@@ -46,7 +50,11 @@
 		<ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">
 			<div class="categories">
 				<li class="categories-title">
-					<a href="/admin/events" class="sidebar-title btn btn-ghost"
+					<a
+						href="/admin/events"
+						class="sidebar-title btn btn-ghost {$page.url.pathname === '/admin/events'
+							? 'active'
+							: ''}"
 						><img src="/events.png" alt="placeholder logo" class="categories-img" /><span
 							class="middle-dot">&middot;</span
 						>
@@ -54,28 +62,44 @@
 					</a>
 				</li>
 				<li class="categories-title">
-					<a href="/admin/equipment" class="sidebar-title btn btn-ghost"
+					<a
+						href="/admin/equipment"
+						class="sidebar-title btn btn-ghost {$page.url.pathname === '/admin/equipment'
+							? 'active'
+							: ''}"
 						><img src="/equipments.png" alt="placeholder logo" class="categories-img" /><span
 							class="middle-dot">&middot;</span
 						><span class="title mr-9">Equipments</span>
 					</a>
 				</li>
 				<li class="categories-title">
-					<a href="/admin/employees" class="sidebar-title btn btn-ghost"
+					<a
+						href="/admin/employees"
+						class="sidebar-title btn btn-ghost {$page.url.pathname === '/admin/employees'
+							? 'active'
+							: ''}"
 						><img src="/employees.png" alt="placeholder logo" class="categories-img" /><span
 							class="middle-dot">&middot;</span
 						><span class="title mr-12">Employees</span></a
 					>
 				</li>
 				<li class="categories-title">
-					<a href="/admin/services" class="sidebar-title btn btn-ghost"
+					<a
+						href="/admin/services"
+						class="sidebar-title btn btn-ghost {$page.url.pathname === '/admin/services'
+							? 'active'
+							: ''}"
 						><img src="/services.png" alt="placeholder logo" class="categories-img" /><span
 							class="middle-dot">&middot;</span
 						><span class="title" style="margin-right: 75px;">Services</span></a
 					>
 				</li>
 				<li class="categories-title">
-					<a href="/admin/finances" class="sidebar-title btn btn-ghost"
+					<a
+						href="/admin/finances"
+						class="sidebar-title btn btn-ghost {$page.url.pathname === '/admin/finances'
+							? 'active'
+							: ''}"
 						><img src="/finances.png" alt="placeholder logo" class="categories-img" /><span
 							class="middle-dot">&middot;</span
 						><span class="title" style="margin-right: 75px;">Finances</span></a
@@ -204,5 +228,11 @@
 		color: rgb(80, 165, 31);
 		margin: 0 -3px;
 		/* vertical-align: middle; */
+	}
+
+	.active {
+		font-weight: bolder !important;
+		background: oklch(0.44 0.06 141.63);
+		color: white;
 	}
 </style>
