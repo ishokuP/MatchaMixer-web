@@ -339,9 +339,42 @@ export const actions = {
                 await connection.query(`INSERT INTO eventemployee (eventID, employeeID) VALUES (?, ?)`, [eventID, employee.value]);
             }
 
-
-            // Enforce the "no more than 3 events per day" rule for equipment
+            // Enforce the "no more than max events per day" rule for equipment based on its status
             for (const equipment of equipmentNeeded) {
+                // Fetch equipment status
+                const [equipmentInfo] = await connection.query(
+                    `SELECT status FROM equipments WHERE id = ?`,
+                    [equipment.value]
+                );
+
+                if (!equipmentInfo.length) {
+                    throw new Error(`Equipment ID ${equipment.value} not found.`);
+                }
+
+                const equipmentStatus = equipmentInfo[0].status;
+                let maxEvents;
+
+                // Determine max events based on equipment status
+                switch (equipmentStatus) {
+                    case "In-Studio":
+                        maxEvents = 3;
+                        break;
+                    case "Deployed":
+                        maxEvents = 2;
+                        break;
+                    case "For Repair":
+                    case "For Replacement":
+                    case "For Testing":
+                        maxEvents = 1;
+                        break;
+                    case "Lost":
+                    case "Retired":
+                        throw new Error(`Equipment ID ${equipment.value} (${equipmentStatus}) cannot be assigned to events.`);
+                    default:
+                        throw new Error(`Unknown equipment status: ${equipmentStatus}`);
+                }
+
+                // Check the count of events assigned to this equipment on the same day
                 const [eventCount] = await connection.query(
                     `SELECT COUNT(*) AS count
                     FROM eventequipment EEQ
@@ -353,10 +386,13 @@ export const actions = {
                     [equipment.value, eventID]
                 );
 
-                if (eventCount[0].count >= 3) {
-                    throw new Error(`Equipment ID ${equipment.value} is already assigned to 3 events on the same day.`);
+                if (eventCount[0].count >= maxEvents) {
+                    throw new Error(
+                        `Equipment ID ${equipment.value} (${equipmentStatus}) is already assigned to ${eventCount[0].count} events on the same day. Max allowed: ${maxEvents}.`
+                    );
                 }
             }
+
 
 
             // Clear and reassign equipment

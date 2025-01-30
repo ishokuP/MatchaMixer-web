@@ -210,10 +210,11 @@
 							name="eventName"
 							bind:value={event.eventName}
 							readonly={!editModes[event.eventID]}
-							class="{inputClasses(editModes[event.eventID])} base w-full"
+							class="{inputClasses(editModes[event.eventID])} base w-full mb-4"
 							placeholder="Event Name"
-							style="font-size: 2rem; font-weight: 700;"
+							style="font-size: 2rem; font-weight: 700; "
 						/>
+						
 
 						<!-- Client Name (Full row, second row) -->
 						<input
@@ -306,13 +307,25 @@
 						<!-- Payment Status (di pa dropdown)-->
 						<div>
 							<h1 class="font-bold">Payment Status</h1>
-							<input
-								type="text"
-								name="paymentStatus"
-								bind:value={event.paymentStatus}
-								readonly={!editModes[event.eventID]}
-								class={inputClasses(editModes[event.eventID])}
-							/>
+							{#if editModes[event.eventID]}
+								<select
+									name="paymentStatus"
+									bind:value={event.paymentStatus}
+									class={inputClasses(true)}
+									style="background-color: transparent; color: black; opacity: 1; outline: none;"
+								>
+									<option value="Pending">Pending</option>
+									<option value="Paid">Paid</option>
+								</select>
+							{:else}
+								<input
+									type="text"
+									name="paymentStatus"
+									bind:value={event.paymentStatus}
+									readonly
+									class={inputClasses(false)}
+								/>
+							{/if}
 						</div>
 
 						<!-- Staff Assigned -->

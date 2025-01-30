@@ -52,6 +52,7 @@
 			return 'bg-transparent border-0 p-0 cursor-default text-base leading-normal';
 		}
 	}
+
 </script>
 
 <h2 class="text-4xl font-extrabold">Equipments</h2>
@@ -72,7 +73,7 @@
 </dialog>
 
 <dialog bind:this={confirmationAdd} class="modal">
-	<form method="post" action="?/update" use:enhance>
+	<form method="post" action="?/update" use:enhance enctype="multipart/form-data">
 		<div class="modal-box">
 			<h3 class="text-lg font-bold">Add New Equipment</h3>
 			<div class="py-4">
@@ -124,6 +125,17 @@
 						<option value="End-of-Life">End-of-Life</option>
 						<option value="Under Inspection">Under Inspection</option>
 					</select>
+				</label>
+
+				<!-- Image Upload -->
+				<label class="block mb-2">
+					Upload Image:
+					<input
+						type="file"
+						accept="image/*"
+						class="file-input file-input-bordered w-full"
+						name="equipImage"
+					/>
 				</label>
 			</div>
 			<div class="modal-action">
