@@ -55,7 +55,7 @@
 
 </script>
 
-<h2 class="text-4xl font-extrabold">Equipments</h2>
+<!-- <h2 class="text-4xl font-extrabold">Equipments</h2> -->
 
 <dialog bind:this={confirmationDelete} class="modal">
 	<form method="post" action="?/delete" use:enhance>
@@ -152,7 +152,7 @@
 	<button class="btn w-40" on:click={() => confirmationAdd.showModal()}> + Add Equipment </button>
 </div>
 
-<div class="flex flex-wrap justify-center">
+<div class="flex flex-wrap justify-center mt-4">
 	{#each data.data as equipment}
 		<div class="card mx-2.5 my-2.5 w-96 bg-base-100">
 			<figure>
@@ -235,3 +235,10 @@
 		</div>
 	{/each}
 </div>
+
+<style>
+	.equipment {
+		display: flex;
+		
+	}
+</style>
