@@ -74,9 +74,9 @@
 	}
 </script>
 
-<h2 class="text-4xl font-extrabold">Finance Management</h2>
+<!-- <h2 class="text-4xl font-extrabold">Finance Management</h2> -->
 
-<div class="space-y-8">
+<div class="space-y-8 mt-4">
 	<!-- Monthly Finance Reports -->
 
 	<!-- Employee Payouts -->

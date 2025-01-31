@@ -172,8 +172,8 @@
 	}
 </script>
 
-<h2 class="text-4xl font-extrabold">Events</h2>
-<div class="sticky top-4 z-50 flex items-center justify-between p-4">
+<!-- <h2 class="text-4xl font-extrabold">Events</h2> -->
+<div class="sticky top-4 z-50 flex items-center justify-between p-4 mt-4">
 	<button class="btn w-40" on:click={addNewEvent}> + Add Event </button>
 </div>
 <dialog bind:this={confirmationDelete} class="modal">
