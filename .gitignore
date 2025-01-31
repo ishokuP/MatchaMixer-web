@@ -22,4 +22,9 @@ vite.config.ts.timestamp-*
 package-lock.json
 
 /src/lib/db/mysql.js
+<<<<<<< HEAD
 static/uploads
+=======
+package-lock.json
+package.json
+>>>>>>> cf6e416ae4c1b6de9a5d09d0703b33eb1544a5e7
