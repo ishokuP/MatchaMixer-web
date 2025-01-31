@@ -25,7 +25,6 @@ export const actions = {
       const formUpdated = await request.formData();
       const serviceID = formUpdated.get('serviceID');
       const serviceName = formUpdated.get('serviceName');
-      const serviceType = formUpdated.get('serviceType');
       const servicePrice = formUpdated.get('servicePrice');
       const serviceRate = formUpdated.get('serviceRate');
       const serviceInclusion = formUpdated.get('serviceInclusion');
@@ -46,18 +45,17 @@ export const actions = {
               await connection.execute(`
                   UPDATE services SET
                       name = ?,
-                      type = ?,
                       price = ?,
                       rate = ?,
                       inclusion = ?
                   WHERE id = ?`,
-                  [serviceName, serviceType, servicePrice, serviceRate, serviceInclusion, serviceID]
+                  [serviceName, servicePrice, serviceRate, serviceInclusion, serviceID]
               );
           } else {
               // Insert new service
               await connection.execute(`
-                  INSERT INTO services (id, name, type, price, rate, inclusion) VALUES (?, ?, ?, ?, ?, ?)`,
-                  [serviceID, serviceName, serviceType, servicePrice, serviceRate, serviceInclusion]
+                  INSERT INTO services (id, name, type, price, rate, inclusion) VALUES (?, ?, ?, ?, ?)`,
+                  [serviceID, serviceName, servicePrice, serviceRate, serviceInclusion]
               );
           }
 

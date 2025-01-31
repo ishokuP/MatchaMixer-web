@@ -4,7 +4,6 @@
 	interface services {
 		id: number;
 		name: string;
-		type: string;
 		price: string;
 		inclusion: string;
 		rate: number;
@@ -20,7 +19,6 @@
 		const newService: services = {
 			id: Math.floor(Math.random() * 100000),
 			name: '',
-			type: '',
 			price: '',
 			inclusion: '',
 			rate: 0
@@ -59,8 +57,6 @@
 				</figure>
 				<div class="card-body w-full">
 					<h3 class="card-title text-3xl font-bold">{service.name}</h3>
-					<h6 class="text-lg font-bold">Type</h6>
-					<p>{service.type}</p>
 
 					<h6 class="text-lg font-bold">Price</h6>
 					<p>{service.price}</p>
@@ -100,14 +96,7 @@
 												/>
 											</h2>
 											<h6 class="text-lg font-bold">Type</h6>
-											<h2>
-												<input
-													type="text"
-													name="serviceType"
-													class="input input-bordered w-full max-w-xs"
-													bind:value={service.type}
-												/>
-											</h2>
+
 										</div>
 
 										<div>
