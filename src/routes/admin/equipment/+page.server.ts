@@ -13,6 +13,7 @@ export async function load() {
                     eq.name AS EquipmentName,
                     eq.status AS EquipmentStatus,
                     eq.Econdition AS EquipmentCondition,
+                    eq.filepath AS EquipmentImagePath,
                     GROUP_CONCAT(ev.eventName SEPARATOR ', ') AS AssignedEvents
                 FROM 
                     equipments eq
@@ -21,7 +22,7 @@ export async function load() {
                 LEFT JOIN 
                     events ev ON eveq.eventID = ev.eventID
                 GROUP BY 
-                    eq.id, eq.name, eq.status, eq.Econdition;
+                    eq.id, eq.name, eq.status, eq.Econdition, eq.filepath;
             `)
             .then(function ([rows, fields]) {
                 return rows.map(row => ({
@@ -29,6 +30,7 @@ export async function load() {
                     name: row.EquipmentName,
                     status: row.EquipmentStatus,
                     Econdition: row.EquipmentCondition,
+                    imagePath: row.EquipmentImagePath,
                     AssignedEvents: row.AssignedEvents ? row.AssignedEvents.split(', ') : []
                 }));
             });
@@ -92,7 +94,7 @@ export const actions = {
                         name = ?,
                         status = ?,
                         Econdition = ?,
-                        imagePath = COALESCE(?, imagePath) -- Only update if new image is provided
+                        filepath = COALESCE(?, imagePath) 
                     WHERE id = ?`, 
                     [name, status, Econdition, imagePath, equipmentID]);
 
@@ -101,7 +103,7 @@ export const actions = {
             } else {
                 // Insert new record
                 await connection.execute(`
-                    INSERT INTO equipments (id, name, status, Econdition, imagePath)
+                    INSERT INTO equipments (id, name, status, Econdition, filepath)
                     VALUES (?, ?, ?, ?, ?)`, 
                     [equipmentID, name, status, Econdition, imagePath]);
 

@@ -53,7 +53,7 @@
 				<figure>
 					<img
 						class="h-full w-full"
-						src="https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.jpg"
+						src="https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp"
 						alt="Album"
 					/>
 				</figure>

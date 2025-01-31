@@ -8,6 +8,7 @@
 		status: string;
 		Econdition: string;
 		AssignedEvents: string;
+		imagePath: string;
 	}
 
 	interface EquipmentData {
@@ -157,7 +158,7 @@
 		<div class="card mx-2.5 my-2.5 w-96 bg-base-100">
 			<figure>
 				<img
-					src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
+				src={equipment.imagePath ? equipment.imagePath : "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"}
 					alt="Equipment"
 				/>
 			</figure>
