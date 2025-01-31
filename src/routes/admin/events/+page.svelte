@@ -173,7 +173,7 @@
 </script>
 
 <!-- <h2 class="text-4xl font-extrabold">Events</h2> -->
-<div class="sticky top-4 z-50 flex items-center justify-between p-4 mt-4">
+<div class="flex items-center justify-between p-4 mt-4">
 	<button class="btn w-40" on:click={addNewEvent}> + Add Event </button>
 </div>
 <dialog bind:this={confirmationDelete} class="modal">
@@ -214,7 +214,6 @@
 							placeholder="Event Name"
 							style="font-size: 2rem; font-weight: 700; "
 						/>
-						
 
 						<!-- Client Name (Full row, second row) -->
 						<input
@@ -445,5 +444,16 @@
 	label {
 		font-weight: 900;
 		font-size: 20px;
+	}
+
+	select {
+		border: 1px solid black !important;
+		font-size: 1.125rem;
+		font-weight: 600;
+		padding: 0.5rem;
+		width: 100%;
+		background-color: transparent;
+		color: black;
+		outline: none;
 	}
 </style>

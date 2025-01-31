@@ -28,13 +28,6 @@
 		'/admin/services': { title: 'Service ', breadcrumbs: ['System', 'Services Management'] },
 		'/admin/finances': { title: 'Finance', breadcrumbs: ['System', 'Finances Management'] }
 	};
-
-	// Reactively update headerTitle and breadcrumbs when the page URL changes
-	$: {
-		const path = $page.url.pathname; // Reactively tracks the current route
-		headerTitle = routeTitleMap[path]?.title || 'Dashboard';
-		breadcrumbs = routeTitleMap[path]?.breadcrumbs || [];
-	}
 </script>
 
 <div class="drawer lg:drawer-open flex">
@@ -122,12 +115,11 @@
 				</div>
 				<div class="flex-grow"></div>
 
-				<!-- Theme & Logout -->
+				<!-- User & Logout -->
 				<h2 class="sub-title text-lg py-2 font-bold text-base-content">Account Logged in</h2>
 				<div class="lowbar flex flex-col gap-2 text-medium">
-					<!-- Theme Selector Row -->
 					{#if user}
-						<div class="user-box rounded-box bg-base-300 shadow-2xl flex gap-2 items-center">
+						<div class="user-box rounded-box bg-base-300 shadow-2xl flex gap-2 justify-center">
 							<img
 								src={user.role === 'ADMIN' ? '/admin.png' : '/employee.png'}
 								alt="User Role"
@@ -186,13 +178,14 @@
 					{#each breadcrumbs as crumb, index}
 						<span class="font-medium">{crumb}</span>
 						{#if index < breadcrumbs.length - 1}
-							<span class="mx-1">&gt;</span> <!-- Adds spacing around '>' -->
+							<span class="mx-1">&gt;</span> 
 						{/if}
 					{/each}
 				</nav>
 			</div>
 
 			<div class="flex items-center gap-1 justify-center rounded-box bg-base-300 p-2 shadow-2xl">
+				<!-- Theme Selector Row -->
 				<span class="font-semibold text-base-content">Theme ></span>
 				<div class="flex gap-1 w-52">
 					<input
@@ -325,7 +318,8 @@
 	}
 
 	.user-box {
-		padding: 5px 12px;
+		padding: 5px;
+		
 	}
 
 	.role {

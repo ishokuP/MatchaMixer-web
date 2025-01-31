@@ -17,7 +17,7 @@
 		employeePayouts: []
 	};
 
-	// dummy data		
+	// dummy data
 	$: data = {
 		employeePayouts: [
 			{
@@ -58,30 +58,40 @@
 		]
 	};
 
-	function addEmployeePayout() {
-		const newPayout: EmployeePayout = {
-			id: Math.floor(Math.random() * 100000),
-			eventName: '',
-			name: '',
-			payoutAmount: 0,
-			status: 'Unpaid'
-		};
-		data.employeePayouts = [...data.employeePayouts, newPayout];
+	let confirmationDelete: HTMLDialogElement;
+	let currentDeletingEvent: number | null = null;
+
+	function confirmRemove(id: number) {
+		currentDeletingEvent = id;
+		confirmationDelete.showModal();
 	}
 
-	function removeEmployeePayout(id: number) {
-		data.employeePayouts = data.employeePayouts.filter((payout) => payout.id !== id);
+	function removeConfirmed() {
+		if (currentDeletingEvent !== null) {
+			data.employeePayouts = data.employeePayouts.filter(
+				(payout) => payout.id !== currentDeletingEvent
+			);
+			currentDeletingEvent = null;
+		}
+		confirmationDelete.close();
 	}
 </script>
+
+<dialog bind:this={confirmationDelete} class="modal">
+	<div class="modal-box">
+		<h3 class="text-lg font-bold">Confirm Delete</h3>
+		<p class="py-4">Are you sure you want to remove this employee payout?</p>
+		<div class="modal-action">
+			<button type="button" class="btn btn-error" on:click={removeConfirmed}>Delete</button>
+			<button type="button" class="btn" on:click={() => confirmationDelete.close()}>Cancel</button>
+		</div>
+	</div>
+</dialog>
 
 <!-- <h2 class="text-4xl font-extrabold">Finance Management</h2> -->
 
 <div class="space-y-8 mt-4">
-	<!-- Monthly Finance Reports -->
-
-	<!-- Employee Payouts -->
 	<h3 class="text-2xl font-bold">Employee Payouts</h3>
-	<button class="btn btn-primary my-4" on:click={addEmployeePayout}>+ Add Employee Payout</button>
 	<table class="table">
 		<thead>
 			<tr class="border-b-2">
@@ -111,7 +121,7 @@
 						</button>
 					</td>
 					<td class="w-40 p-3">
-						<button class="btn btn-error w-full" on:click={() => removeEmployeePayout(payout.id)}
+						<button class="btn btn-error w-full" on:click={() => confirmRemove(payout.id)}
 							>Clear</button
 						>
 					</td>

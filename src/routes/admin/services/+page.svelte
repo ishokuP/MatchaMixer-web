@@ -41,7 +41,7 @@
 </script>
 
 <!-- <h2 class="text-4xl font-extrabold">Services</h2> -->
-<div class="sticky top-4 z-50 p-4 mt-4">
+<div class="p-4 mt-4">
 	<button class="btn w-40" on:click={addNewEvent}> + Add Service </button>
 </div>
 <div class="flex flex-wrap">
