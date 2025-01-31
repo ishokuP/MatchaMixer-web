@@ -22,3 +22,5 @@ vite.config.ts.timestamp-*
 package-lock.json
 
 /src/lib/db/mysql.js
+package-lock.json
+package.json

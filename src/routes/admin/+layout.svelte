@@ -3,6 +3,8 @@
 	import { page } from '$app/stores';
 
 	let currentTheme = 'light';
+	export let data;
+	export let user = data.user;
 
 	onMount(() => {
 		const savedTheme = localStorage.getItem('theme') || 'light';
@@ -122,13 +124,13 @@
 
 				<!-- Theme & Logout -->
 				<h2 class="sub-title text-lg py-2 font-bold text-base-content">Settings</h2>
-				<div class="lowbar flex flex-col gap-2">
+				<div class="lowbar flex flex-col gap-2 text-medium">
 					<!-- Theme Selector Row -->
 					<div
 						class="flex items-center gap-1 justify-center rounded-box bg-base-300 p-2 shadow-2xl"
 					>
 						<span class="font-semibold text-base-content">Theme ></span>
-						<div class="flex gap-2 w-52">
+						<div class="flex gap-1 w-52">
 							<input
 								type="radio"
 								name="theme-dropdown"
@@ -161,7 +163,7 @@
 					<div class=" justify-center">
 						<a
 							href="/logout"
-							class="btn btn-ghost rounded-box bg-base-300 p-2 shadow-2xl mt-2 flex py-1 btn-sm w-full flex items-center gap-2 justify-center"
+							class="btn btn-ghost text-xl rounded-box bg-base-300 p-1 shadow-2xl mt-1 flex py-1 w-full flex items-center gap-3 justify-center"
 						>
 							<img src="/logout.png" alt="Logout" class="settings-img" />
 							Logout
@@ -192,6 +194,8 @@
 					/>
 				</svg>
 			</label>
+
+			<!-- Header title -->
 			<div class="header1 flex flex-col gap-3">
 				<h1 class="text-4xl font-extrabold">{headerTitle}</h1>
 				<nav class="text-sm text-based-content">
@@ -203,6 +207,26 @@
 					{/each}
 				</nav>
 			</div>
+
+			<!-- Logged-in User Box -->
+			{#if user}
+				<div class="rounded-box bg-base-300 px-6 py-0 shadow-2xl flex gap-2 items-center">
+					<img
+						src={user.role === 'ADMIN' ? '/admin.png' : '/employee.png'}
+						alt="User Role"
+						class="w-5 h-5 rounded-full"
+					/>
+					<div class="flex flex-col">
+						<span class="text-xl font-extrabold">{user.name}</span>
+						<!-- <span class="text-sm font-bold">{user.email}</span> -->
+						<span class="text-sm">
+							{user.role === 'ADMIN' ? 'Admin Privileges' : 'Employee Privileges'}
+						</span>
+					</div>
+				</div>
+			{:else}
+				<p>No user logged in</p>
+			{/if}
 		</header>
 
 		<!-- Main Content Area -->
