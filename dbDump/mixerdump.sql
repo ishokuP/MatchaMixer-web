@@ -32,7 +32,7 @@ CREATE TABLE `employee` (
   `password` varchar(255) DEFAULT NULL,
   `role` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `employee` (
 
 LOCK TABLES `employee` WRITE;
 /*!40000 ALTER TABLE `employee` DISABLE KEYS */;
-INSERT INTO `employee` VALUES (1,'Alice Johnson','alice.j@example.com','1234567890','123 Maple Street','AliceJ','password123','Manager'),(2,'Bob Smith','bob.smith@example.com','9876543210','456 Oak Avenue','BobS','securepass','Technician'),(3,'Charlie Brown','charlie.b@example.com','4567891230','789 Pine Road','CharlieB','mypassword','Assistant');
+INSERT INTO `employee` VALUES (1,'Alice Johnson','alice.j@example.com','1234567890','123 Maple Street','AliceJ','password123','Manager'),(2,'Bob Smith','bob.smith@example.com','9876543210','456 Oak Avenue','BobS','securepass','Technician'),(3,'Charlie Brown','charlie.b@example.com','4567891230','789 Pine Road','CharlieB','mypassword','Assistant'),(4,'AdminUser','admin@example.com','242152456252','AdminRoad','AdminTest','adminpassword','Admin');
 /*!40000 ALTER TABLE `employee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,6 +58,7 @@ CREATE TABLE `equipments` (
   `status` varchar(255) DEFAULT NULL,
   `Econdition` varchar(255) DEFAULT NULL,
   `event` int DEFAULT NULL,
+  `filepath` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `equipments_ibfk_1` (`event`),
   CONSTRAINT `equipments_ibfk_1` FOREIGN KEY (`event`) REFERENCES `events` (`eventID`)
@@ -70,7 +71,7 @@ CREATE TABLE `equipments` (
 
 LOCK TABLES `equipments` WRITE;
 /*!40000 ALTER TABLE `equipments` DISABLE KEYS */;
-INSERT INTO `equipments` VALUES ('21559','woooo','Deployed','Requires Cleaning',NULL),('384922','aa','Deployed','Good-to-Go',NULL),('571477','aa','Deployed','Requires Cleaning',NULL),('943091','asd','Deployed','Requires Cleaning',NULL);
+INSERT INTO `equipments` VALUES ('21559','woooo','Deployed','Requires Cleaning',NULL,NULL),('311471','q','In-Studio','Good-to-Go',NULL,NULL),('384922','aa','Deployed','Good-to-Go',NULL,NULL),('389','test3','Deployed','Requires Cleaning',NULL,'/uploads/test3_1738311361723.png'),('438507','wwwwwwwweeeeee','Deployed','Requires Cleaning',NULL,NULL),('571477','aa','Deployed','Requires Cleaning',NULL,NULL),('577554','test`','Deployed','Requires Cleaning',NULL,NULL),('768625','woooo','Deployed','Requires Cleaning',NULL,NULL),('943091','asd','Deployed','Requires Cleaning',NULL,NULL);
 /*!40000 ALTER TABLE `equipments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -97,7 +98,7 @@ CREATE TABLE `eventemployee` (
 
 LOCK TABLES `eventemployee` WRITE;
 /*!40000 ALTER TABLE `eventemployee` DISABLE KEYS */;
-INSERT INTO `eventemployee` VALUES (1,1),(1,2);
+INSERT INTO `eventemployee` VALUES (1609,1),(3800,1),(50338,1),(94047,1),(53827,2),(53827,3),(1,4);
 /*!40000 ALTER TABLE `eventemployee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -124,7 +125,7 @@ CREATE TABLE `eventequipment` (
 
 LOCK TABLES `eventequipment` WRITE;
 /*!40000 ALTER TABLE `eventequipment` DISABLE KEYS */;
-INSERT INTO `eventequipment` VALUES (1,'943091');
+INSERT INTO `eventequipment` VALUES (53827,'21559'),(53827,'384922'),(3800,'571477'),(1,'577554'),(1609,'577554'),(50338,'577554'),(94047,'577554'),(1,'943091');
 /*!40000 ALTER TABLE `eventequipment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -167,7 +168,7 @@ CREATE TABLE `events` (
 
 LOCK TABLES `events` WRITE;
 /*!40000 ALTER TABLE `events` DISABLE KEYS */;
-INSERT INTO `events` VALUES (1,'2025-01-15 00:00:00','Annual Conference','John Doe','1234567890','Grand Hall','Conference','Sound System, Lighting Rig','PAY001','VIP setup',1,1,120,'2025-01-15 00:00:00');
+INSERT INTO `events` VALUES (1,'2025-01-15 00:00:00','Annual Conference','John Doe','1234567890','Grand Hall','Conference','Sound System, Lighting Rig','PAY001','VIP setup',1,1,120,'2025-01-15 00:00:00'),(1609,'2025-01-21 03:54:00','sameday2','wevqrewqveq','awevaev','aeva','aeva',NULL,'55215','eav',NULL,NULL,NULL,'2025-01-21 06:55:00'),(3800,'2025-01-21 00:30:00','sameday1','test2','eadavda','aaaaa','aaaa',NULL,'65291','aeva',NULL,NULL,NULL,'2025-01-21 02:30:00'),(50338,'2025-01-21 12:55:00','sameday3','asdvaeaev','aaaaa','a','evae',NULL,'82620','aevaev',NULL,NULL,NULL,'2025-01-21 15:55:00'),(53827,'2025-10-15 08:00:00','Graduation','College of Computer Science','09999951025','PUP','Scholar',NULL,'78995','',NULL,NULL,NULL,'2025-10-15 17:00:00'),(94047,'2024-12-30 15:23:00','test3','ASA','AA','A231','ADA',NULL,'81859','A',NULL,NULL,NULL,'2025-01-10 15:23:00');
 /*!40000 ALTER TABLE `events` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -192,7 +193,7 @@ CREATE TABLE `payments` (
 
 LOCK TABLES `payments` WRITE;
 /*!40000 ALTER TABLE `payments` DISABLE KEYS */;
-INSERT INTO `payments` VALUES ('PAY001','Paid','5000');
+INSERT INTO `payments` VALUES ('55215','Unpaid','01321'),('65291','Unpaid','12131'),('78995','Unpaid','12000'),('81859','Unpaid','1212'),('82620','Unpaid','121321'),('PAY001','Paid','5000');
 /*!40000 ALTER TABLE `payments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -237,4 +238,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-01-14 14:51:22
+-- Dump completed on 2025-01-31 16:44:41
