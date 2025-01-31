@@ -123,43 +123,25 @@
 				<div class="flex-grow"></div>
 
 				<!-- Theme & Logout -->
-				<h2 class="sub-title text-lg py-2 font-bold text-base-content">Settings</h2>
+				<h2 class="sub-title text-lg py-2 font-bold text-base-content">Account Logged in</h2>
 				<div class="lowbar flex flex-col gap-2 text-medium">
 					<!-- Theme Selector Row -->
-					<div
-						class="flex items-center gap-1 justify-center rounded-box bg-base-300 p-2 shadow-2xl"
-					>
-						<span class="font-semibold text-base-content">Theme ></span>
-						<div class="flex gap-1 w-52">
-							<input
-								type="radio"
-								name="theme-dropdown"
-								class="theme-controller btn btn-ghost btn-sm"
-								aria-label="Dark"
-								value="dark"
-								checked={currentTheme === 'dark'}
-								on:change={() => setTheme('dark')}
+					{#if user}
+						<div class="user-box rounded-box bg-base-300 shadow-2xl flex gap-2 items-center">
+							<img
+								src={user.role === 'ADMIN' ? '/admin.png' : '/employee.png'}
+								alt="User Role"
+								class="role rounded-full"
 							/>
-							<input
-								type="radio"
-								name="theme-dropdown"
-								class="theme-controller btn btn-ghost btn-sm"
-								aria-label="Light"
-								value="light"
-								checked={currentTheme === 'light'}
-								on:change={() => setTheme('light')}
-							/>
-							<input
-								type="radio"
-								name="theme-dropdown"
-								class="theme-controller btn btn-ghost btn-sm"
-								aria-label="Matcha"
-								value="matcha"
-								checked={currentTheme === 'matcha'}
-								on:change={() => setTheme('matcha')}
-							/>
+							<div class="flex flex-col">
+								<span class="font-extrabold">{user.name}</span>
+								<span class="text-sm font-bold">{user.email}</span>
+								<span class="text-xs">
+									{user.role === 'ADMIN' ? 'Admin Privileges' : 'Employee Privileges'}
+								</span>
+							</div>
 						</div>
-					</div>
+					{/if}
 					<div class=" justify-center">
 						<a
 							href="/logout"
@@ -210,26 +192,42 @@
 				</nav>
 			</div>
 
-			{#if user}
-				<div class="user-box rounded-box bg-base-300 shadow-2xl flex gap-2 items-center">
-					<img
-						src={user.role === 'ADMIN' ? '/admin.png' : '/employee.png'}
-						alt="User Role"
-						class="role rounded-full"
+			<div class="flex items-center gap-1 justify-center rounded-box bg-base-300 p-2 shadow-2xl">
+				<span class="font-semibold text-base-content">Theme ></span>
+				<div class="flex gap-1 w-52">
+					<input
+						type="radio"
+						name="theme-dropdown"
+						class="theme-controller btn btn-ghost btn-sm"
+						aria-label="Dark"
+						value="dark"
+						checked={currentTheme === 'dark'}
+						on:change={() => setTheme('dark')}
 					/>
-					<div class="flex flex-col">
-						<span class="font-extrabold">{user.name}</span>
-						<span class="text-sm font-bold">{user.email}</span>
-						<span class="text-xs">
-							{user.role === 'ADMIN' ? 'Admin Privileges' : 'Employee Privileges'}
-						</span>
-					</div>
+					<input
+						type="radio"
+						name="theme-dropdown"
+						class="theme-controller btn btn-ghost btn-sm"
+						aria-label="Light"
+						value="light"
+						checked={currentTheme === 'light'}
+						on:change={() => setTheme('light')}
+					/>
+					<input
+						type="radio"
+						name="theme-dropdown"
+						class="theme-controller btn btn-ghost btn-sm"
+						aria-label="Matcha"
+						value="matcha"
+						checked={currentTheme === 'matcha'}
+						on:change={() => setTheme('matcha')}
+					/>
 				</div>
-			{/if}
+			</div>
 		</header>
 
 		<!-- Main Content (Scrolls) -->
-		<main class="main-content ">
+		<main class="main-content">
 			<slot />
 		</main>
 	</div>
@@ -327,16 +325,12 @@
 	}
 
 	.user-box {
-		padding: 3px 12px;
+		padding: 5px 12px;
 	}
 
 	.role {
 		width: 3.5rem;
 		height: 3.5rem;
-	}
-
-	.dropdown-content {
-		border: none;
 	}
 
 	.shadow-2xl {
@@ -352,7 +346,7 @@
 		display: flex;
 		flex-direction: column;
 		height: 100vh;
-		width: 100%; 
+		width: 100%;
 	}
 
 	.main-content {
