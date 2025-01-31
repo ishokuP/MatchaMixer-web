@@ -95,12 +95,12 @@
 	<table class="table">
 		<thead>
 			<tr class="border-b-2">
-				<th class="w-20 p-3 text-xl font-extrabold text-white">ID</th>
+				<th class="first-column w-20 p-3 text-xl font-extrabold text-white">ID</th>
 				<th class="w-48 p-3 text-xl font-extrabold text-white">Event Name</th>
 				<th class="w-48 p-3 text-xl font-extrabold text-white">Employee Name</th>
 				<th class="w-32 p-3 text-xl font-extrabold text-white">Amount</th>
 				<th class="w-32 p-3 text-xl font-extrabold text-white">Status</th>
-				<th class="w-40 p-3 text-xl font-extrabold text-white">Actions</th>
+				<th class="last-column w-40 p-3 text-xl font-extrabold text-white">Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -122,7 +122,7 @@
 					</td>
 					<td class="w-40 p-3">
 						<button class="btn btn-error w-full" on:click={() => confirmRemove(payout.id)}
-							>Clear</button
+							>Delete</button
 						>
 					</td>
 				</tr>
@@ -134,5 +134,13 @@
 <style>
 	th {
 		background: oklch(33.4052% 0.059945 126.98602 / 1);
+	}
+
+	.first-column {
+		border-top-left-radius: 1rem;
+	}
+
+	.last-column {
+		border-top-right-radius: 1rem;
 	}
 </style>

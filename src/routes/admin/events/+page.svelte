@@ -311,7 +311,7 @@
 									name="paymentStatus"
 									bind:value={event.paymentStatus}
 									class={inputClasses(true)}
-									style="background-color: transparent; color: black; opacity: 1; outline: none;"
+									style="background-color: transparent; opacity: 1; outline: none;"
 								>
 									<option value="Pending">Pending</option>
 									<option value="Paid">Paid</option>
@@ -447,13 +447,12 @@
 	}
 
 	select {
-		border: 1px solid black !important;
+		border: 1px solid !important;
 		font-size: 1.125rem;
 		font-weight: 600;
 		padding: 0.5rem;
 		width: 100%;
 		background-color: transparent;
-		color: black;
 		outline: none;
 	}
 
