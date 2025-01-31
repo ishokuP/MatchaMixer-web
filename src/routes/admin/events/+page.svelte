@@ -459,5 +459,6 @@
 
 	.collapse-title {
 		background: oklch(33.4052% 0.059945 126.98602 / 1);
+		color: white;
 	}
 </style>
