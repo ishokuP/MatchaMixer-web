@@ -15,19 +15,23 @@
 		currentTheme = theme;
 	}
 
-	let headerTitle = 'Event'; // Default Title
+	let headerTitle = 'Dashboard';
+	let breadcrumbs = [];
 
-	// Update the title based on the route
+	// Route-to-title and breadcrumb mappings
+	const routeTitleMap = {
+		'/admin/events': { title: 'Event', breadcrumbs: ['System', 'Event Management'] },
+		'/admin/equipment': { title: 'Equipment', breadcrumbs: ['System', 'Equipment Management'] },
+		'/admin/employees': { title: 'Employee', breadcrumbs: ['System', 'Employees Management'] },
+		'/admin/services': { title: 'Service ', breadcrumbs: ['System', 'Services Management'] },
+		'/admin/finances': { title: 'Finance', breadcrumbs: ['System', 'Finances Management'] }
+	};
+
+	// Reactively update headerTitle and breadcrumbs when the page URL changes
 	$: {
-		const routeTitleMap = {
-			'/admin/events': 'Event Management',
-			'/admin/equipment': 'Equipment Management',
-			'/admin/employees': 'Employee Management',
-			'/admin/services': 'Service Management',
-			'/admin/finances': 'Finance Management'
-		};
-
-		headerTitle = routeTitleMap[$page.url.pathname] || 'Dashboard';
+		const path = $page.url.pathname; // Reactively tracks the current route
+		headerTitle = routeTitleMap[path]?.title || 'Dashboard';
+		breadcrumbs = routeTitleMap[path]?.breadcrumbs || [];
 	}
 </script>
 
@@ -48,6 +52,11 @@
 
 			<ul class="menu h-screen w-80 bg-base-200 p-4 text-base-content">
 				<div class="categories">
+					<div class="subtitle">
+						<h2 class="sub-title text-lg font-bold py-2 text-base-content">
+							Management Categories
+						</h2>
+					</div>
 					<li class="categories-title">
 						<a
 							href="/admin/events"
@@ -112,57 +121,52 @@
 				<div class="flex-grow"></div>
 
 				<!-- Theme & Logout -->
-				<div class="lowbar flex items-center justify-between">
-					<div class="dropdown dropdown-top">
-						<div tabindex="0" role="button" class="btn">
-							Theme
-							<svg
-								width="12px"
-								height="12px"
-								class="inline-block h-2 w-2 fill-current opacity-60"
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 2048 2048"
-							>
-								<path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
-							</svg>
+				<h2 class="sub-title text-lg py-2 font-bold text-base-content">Settings</h2>
+				<div class="lowbar flex flex-col gap-2">
+					<!-- Theme Selector Row -->
+					<div
+						class="flex items-center gap-1 justify-center rounded-box bg-base-300 p-2 shadow-2xl"
+					>
+						<span class="font-semibold text-base-content">Theme ></span>
+						<div class="flex gap-2 w-52">
+							<input
+								type="radio"
+								name="theme-dropdown"
+								class="theme-controller btn btn-ghost btn-sm"
+								aria-label="Dark"
+								value="dark"
+								checked={currentTheme === 'dark'}
+								on:change={() => setTheme('dark')}
+							/>
+							<input
+								type="radio"
+								name="theme-dropdown"
+								class="theme-controller btn btn-ghost btn-sm"
+								aria-label="Light"
+								value="light"
+								checked={currentTheme === 'light'}
+								on:change={() => setTheme('light')}
+							/>
+							<input
+								type="radio"
+								name="theme-dropdown"
+								class="theme-controller btn btn-ghost btn-sm"
+								aria-label="Matcha"
+								value="matcha"
+								checked={currentTheme === 'matcha'}
+								on:change={() => setTheme('matcha')}
+							/>
 						</div>
-						<ul class="dropdown-content z-[1] w-52 rounded-box bg-base-300 p-2 shadow-2xl">
-							<li>
-								<input
-									type="radio"
-									name="theme-dropdown"
-									class="theme-controller btn btn-ghost btn-sm btn-block justify-start"
-									aria-label="Dark"
-									value="dark"
-									checked={currentTheme === 'dark'}
-									on:change={() => setTheme('dark')}
-								/>
-							</li>
-							<li>
-								<input
-									type="radio"
-									name="theme-dropdown"
-									class="theme-controller btn btn-ghost btn-sm btn-block justify-start"
-									aria-label="Light"
-									value="light"
-									checked={currentTheme === 'light'}
-									on:change={() => setTheme('light')}
-								/>
-							</li>
-							<li>
-								<input
-									type="radio"
-									name="theme-dropdown"
-									class="theme-controller btn btn-ghost btn-sm btn-block justify-start"
-									aria-label="Matcha"
-									value="matcha"
-									checked={currentTheme === 'matcha'}
-									on:change={() => setTheme('matcha')}
-								/>
-							</li>
-						</ul>
 					</div>
-					<a href="/logout" class="btn btn-ghost">Logout</a>
+					<div class=" justify-center">
+						<a
+							href="/logout"
+							class="btn btn-ghost rounded-box bg-base-300 p-2 shadow-2xl mt-2 flex py-1 btn-sm w-full flex items-center gap-2 justify-center"
+						>
+							<img src="/logout.png" alt="Logout" class="settings-img" />
+							Logout
+						</a>
+					</div>
 				</div>
 			</ul>
 		</div>
@@ -171,7 +175,7 @@
 	<!-- Main Content -->
 	<div class="drawer-content flex flex-col flex-grow">
 		<!-- Header -->
-		<header class="bg-base-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+		<header class="bg-base-200 px-4 py-1 flex justify-between items-center sticky top-0 z-10">
 			<label for="my-drawer-2" class="btn btn-primary drawer-button lg:hidden">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -188,7 +192,17 @@
 					/>
 				</svg>
 			</label>
-			<h1 class="text-4xl font-extrabold">{headerTitle}</h1>
+			<div class="header1 flex flex-col gap-3">
+				<h1 class="text-4xl font-extrabold">{headerTitle}</h1>
+				<nav class="text-sm text-based-content">
+					{#each breadcrumbs as crumb, index}
+						<span class="font-medium">{crumb}</span>
+						{#if index < breadcrumbs.length - 1}
+							<span class="mx-1">&gt;</span> <!-- Adds spacing around '>' -->
+						{/if}
+					{/each}
+				</nav>
+			</div>
 		</header>
 
 		<!-- Main Content Area -->
@@ -266,20 +280,21 @@
 
 	.active {
 		font-weight: bolder !important;
-		background: oklch(0.44 0.06 141.63);
+		background: oklch(33.4052% 0.059945 126.98602 / 1);
 		color: white;
-		box-shadow: 1px 1px 5px rgb(26, 80, 26) inset,
-            -1px -1px 5px darkgreen inset;
+		box-shadow:
+			1px 1px 40px rgb(10, 29, 10) inset,
+			-1px -1px 50px rgb(9, 26, 9) inset;
 	}
 
 	header {
 		border-bottom: 1px outset;
-
 		height: 95px;
 	}
 
 	ul {
-		border-right: 1px outset;
+		/* border-right: 0.5px outset; */
+		box-shadow: inset -8px -8px 8px 0px rgba(0, 0, 0, 0.08);
 	}
 
 	.logo {
@@ -289,11 +304,20 @@
 		display: flex;
 		align-items: center;
 		height: 95px;
-		border-right: 1px outset;
+		/* border-bottom: 1px outset; */
+		box-shadow: inset -8px 8px 8px 0px rgba(0, 0, 0, 0.08);
 	}
-
 
 	.dropdown-content {
 		border: none;
+	}
+
+	.shadow-2xl {
+		box-shadow: none;
+	}
+
+	.settings-img {
+		width: 1.5rem;
+		height: 1.5rem;
 	}
 </style>
