@@ -175,9 +175,12 @@
 	</div>
 
 	<!-- Main Content -->
-	<div class="drawer-content flex flex-col flex-grow">
-		<!-- Header -->
-		<header class="bg-base-200 px-4 py-1 flex justify-between items-center sticky top-0 z-10">
+	<div class="layout-container">
+		<!-- Fixed Header -->
+
+		<header
+			class="header bg-base-200 px-4 py-3 flex justify-between items-center sticky top-0 z-10"
+		>
 			<label for="my-drawer-2" class="btn btn-primary drawer-button lg:hidden">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -195,7 +198,6 @@
 				</svg>
 			</label>
 
-			<!-- Header title -->
 			<div class="header1 flex flex-col gap-3">
 				<h1 class="text-4xl font-extrabold">{headerTitle}</h1>
 				<nav class="text-sm text-based-content">
@@ -208,29 +210,26 @@
 				</nav>
 			</div>
 
-			<!-- Logged-in User Box -->
 			{#if user}
-				<div class="rounded-box bg-base-300 px-6 py-0 shadow-2xl flex gap-2 items-center">
+				<div class="user-box rounded-box bg-base-300 shadow-2xl flex gap-2 items-center">
 					<img
 						src={user.role === 'ADMIN' ? '/admin.png' : '/employee.png'}
 						alt="User Role"
-						class="w-5 h-5 rounded-full"
+						class="role rounded-full"
 					/>
 					<div class="flex flex-col">
-						<span class="text-xl font-extrabold">{user.name}</span>
-						<!-- <span class="text-sm font-bold">{user.email}</span> -->
-						<span class="text-sm">
+						<span class="font-extrabold">{user.name}</span>
+						<span class="text-sm font-bold">{user.email}</span>
+						<span class="text-xs">
 							{user.role === 'ADMIN' ? 'Admin Privileges' : 'Employee Privileges'}
 						</span>
 					</div>
 				</div>
-			{:else}
-				<p>No user logged in</p>
 			{/if}
 		</header>
 
-		<!-- Main Content Area -->
-		<main class="p-6 flex-grow overflow-auto">
+		<!-- Main Content (Scrolls) -->
+		<main class="main-content ">
 			<slot />
 		</main>
 	</div>
@@ -311,11 +310,6 @@
 			-1px -1px 50px rgb(9, 26, 9) inset;
 	}
 
-	header {
-		border-bottom: 1px outset;
-		height: 95px;
-	}
-
 	ul {
 		/* border-right: 0.5px outset; */
 		box-shadow: inset -8px -8px 8px 0px rgba(0, 0, 0, 0.08);
@@ -332,6 +326,15 @@
 		box-shadow: inset -8px 8px 8px 0px rgba(0, 0, 0, 0.08);
 	}
 
+	.user-box {
+		padding: 3px 12px;
+	}
+
+	.role {
+		width: 3.5rem;
+		height: 3.5rem;
+	}
+
 	.dropdown-content {
 		border: none;
 	}
@@ -343,5 +346,24 @@
 	.settings-img {
 		width: 1.5rem;
 		height: 1.5rem;
+	}
+
+	.layout-container {
+		display: flex;
+		flex-direction: column;
+		height: 100vh;
+		width: 100%; 
+	}
+
+	.main-content {
+		flex-grow: 1;
+		overflow-y: scroll;
+		padding: 0.5rem;
+	}
+
+	header {
+		border-bottom: 1px outset;
+		height: 95px;
+		max-width: 100%;
 	}
 </style>
