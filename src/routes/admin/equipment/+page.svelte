@@ -149,7 +149,7 @@
 	</form>
 </dialog>
 
-<div class="p-4">
+<div class="p-4 mt-4">
 	<button class="btn w-40" on:click={() => confirmationAdd.showModal()}> + Add Equipment </button>
 </div>
 

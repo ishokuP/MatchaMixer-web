@@ -95,12 +95,12 @@
 	<table class="table">
 		<thead>
 			<tr class="border-b-2">
-				<th class="w-20 p-3 text-xl font-extrabold">ID</th>
-				<th class="w-48 p-3 text-xl font-extrabold">Event Name</th>
-				<th class="w-48 p-3 text-xl font-extrabold">Employee Name</th>
-				<th class="w-32 p-3 text-xl font-extrabold">Amount</th>
-				<th class="w-32 p-3 text-xl font-extrabold">Status</th>
-				<th class="w-40 p-3 text-xl font-extrabold">Actions</th>
+				<th class="w-20 p-3 text-xl font-extrabold text-white">ID</th>
+				<th class="w-48 p-3 text-xl font-extrabold text-white">Event Name</th>
+				<th class="w-48 p-3 text-xl font-extrabold text-white">Employee Name</th>
+				<th class="w-32 p-3 text-xl font-extrabold text-white">Amount</th>
+				<th class="w-32 p-3 text-xl font-extrabold text-white">Status</th>
+				<th class="w-40 p-3 text-xl font-extrabold text-white">Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -130,3 +130,9 @@
 		</tbody>
 	</table>
 </div>
+
+<style>
+	th {
+		background: oklch(33.4052% 0.059945 126.98602 / 1);
+	}
+</style>

@@ -58,11 +58,12 @@ $: data.data.forEach(employee => {
 <div class="w-auto">
 	<table class="table">
 		<thead>
-			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Job</th>
-				<th>Role</th>
+			<tr class="table-th">
+				<th class="p-3 text-xl font-extrabold text-white">ID</th>
+				<th class="p-3 text-xl font-extrabold text-white">Name</th>
+				<th class="p-3 text-xl font-extrabold text-white">Job</th>
+				<th class="p-3 text-xl font-extrabold text-white">Role</th>
+        <th class="p-3 text-xl font-extrabold text-white"></th>
 			</tr>
 		</thead>
     <tbody>
@@ -167,4 +168,10 @@ $: data.data.forEach(employee => {
 
   
 </div>
+
+<style>
+  .table-th {
+		background: oklch(33.4052% 0.059945 126.98602 / 1);;
+	}
+</style>
 

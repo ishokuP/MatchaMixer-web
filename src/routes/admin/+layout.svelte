@@ -28,6 +28,12 @@
 		'/admin/services': { title: 'Service ', breadcrumbs: ['System', 'Services Management'] },
 		'/admin/finances': { title: 'Finance', breadcrumbs: ['System', 'Finances Management'] }
 	};
+
+	$: {
+		const path = $page.url.pathname; // Reactively tracks the current route
+		headerTitle = routeTitleMap[path]?.title || 'Dashboard';
+		breadcrumbs = routeTitleMap[path]?.breadcrumbs || [];
+	}
 </script>
 
 <div class="drawer lg:drawer-open flex">
@@ -48,7 +54,7 @@
 			<ul class="menu h-screen w-80 bg-base-200 p-4 text-base-content">
 				<div class="categories">
 					<div class="subtitle">
-						<h2 class="sub-title text-lg font-bold py-2 text-base-content">
+						<h2 class="sub-title text-lg font-bold py-2 text-base-content mb-2">
 							Management Categories
 						</h2>
 					</div>
@@ -116,7 +122,7 @@
 				<div class="flex-grow"></div>
 
 				<!-- User & Logout -->
-				<h2 class="sub-title text-lg py-2 font-bold text-base-content">Account Logged in</h2>
+				<h2 class="sub-title text-lg py-2 font-bold text-base-content mb-2">Account Logged in</h2>
 				<div class="lowbar flex flex-col gap-2 text-medium">
 					{#if user}
 						<div class="user-box rounded-box bg-base-300 shadow-2xl flex gap-2 justify-center">
