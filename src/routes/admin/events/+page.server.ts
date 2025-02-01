@@ -43,12 +43,22 @@ interface Equipment {
 	equipmentCondition: string;
 }
 
+interface Services {
+	serviceID: string;
+	serviceName: string;
+	servicePrice: string;
+	serviceInclusion: string;
+	serviceRate: string;
+}
+
 interface LoadResult {
-	eventResults: Event[];
-	employeeResults: { [key: number]: Employee[] };
-	equipmentResults: { [key: number]: Equipment[] };
-	allEmployees: allEmployOriginal[];
-	allEquipment: allEquipOriginal[];
+    eventResults: Event[];
+    employeeResults: { [key: number]: Employee[] };
+    equipmentResults: { [key: number]: Equipment[] };
+    serviceResults: { [key: number]: Services[] };
+    allEmployees: allEmployOriginal[];
+    allEquipment: allEquipOriginal[];
+    allServices: Services[];
 }
 
 function parseDate(dateString: string | undefined): string {
@@ -119,6 +129,7 @@ export async function load(): Promise<LoadResult> {
 
 		let employeeResults: { [key: number]: Employee[] } = {};
 		let equipmentResults: { [key: number]: Equipment[] } = {};
+        let serviceResults: { [key: number]: Services[] } = {};
 
 		const employeePromises = events.map((event) =>
 			mysqlconn
@@ -161,23 +172,50 @@ export async function load(): Promise<LoadResult> {
 				})
 		);
 
+        const servicePromises = events.map((event) =>
+            mysqlconn
+                .query(
+                    `SELECT 
+                        S.id AS serviceID,
+                        S.name AS serviceName,
+                        S.Price AS servicePrice,
+                        S.Inclusion AS serviceInclusion,
+                        S.rate AS serviceRate
+                    FROM 
+                        serviceevent ES
+                    JOIN 
+                        Services S ON ES.serviceid = S.ID
+                    WHERE 
+                        ES.eventID = ${event.eventID};`
+                )
+                .then(([rows]) => {
+                    serviceResults[event.eventID] = rows;
+                })
+        );
+
+
 		const allEmployees: allEmployOriginal[] = await mysqlconn
 			.query(`SELECT * FROM Employee`)
 			.then(([rows]) => rows);
 		const allEquipment: allEquipOriginal[] = await mysqlconn
 			.query(`SELECT * FROM Equipments`)
 			.then(([rows]) => rows);
+        const allServices: Services[] = await mysqlconn
+			.query(`SELECT * FROM Services`)
+			.then(([rows]) => rows);
 
 		// Wait for all promises to complete
-		await Promise.all([...employeePromises, ...equipmentPromises]);
+		await Promise.all([...employeePromises, ...equipmentPromises, ...servicePromises]);
 
-		return {
-			eventResults: events,
-			employeeResults,
-			equipmentResults,
-			allEmployees,
-			allEquipment
-		};
+        return {
+            eventResults: events,
+            employeeResults,
+            equipmentResults,
+            serviceResults, 
+            allEmployees,
+            allEquipment,
+            allServices,
+        };
 	} catch (error) {
 		console.error('Got an error!!!');
 		console.log(error);
@@ -216,12 +254,15 @@ export const actions = {
         const paymentCost = getStringValue(form, 'paymentCost');
         const employeesNeededJson = getStringValue(form, 'employeesNeeded', '[]');
         const equipmentNeededJson = getStringValue(form, 'equipmentNeeded', '[]');
+        const servicesNeededJson = getStringValue(form, 'servicesNeeded', '[]');
 
         const employeesNeeded = JSON.parse(employeesNeededJson);
         const equipmentNeeded = JSON.parse(equipmentNeededJson);
+        const servicesNeeded = JSON.parse(servicesNeededJson);
 
         console.log("Employees Needed:", employeesNeeded);
         console.log("Equipment Needed:", equipmentNeeded);
+        console.log("Services Needed:", servicesNeeded);
 
         let connection;
 
@@ -315,6 +356,25 @@ export const actions = {
                 }
             }
 
+            for (const service of servicesNeeded) {
+                const [overlappingEvents] = await connection.query(
+                    `SELECT COUNT(*) AS count
+                    FROM serviceevent ES
+                    JOIN events E ON ES.eventID = E.eventID
+                    WHERE ES.serviceID = ?
+                    AND (
+                        (E.eventStart <= ? AND E.eventEnd > ?) OR
+                        (E.eventStart < ? AND E.eventEnd >= ?)
+                    )
+                    AND E.eventID != ?`,
+                    [service.value, eventEnd, eventStart, eventEnd, eventStart, eventID]
+                );
+            
+                if (overlappingEvents[0].count > 0) {
+                    throw new Error(`Service ID ${service.value} is already assigned to an overlapping event.`);
+                }
+            }
+
             // Enforce the "no more than 3 events per day" rule
             for (const employee of employeesNeeded) {
                 const [eventCount] = await connection.query(
@@ -338,6 +398,7 @@ export const actions = {
             for (const employee of employeesNeeded) {
                 await connection.query(`INSERT INTO eventemployee (eventID, employeeID) VALUES (?, ?)`, [eventID, employee.value]);
             }
+            
 
             // Enforce the "no more than max events per day" rule for equipment based on its status
             for (const equipment of equipmentNeeded) {
@@ -399,6 +460,11 @@ export const actions = {
             await connection.query(`DELETE FROM eventequipment WHERE eventID = ?`, [eventID]);
             for (const equipment of equipmentNeeded) {
                 await connection.query(`INSERT INTO eventequipment (eventID, equipmentID) VALUES (?, ?)`, [eventID, equipment.value]);
+            }
+
+            await connection.query(`DELETE FROM serviceevent WHERE eventID = ?`, [eventID]);
+            for (const service of servicesNeeded) {
+                await connection.query(`INSERT INTO serviceevent (eventID, serviceID) VALUES (?, ?)`, [eventID, service.value]);
             }
 
             await connection.commit();

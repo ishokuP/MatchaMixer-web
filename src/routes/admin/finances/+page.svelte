@@ -89,7 +89,8 @@
 </dialog>
 
 <!-- <h2 class="text-4xl font-extrabold">Finance Management</h2> -->
-
+<!-- TODO add logic for this, loop through the event and find each employee  -->
+ <!-- Todo monthly graph report? -->
 <div class="space-y-8 mt-4">
 	<h3 class="text-2xl font-bold">Employee Payouts</h3>
 	<table class="table">

@@ -41,6 +41,10 @@
 		id: number;
 		name: number;
 	}
+	interface allServicesOriginal {
+		id: number;
+		name: number;
+	}
 
 	interface Equipment {
 		equipmentID: string;
@@ -48,16 +52,27 @@
 		equipmentStatus: string;
 		equipmentCondition: string;
 	}
+	interface Services {
+		serviceID: string;
+		serviceName: string;
+		servicePrice: string;
+		serviceInclusion: string;
+		serviceRate: string;
+		serviceimage: string;
+	}
 
 	export let data: {
 		eventResults: Event[];
 		employeeResults: { [key: number]: Employee[] };
 		equipmentResults: { [key: number]: Equipment[] };
+		serviceResults: { [key: number]: Services[] };
 		allEmployees: allEmployOriginal[];
 		allEquipment: allEquipOriginal[];
+		allServices: allServicesOriginal[];
 	};
 
-	// console.log(data.allEquipment);
+	console.log(data.serviceResults);
+
 
 	function formatTime(time: string): string {
 		const [hours, minutes] = time.split(':');
@@ -112,6 +127,7 @@
 
 	let staffSelections = {};
 	let equipmentSelections = {};
+	let servicesSelections = {};
 
 	function prepareStaffSelected(eventID) {
 		return (
@@ -131,10 +147,20 @@
 		);
 	}
 
+	function prepareServiceSelected(eventID) {
+		return (
+			data.serviceResults[eventID]?.map((service) => ({
+				value: service.serviceID,
+				label: service.serviceName
+			})) ?? []
+		);
+	}
+
 	onMount(() => {
 		Object.keys(data.employeeResults).forEach((eventID) => {
 			staffSelections[eventID] = prepareStaffSelected(eventID);
 			equipmentSelections[eventID] = prepareEquipmentSelected(eventID);
+			servicesSelections[eventID] = prepareServiceSelected(eventID);
 		});
 	});
 
@@ -158,6 +184,11 @@
 		value: equip.id,
 		label: equip.name
 	}));
+	
+	let serviceItems = data.allServices.map((serv) => ({
+		value: serv.id,
+		label: serv.name
+	}));
 
 	function formatDateTime(date: Date): string {
 		const options: Intl.DateTimeFormatOptions = {
@@ -170,6 +201,11 @@
 		};
 		return date.toLocaleString('en-US', options);
 	}
+	function formatDateForInput(date: Date): string {
+		return date.toISOString().slice(0, 16);
+	}
+
+	
 </script>
 
 <!-- <h2 class="text-4xl font-extrabold">Events</h2> -->
@@ -303,7 +339,7 @@
 							/>
 						</div>
 
-						<!-- Payment Status (di pa dropdown)-->
+						
 						<div>
 							<h1 class="font-bold">Payment Status</h1>
 							{#if editModes[event.eventID]}
@@ -350,6 +386,19 @@
 								name="equipmentNeeded"
 								bind:value={equipmentSelections[event.eventID]}
 								placeholder="Select equipment"
+								disabled={!editModes[event.eventID]}
+								containerStyles="background: #ebedef00 !important; color: black; opacity: 1; outline: none; border:none;"
+							/>
+						</div>
+
+						<div class="col-span-3">
+							<h1 class="font-bold">Services Included</h1>
+							<Select
+								items={serviceItems}
+								multiple={true}
+								name="servicesNeeded"
+								bind:value={servicesSelections[event.eventID]}
+								placeholder="Select services"
 								disabled={!editModes[event.eventID]}
 								containerStyles="background: #ebedef00 !important; color: black; opacity: 1; outline: none; border:none;"
 							/>
