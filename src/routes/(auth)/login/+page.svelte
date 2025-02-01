@@ -5,6 +5,13 @@
 <div class="login-container" style="background-image: url({bgImage});">
 	<div class="overlay">
 		<div class="login-box">
+			<div class="logo">
+				<div class="flex items-center">
+					<img src="/logo.png" alt="placeholder logo" />
+					<span class="title-logo">Matcha Mixer</span>
+				</div>
+			</div>
+			<!-- <h1 class="title">Login</h1> -->
 			<h1 class="title">Employee Login</h1>
 			<p class="subtitle font-bold">Manage your event in efficiency.</p>
 			<p class="sub-subtitle">Please, enter your details to get sign in to your account.</p>
@@ -25,18 +32,33 @@
 <style>
 	.login-container {
 		display: flex;
-		align-items: center;
-		justify-content: flex-start;
+		/* align-items: center; */
 		height: 100vh;
 		background-position: center;
 		background-size: cover;
-		padding-left: 70.1%;
+		padding-left: 70%;
 	}
 
 	.login-box {
 		background: #ffffff;
-		margin-top: 3rem;
-		width: 350px;
+		margin-top: 5rem;
+		width: 400px;
+	}
+
+	.logo {
+		margin-bottom: 15rem;
+	}
+
+	img {
+		width: 4.25rem;
+		height: 4rem;
+	}
+
+	.title-logo {
+		font-size: 2.5rem;
+		line-height: 2.25rem;
+		font-weight: 900;
+		color: #364617;
 	}
 
 	.title {
