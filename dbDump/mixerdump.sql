@@ -71,7 +71,7 @@ CREATE TABLE `equipments` (
 
 LOCK TABLES `equipments` WRITE;
 /*!40000 ALTER TABLE `equipments` DISABLE KEYS */;
-INSERT INTO `equipments` VALUES ('21559','woooo','Deployed','Requires Cleaning',NULL,NULL),('311471','q','In-Studio','Good-to-Go',NULL,NULL),('384922','aa','Deployed','Good-to-Go',NULL,NULL),('389','test3','Deployed','Requires Cleaning',NULL,'/uploads/test3_1738311361723.png'),('438507','wwwwwwwweeeeee','Deployed','Requires Cleaning',NULL,NULL),('571477','aa','Deployed','Requires Cleaning',NULL,NULL),('577554','test`','Deployed','Requires Cleaning',NULL,NULL),('768625','woooo','Deployed','Requires Cleaning',NULL,NULL),('943091','asd','Deployed','Requires Cleaning',NULL,NULL);
+INSERT INTO `equipments` VALUES ('21559','woooo','Deployed','Requires Cleaning',NULL,NULL),('311471','q','In-Studio','Good-to-Go',NULL,NULL),('384922','aa','Deployed','Good-to-Go',NULL,NULL),('389','test3','Deployed','Requires Cleaning',NULL,'/uploads/test3_1738311361723.png'),('438507','wwwwwwwweeeeee','Deployed','Requires Cleaning',NULL,NULL),('571477','aa','Deployed','Requires Cleaning',NULL,NULL),('577554','test`','Deployed','Requires Cleaning',NULL,NULL),('768625','woooo','Deployed','Requires Cleaning',NULL,NULL),('843089','aa','Deployed','Good-to-Go',NULL,NULL),('943091','asd','Deployed','Requires Cleaning',NULL,NULL);
 /*!40000 ALTER TABLE `equipments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -98,7 +98,7 @@ CREATE TABLE `eventemployee` (
 
 LOCK TABLES `eventemployee` WRITE;
 /*!40000 ALTER TABLE `eventemployee` DISABLE KEYS */;
-INSERT INTO `eventemployee` VALUES (1609,1),(3800,1),(50338,1),(94047,1),(53827,2),(53827,3),(1,4);
+INSERT INTO `eventemployee` VALUES (1,1),(1609,1),(3800,1),(50338,1),(94047,1),(1,2),(53827,2),(1,3),(53827,3),(1,4);
 /*!40000 ALTER TABLE `eventemployee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -125,7 +125,7 @@ CREATE TABLE `eventequipment` (
 
 LOCK TABLES `eventequipment` WRITE;
 /*!40000 ALTER TABLE `eventequipment` DISABLE KEYS */;
-INSERT INTO `eventequipment` VALUES (53827,'21559'),(53827,'384922'),(3800,'571477'),(1,'577554'),(1609,'577554'),(50338,'577554'),(94047,'577554'),(1,'943091');
+INSERT INTO `eventequipment` VALUES (53827,'21559'),(1,'311471'),(53827,'384922'),(1,'389'),(3800,'571477'),(1,'577554'),(1609,'577554'),(50338,'577554'),(94047,'577554'),(1,'943091');
 /*!40000 ALTER TABLE `eventequipment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -198,6 +198,60 @@ INSERT INTO `payments` VALUES ('55215','Unpaid','01321'),('65291','Unpaid','1213
 UNLOCK TABLES;
 
 --
+-- Table structure for table `serviceequipment`
+--
+
+DROP TABLE IF EXISTS `serviceequipment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `serviceequipment` (
+  `serviceID` int DEFAULT NULL,
+  `equipmentID` varchar(255) DEFAULT NULL,
+  KEY `serviceequipment_services_FK` (`serviceID`),
+  KEY `serviceequipment_equipments_FK` (`equipmentID`),
+  CONSTRAINT `serviceequipment_equipments_FK` FOREIGN KEY (`equipmentID`) REFERENCES `equipments` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `serviceequipment_services_FK` FOREIGN KEY (`serviceID`) REFERENCES `services` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `serviceequipment`
+--
+
+LOCK TABLES `serviceequipment` WRITE;
+/*!40000 ALTER TABLE `serviceequipment` DISABLE KEYS */;
+INSERT INTO `serviceequipment` VALUES (NULL,'438507'),(NULL,'438507'),(20578,'384922'),(38025,'438507'),(1,'571477'),(1,'438507'),(1,'389'),(48283,'571477');
+/*!40000 ALTER TABLE `serviceequipment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `serviceevent`
+--
+
+DROP TABLE IF EXISTS `serviceevent`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `serviceevent` (
+  `serviceid` int DEFAULT NULL,
+  `eventid` int DEFAULT NULL,
+  KEY `serviceevent_services_FK` (`serviceid`),
+  KEY `serviceevent_events_FK` (`eventid`),
+  CONSTRAINT `serviceevent_events_FK` FOREIGN KEY (`eventid`) REFERENCES `events` (`eventID`),
+  CONSTRAINT `serviceevent_services_FK` FOREIGN KEY (`serviceid`) REFERENCES `services` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `serviceevent`
+--
+
+LOCK TABLES `serviceevent` WRITE;
+/*!40000 ALTER TABLE `serviceevent` DISABLE KEYS */;
+INSERT INTO `serviceevent` VALUES (1,1),(2,1),(38025,1);
+/*!40000 ALTER TABLE `serviceevent` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `services`
 --
 
@@ -207,12 +261,12 @@ DROP TABLE IF EXISTS `services`;
 CREATE TABLE `services` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
-  `type` int DEFAULT NULL,
   `price` int DEFAULT NULL,
   `inclusion` varchar(255) DEFAULT NULL,
   `rate` varchar(255) DEFAULT NULL,
+  `imagepath` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=48284 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -221,7 +275,7 @@ CREATE TABLE `services` (
 
 LOCK TABLES `services` WRITE;
 /*!40000 ALTER TABLE `services` DISABLE KEYS */;
-INSERT INTO `services` VALUES (1,'Audio Setup',1,3000,'Microphones, Speakers','Hourly'),(2,'Lighting Setup',2,2000,'LED Lights, Stage Effects','Daily');
+INSERT INTO `services` VALUES (1,'Audio Setup',3000,'Microphones, Speakers','Hourly',NULL),(2,'Lighting Setup',2000,'LED Lights, Stage Effects','Daily',NULL),(20578,'weee',0,'okay','daily',NULL),(38025,'weee',0,'okay','hourly',NULL),(48283,'weee',0,'okay',NULL,NULL);
 /*!40000 ALTER TABLE `services` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -238,4 +292,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-01-31 16:44:41
+-- Dump completed on 2025-02-02 19:20:31
