@@ -334,7 +334,7 @@
 								type="text"
 								name="paymentCost"
 								bind:value={event.paymentCost}
-								readonly={!editModes[event.eventID]}
+								readonly
 								class={inputClasses(editModes[event.eventID])}
 							/>
 						</div>

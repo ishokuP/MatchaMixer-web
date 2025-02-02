@@ -13,11 +13,22 @@
 	}
 
 
+	interface allEquipOriginal {
+		id: number;
+		name: number;
+	}
+
 	interface servicesdata {
 		data: services[];
 	}
 
-	export let data: servicesdata = { data: [] };
+	export let data: {
+		data: services[];
+		allEquipment: allEquipOriginal[];
+	};
+	
+	let equipmentSelections = {};
+
 	console.log(data)
 
 
@@ -51,10 +62,10 @@
 	});
 
 
-	// let equipmentItems = data.allEquipment.map((equip) => ({
-	// 	value: equip.id,
-	// 	label: equip.name
-	// }));
+	let equipmentItems = data.allEquipment.map((equip) => ({
+		value: equip.id,
+		label: equip.name
+	}));
 
 
 </script>
@@ -69,6 +80,7 @@
 	<div class="modal-box">
 		<h2 class="text-2xl font-bold ">Add New Service</h2>
 		<form method="post" action="?/update" enctype="multipart/form-data" use:enhance class="space-y-2">
+			<input type="hidden" name="serviceID" bind:value={newService.id} />
 			<label for="serviceName" class="block font-bold">Name</label>
 			<input id="serviceName" type="text" name="serviceName" class="input input-bordered w-full" bind:value={newService.name} />
 
@@ -84,18 +96,22 @@
 			<label for="serviceInclusion" class="block font-bold">Inclusions</label>
 			<input id="serviceInclusion" type="text" name="serviceInclusion" class="input input-bordered w-full" bind:value={newService.inclusion} />
 
+				
+
 			<div class="col-span-3">
 				<h1 class="font-bold">Equipment Needed</h1>
-				<!-- <Select
+
+				<Select
 					items={equipmentItems}
 					multiple={true}
 					name="equipmentNeeded"
-					bind:value={equipmentSelections[event.eventID]}
+					bind:value={equipmentSelections[newService.id]}
 					placeholder="Select equipment"
-					disabled={!editModes[event.eventID]}
 					containerStyles="background: #ebedef00 !important; color: black; opacity: 1; outline: none; border:none;"
-				/> -->
+				/>
+
 			</div>
+
 			<label class="block mb-2">
 				Upload Image:
 				<input
@@ -145,6 +161,17 @@
 
 					<h6 class="text-lg font-bold">Inclusions</h6>
 					<p>{service.inclusion}</p>
+
+					<Select
+					items={equipmentItems}
+					multiple={true}
+					name="equipmentNeeded"
+					disabled
+					bind:value={equipmentSelections[service.id]}
+					placeholder="Select equipment"
+					containerStyles="background: #ebedef00 !important; color: black; opacity: 1; outline: none; border:none;"
+				/>
+
 					<div class="card-actions justify-end">
 						<form method="post" action="?/update" use:enhance>
 							<div class="modal" class:modal-open={modalOpenState[service.id]}>
@@ -174,8 +201,6 @@
 													bind:value={service.name}
 												/>
 											</h2>
-											<h6 class="text-lg font-bold">Type</h6>
-
 										</div>
 
 										<div>
@@ -190,14 +215,15 @@
 											</h2>
 
 											<h6 class="text-lg font-bold">Rate</h6>
-											<h2>
-												<input
-													type="text"
-													name="serviceRate"
-													class="input input-bordered w-full max-w-xs"
-													bind:value={service.rate}
-												/>
-											</h2>
+											<select
+												name="serviceRate"
+												class="select select-bordered w-full max-w-xs"
+												bind:value={service.rate}
+											>
+												<option value="Hourly">Hourly</option>
+												<option value="Daily">Daily</option>
+											</select>
+											
 										</div>
 									</div>
 									<br />
@@ -211,6 +237,18 @@
 												bind:value={service.inclusion}
 											/>
 										</h2>
+									</div>
+									<div>
+										<h6 class="text-lg font-bold">Equipment Needed</h6>
+										<Select
+										items={equipmentItems}
+										multiple={true}
+										name="equipmentNeeded"
+										bind:value={equipmentSelections[newService.id]}
+										placeholder="Select equipment"
+										containerStyles="background: #ebedef00 !important; color: black; opacity: 1; outline: none; border:none;"
+									/>
+					
 									</div>
 									<br /><br />
 									<div class="modal-action flex w-full justify-between">

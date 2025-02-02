@@ -12,7 +12,25 @@ interface Equipment {
 	equipmentCondition: string;
 }
 
-export async function load() {
+interface Services {
+	serviceID: string;
+	serviceName: string;
+	servicePrice: string;
+	serviceInclusion: string;
+	serviceRate: string;
+}
+
+interface LoadResult {
+    data: Services[];
+    equipmentResults: { [key: number]: Equipment[] };
+    allEquipment: allEquipOriginal[];
+}
+function getStringValue(formData: FormData, key: string, defaultValue: string = ''): string {
+	const value = formData.get(key);
+	return value !== null && value !== undefined ? value.toString() : defaultValue;
+}
+
+export async function load():Promise<LoadResult>{
   let mysqlconn = await mysqlconnFn();
   try {
     const results = await mysqlconn
@@ -24,28 +42,27 @@ export async function load() {
       let equipmentResults: { [key: number]: Equipment[] } = {};
       console.log('here!!!!!!!!!!!!!!!!!')
 
-      // const equipmentPromises = results.map((results) =>
-      //   mysqlconn
-      //     .query(
-      //       `SELECT 
-      //       EM.id AS employeeID,
-      //       EM.name AS employeeName,
-      //       EM.role AS employeeRole,
-      //       EM.email,
-      //       EM.number AS contactNumber
-      //   FROM 
-      //       EventEmployee EE 
-      //   JOIN 
-      //       Employee EM ON EE.employeeID = EM.id
-      //   WHERE 
-      //       EE.eventID = ${results.eventID};`
-      //     )
-      //     .then(([rows]) => {
-      //       equipmentResults[results.serviceID] = rows;
-      //     })
-      // );
+      const equipmentPromises = results.map((event) =>
+        mysqlconn
+          .query(
+            `SELECT 
+                      EQ.id AS equipmentID,
+                      EQ.name AS equipmentName,
+                      EQ.status AS equipmentStatus,
+                      EQ.Econdition AS equipmentCondition
+                  FROM 
+                      EventEquipment EEQ 
+                  JOIN 
+                      Equipments EQ ON EEQ.equipmentID = EQ.id
+                  WHERE 
+                      EEQ.eventID = ${event.id};`
+          )
+          .then(([rows]) => {
+            equipmentResults[event.id] = rows;
+          })
+      );
+      await Promise.all(equipmentPromises);
 
-      // await Promise.all(equipmentPromises);
       const allEquipment: allEquipOriginal[] = await mysqlconn
 			.query(`SELECT * FROM Equipments`)
 			.then(([rows]) => rows);
@@ -54,12 +71,13 @@ export async function load() {
 
     return {
       data: results,
-      allEquipment
+      allEquipment,
+      equipmentResults
     };
   } catch (error) {
     console.error("Got an error!!!");
     console.log(error);
-    return error;
+    throw error;
   }
 }
 
@@ -74,6 +92,14 @@ export const actions = {
       const serviceRate = formUpdated.get('serviceRate');
       const serviceInclusion = formUpdated.get('serviceInclusion');
       const image = formUpdated.get('serviceImage') as File;
+
+      const equipmentNeededJson = getStringValue(formUpdated, 'equipmentNeeded', '[]');
+
+
+      const equipmentNeeded = JSON.parse(equipmentNeededJson);
+
+      console.log("Equipment Needed:", equipmentNeeded);
+
 
       console.log(formUpdated);
       console.log("save clicked");
@@ -125,6 +151,12 @@ export const actions = {
                   INSERT INTO services (id, name, price, inclusion, rate, imagepath ) VALUES (?, ?, ?, ?, ?, ?)`,
                   [serviceID, serviceName, servicePrice, serviceInclusion, serviceRate, imagePath]
               );
+                // Clear and reassign equipment
+            await connection.query(`DELETE FROM serviceequipment WHERE serviceID = ?`, [serviceID]);
+            for (const equipment of equipmentNeeded) {
+                await connection.query(`INSERT INTO serviceequipment (serviceID, equipmentID) VALUES (?, ?)`, [serviceID, equipment.value]);
+            }
+              
           }
 
           return { status: 200 };
