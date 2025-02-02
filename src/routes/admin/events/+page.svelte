@@ -158,6 +158,7 @@
 
 	onMount(() => {
 		Object.keys(data.employeeResults).forEach((eventID) => {
+			
 			staffSelections[eventID] = prepareStaffSelected(eventID);
 			equipmentSelections[eventID] = prepareEquipmentSelected(eventID);
 			servicesSelections[eventID] = prepareServiceSelected(eventID);

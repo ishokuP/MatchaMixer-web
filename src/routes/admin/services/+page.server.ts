@@ -42,7 +42,7 @@ export async function load():Promise<LoadResult>{
       let equipmentResults: { [key: number]: Equipment[] } = {};
       console.log('here!!!!!!!!!!!!!!!!!')
 
-      const equipmentPromises = results.map((event) =>
+      const equipmentPromises = results.map((service) =>
         mysqlconn
           .query(
             `SELECT 
@@ -51,14 +51,14 @@ export async function load():Promise<LoadResult>{
                       EQ.status AS equipmentStatus,
                       EQ.Econdition AS equipmentCondition
                   FROM 
-                      EventEquipment EEQ 
+                      serviceequipment EEQ 
                   JOIN 
                       Equipments EQ ON EEQ.equipmentID = EQ.id
                   WHERE 
-                      EEQ.eventID = ${event.id};`
+                      EEQ.serviceID = ${service.id};`
           )
           .then(([rows]) => {
-            equipmentResults[event.id] = rows;
+            equipmentResults[service.id] = rows;
           })
       );
       await Promise.all(equipmentPromises);
@@ -151,13 +151,15 @@ export const actions = {
                   INSERT INTO services (id, name, price, inclusion, rate, imagepath ) VALUES (?, ?, ?, ?, ?, ?)`,
                   [serviceID, serviceName, servicePrice, serviceInclusion, serviceRate, imagePath]
               );
-                // Clear and reassign equipment
+
+              
+          }
+
+            // Clear and reassign equipment
             await connection.query(`DELETE FROM serviceequipment WHERE serviceID = ?`, [serviceID]);
             for (const equipment of equipmentNeeded) {
                 await connection.query(`INSERT INTO serviceequipment (serviceID, equipmentID) VALUES (?, ?)`, [serviceID, equipment.value]);
             }
-              
-          }
 
           return { status: 200 };
       } catch (error) {

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Select from 'svelte-select';
+	import { onMount } from 'svelte';
 
 
 	interface services {
@@ -10,6 +11,12 @@
 		inclusion: string;
 		rate: string;
 		imagepath: string | null;
+	}
+	interface Equipment {
+		equipmentID: string;
+		equipmentName: string;
+		equipmentStatus: string;
+		equipmentCondition: string;
 	}
 
 
@@ -25,6 +32,7 @@
 	export let data: {
 		data: services[];
 		allEquipment: allEquipOriginal[];
+		equipmentResults: { [key: number]: Equipment[] };
 	};
 	
 	let equipmentSelections = {};
@@ -67,6 +75,20 @@
 		label: equip.name
 	}));
 
+		function prepareEquipmentSelected(eventID) {
+		return (
+			data.equipmentResults[eventID]?.map((equip) => ({
+				value: equip.equipmentID,
+				label: equip.equipmentName
+			})) ?? []
+		);
+	}
+	
+	onMount(() => {
+		Object.keys(data.equipmentResults).forEach((serviceID) => {
+			equipmentSelections[serviceID] = prepareEquipmentSelected(serviceID);
+		});
+	});
 
 </script>
 <!-- TODO add if else logic to the image, equipment if possible grab it from the equipment thing?  -->
@@ -162,6 +184,8 @@
 					<h6 class="text-lg font-bold">Inclusions</h6>
 					<p>{service.inclusion}</p>
 
+
+					<h6 class="text-lg font-bold">Equipment Needed</h6>
 					<Select
 					items={equipmentItems}
 					multiple={true}
