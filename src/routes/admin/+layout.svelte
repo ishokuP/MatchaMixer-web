@@ -319,7 +319,7 @@
 		display: flex;
 		align-items: center;
 		height: 95px;
-		/* border-bottom: 1px outset; */
+		/* border-right: 1px outset; */
 		box-shadow: inset -8px 8px 8px 0px rgba(0, 0, 0, 0.08);
 	}
 
@@ -356,8 +356,9 @@
 	}
 
 	header {
-		border-bottom: 1px outset;
+		/* border-bottom: 1px outset; */
 		height: 95px;
 		max-width: 100%;
+		box-shadow: inset 0px -11px 8px 0px rgba(0, 0, 0, 0.08);
 	}
 </style>
