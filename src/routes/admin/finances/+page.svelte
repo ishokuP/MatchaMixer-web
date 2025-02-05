@@ -2,16 +2,17 @@
 	import { enhance } from '$app/forms';
 
 	interface EmployeePayout {
-		eventID: number;
-		eventName: string;
-		name: string;
-		payoutAmount: number;
-		status: 'Paid' | 'Unpaid';
-		employees: Employee[];
+			eventID: number;
+			eventName: string;
+			name: string;
+			payoutAmount: number;
+			status: string;
+			employees: Employee[];
 	}
 
 	interface Employee {
 		employeeName: string;
+		status:string;
 	}
 
 	interface FinanceData {
@@ -23,46 +24,6 @@
 	};
 	console.log(data);
 
-	// dummy data
-	// $: data = {
-	// 	employeePayouts: [
-	// 		{
-	// 			id: 1001,
-	// 			eventName: 'Annual Company Retreat',
-	// 			name: 'Alice Johnson',
-	// 			payoutAmount: 1500,
-	// 			status: 'Paid'
-	// 		},
-	// 		{
-	// 			id: 1002,
-	// 			eventName: 'Quarterly Sales Bonus',
-	// 			name: 'Bob Smith',
-	// 			payoutAmount: 2000,
-	// 			status: 'Unpaid'
-	// 		},
-	// 		{
-	// 			id: 1003,
-	// 			eventName: 'Project X Completion Bonus',
-	// 			name: 'Charlie Davis',
-	// 			payoutAmount: 2500,
-	// 			status: 'Paid'
-	// 		},
-	// 		{
-	// 			id: 1004,
-	// 			eventName: 'Holiday Bonus',
-	// 			name: 'Diana Evans',
-	// 			payoutAmount: 1800,
-	// 			status: 'Unpaid'
-	// 		},
-	// 		{
-	// 			id: 1005,
-	// 			eventName: 'Customer Service Excellence Award',
-	// 			name: 'Edward Brown',
-	// 			payoutAmount: 1200,
-	// 			status: 'Paid'
-	// 		}
-	// 	]
-	// };
 
 	let confirmationDelete: HTMLDialogElement;
 	let currentDeletingEvent: number | null = null;
@@ -72,7 +33,44 @@
 		confirmationDelete.showModal();
 	}
 
-	// function removeConfirmed() {
+	    // Merge eventResults with financesdata to get the correct status
+    function mergeStatus(eventResults: EmployeePayout[], financesdata: any[]) {
+        for (const payout of eventResults) {
+            for (const employee of payout.employees) {
+                // Find the matching status in financesdata
+                const financeRecord = financesdata.find(
+                    (fin) => fin.eventName === payout.eventName && fin.employeeName === employee.employeeName
+                );
+
+                // If we find a match in financesdata, update the status
+                if (financeRecord) {
+                    employee.status = financeRecord.status;
+                } else {
+                    // Default to 'Unpaid' if no record in financesdata
+                    employee.status = 'Unpaid';
+                }
+            }
+        }
+    }
+
+    // Call the merge function to update the statuses
+    mergeStatus(data.eventResults, data.financesdata);
+
+    // Function to toggle the employee's status (locally in the frontend)
+	const toggleStatus = (eventName: string, employeeName: string) => {
+    for (const payout of data.eventResults) {
+        if (payout.eventName === eventName) {
+            const employee = payout.employees.find(emp => emp.employeeName === employeeName);
+            if (employee) {
+                // Toggle the status
+                employee.status = employee.status === 'Paid' ? 'Unpaid' : 'Paid';
+            }
+        }
+    }
+};
+
+
+
 	// 	if (currentDeletingEvent !== null) {
 	// 		data.employeePayouts = data.employeePayouts.filter(
 	// 			(payout) => payout.id !== currentDeletingEvent
@@ -128,34 +126,33 @@
 						<td class="w-48 p-3">{employee.employeeName}</td>
 						<td class="w-32 p-3">{payoutAmount}</td>
 						<td class="w-32 p-3">
-							<!-- Hidden Form to Toggle Status -->
-							<form method="POST" action="?/update" use:enhance>
+							<!-- Button will default to 'Unpaid' if no record in financesemployees, or show actual status -->
+							<form method="POST" action="?/update">
 								<input type="hidden" name="eventID" value={payout.eventID} />
 								<input type="hidden" name="eventName" value={payout.eventName} />
 								<input type="hidden" name="employeeName" value={employee.employeeName} />
 								<input type="hidden" name="payoutAmount" value={payoutAmount} />
-								<input type="hidden" name="currentStatus" value={payout.status} />
+								<input type="hidden" name="currentStatus" value={employee.status} />
 								<button
-									class="btn w-full font-bold {payout.status === 'Paid'
-										? 'text-green-600 text-xl font-extrabold'
-										: 'text-red-600'}"
-									type="submit"
-								>
-									{#if !payout.status || payout.status === 'Unpaid'}
-										Unpaid
-									{:else}
-										{payout.status}
-									{/if}
-								</button>
+								class="btn w-full font-bold {employee.status === 'Paid' ? 'text-green-600 text-xl font-extrabold' : 'text-red-600'}"
+								type="submit"
+								on:click={() => toggleStatus(payout.eventName, employee.employeeName)} 
+							>
+								{#if employee.status === 'Unpaid'}
+									Unpaid
+								{:else}
+									Paid
+								{/if}
+							</button>
+							
 							</form>
 						</td>
 						<td class="w-40 p-3">
-							<!-- Delete Button Opens Confirmation Dialog -->
 							<button
 								class="btn btn-error w-full"
 								type="button"
-								on:click={() => confirmRemove(payout.eventID)}>Delete</button
-							>
+								on:click={() => confirmRemove(payout.eventID)}
+							>Delete</button>
 						</td>
 					</tr>
 				{/each}

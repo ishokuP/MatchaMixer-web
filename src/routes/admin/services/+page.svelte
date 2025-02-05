@@ -255,20 +255,6 @@
 												<option value="Hourly">Hourly</option>
 												<option value="Daily">Daily</option>
 											</select>
-<<<<<<< HEAD
-=======
-										</div>
-										<div>
-											<h6 class="text-lg font-bold">Price</h6>
-											<h2>
-												<input
-													type="text"
-													name="servicePrice"
-													class="input input-bordered w-full max-w-xs"
-													bind:value={service.price}
-												/>
-											</h2>
->>>>>>> bff12a1db11628b45caa560712f062e464202377
 										</div>
 									</div>
 									<br />
