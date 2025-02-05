@@ -156,7 +156,7 @@ CREATE TABLE `events` (
   KEY `paymentID` (`paymentID`),
   KEY `service` (`service`),
   KEY `employeeAssigned` (`employeeAssigned`),
-  CONSTRAINT `events_ibfk_1` FOREIGN KEY (`paymentID`) REFERENCES `payments` (`id`),
+  CONSTRAINT `events_ibfk_1` FOREIGN KEY (`paymentID`) REFERENCES `finances` (`id`),
   CONSTRAINT `events_ibfk_2` FOREIGN KEY (`service`) REFERENCES `services` (`id`),
   CONSTRAINT `events_ibfk_3` FOREIGN KEY (`employeeAssigned`) REFERENCES `employee` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -173,28 +173,55 @@ INSERT INTO `events` VALUES (1,'2025-01-15 00:00:00','Annual Conference','John D
 UNLOCK TABLES;
 
 --
--- Table structure for table `payments`
+-- Table structure for table `finances`
 --
 
-DROP TABLE IF EXISTS `payments`;
+DROP TABLE IF EXISTS `finances`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `payments` (
+CREATE TABLE `finances` (
   `id` varchar(255) NOT NULL,
   `status` varchar(255) DEFAULT NULL,
   `cost` varchar(255) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `payments`
+-- Dumping data for table `finances`
 --
 
-LOCK TABLES `payments` WRITE;
-/*!40000 ALTER TABLE `payments` DISABLE KEYS */;
-INSERT INTO `payments` VALUES ('55215','Unpaid','01321'),('65291','Unpaid','12131'),('78995','Unpaid','12000'),('81859','Unpaid','1212'),('82620','Unpaid','121321'),('PAY001','Paid','5000');
-/*!40000 ALTER TABLE `payments` ENABLE KEYS */;
+LOCK TABLES `finances` WRITE;
+/*!40000 ALTER TABLE `finances` DISABLE KEYS */;
+INSERT INTO `finances` VALUES ('55215','Unpaid','01321',NULL),('65291','Unpaid','12131',NULL),('78995','Unpaid','12000',NULL),('81859','Unpaid','1212',NULL),('82620','Unpaid','121321',NULL),('PAY001','Paid','5000',NULL);
+/*!40000 ALTER TABLE `finances` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `financesemployees`
+--
+
+DROP TABLE IF EXISTS `financesemployees`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `financesemployees` (
+  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `eventName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `employeeName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `amount` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `financesemployees`
+--
+
+LOCK TABLES `financesemployees` WRITE;
+/*!40000 ALTER TABLE `financesemployees` DISABLE KEYS */;
+/*!40000 ALTER TABLE `financesemployees` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -292,4 +319,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-02-02 19:20:31
+-- Dump completed on 2025-02-06  0:22:16

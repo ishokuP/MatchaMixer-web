@@ -73,7 +73,6 @@
 
 	console.log(data.serviceResults);
 
-
 	function formatTime(time: string): string {
 		const [hours, minutes] = time.split(':');
 		const hour = parseInt(hours, 10);
@@ -158,7 +157,6 @@
 
 	onMount(() => {
 		Object.keys(data.employeeResults).forEach((eventID) => {
-			
 			staffSelections[eventID] = prepareStaffSelected(eventID);
 			equipmentSelections[eventID] = prepareEquipmentSelected(eventID);
 			servicesSelections[eventID] = prepareServiceSelected(eventID);
@@ -185,7 +183,7 @@
 		value: equip.id,
 		label: equip.name
 	}));
-	
+
 	let serviceItems = data.allServices.map((serv) => ({
 		value: serv.id,
 		label: serv.name
@@ -205,8 +203,6 @@
 	function formatDateForInput(date: Date): string {
 		return date.toISOString().slice(0, 16);
 	}
-
-	
 </script>
 
 <!-- <h2 class="text-4xl font-extrabold">Events</h2> -->
@@ -340,7 +336,6 @@
 							/>
 						</div>
 
-						
 						<div>
 							<h1 class="font-bold">Payment Status</h1>
 							{#if editModes[event.eventID]}

@@ -118,7 +118,7 @@ export async function load(): Promise<LoadResult> {
             FROM 
                 Events E
             JOIN 
-                Payments P ON E.paymentID = P.id`
+                finances P ON E.paymentID = P.id`
 			)
 			.then(([rows]) => {
 				return rows.map((row: any) => ({
