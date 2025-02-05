@@ -114,7 +114,6 @@
 				<th class="w-48 p-3 text-xl font-extrabold text-white">Employee Name</th>
 				<th class="w-32 p-3 text-xl font-extrabold text-white">Amount</th>
 				<th class="w-32 p-3 text-xl font-extrabold text-white">Status</th>
-				<th class="last-column w-40 p-3 text-xl font-extrabold text-white">Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -147,13 +146,7 @@
 							
 							</form>
 						</td>
-						<td class="w-40 p-3">
-							<button
-								class="btn btn-error w-full"
-								type="button"
-								on:click={() => confirmRemove(payout.eventID)}
-							>Delete</button>
-						</td>
+
 					</tr>
 				{/each}
 			{/each}
