@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-
+	import { onMount } from 'svelte';
 
 	interface Equipment {
 		id: string;
@@ -8,6 +8,7 @@
 		status: string;
 		Econdition: string;
 		AssignedEvents: string;
+		imagePath: string;
 	}
 
 	interface EquipmentData {
@@ -16,6 +17,34 @@
 
 	export let data: EquipmentData = { data: [] };
 	let editModes = {};
+	let currentDeletingEvent = null;
+	let confirmationDelete;
+	let confirmationAdd; // Bind the dialog element
+	let newEquipment = {
+		id: '',
+		name: '',
+		status: '',
+		Econdition: '',
+		AssignedEvents: ''
+	};
+
+	const closeModal = () => {
+		confirmationAdd.close();
+	};
+
+	function handleEditSaveToggle(event, equipID) {
+		if (editModes[equipID]) {
+			editModes[equipID] = false;
+		} else {
+			event.preventDefault();
+			editModes[equipID] = true;
+		}
+	}
+
+	function promptDelete(equipID) {
+		currentDeletingEvent = equipID;
+		confirmationDelete.showModal();
+	}
 
 	function inputClasses(isEditMode) {
 		if (isEditMode) {
@@ -24,17 +53,112 @@
 			return 'bg-transparent border-0 p-0 cursor-default text-base leading-normal';
 		}
 	}
+
 </script>
 
-<h2 class="text-4xl font-extrabold">Equipments</h2>
+<!-- <h2 class="text-4xl font-extrabold">Equipments</h2> -->
 
+<dialog bind:this={confirmationDelete} class="modal">
+	<form method="post" action="?/delete" use:enhance>
+		<input type="hidden" name="equipID" value={currentDeletingEvent} />
+		<div class="modal-box">
+			<h3 class="text-lg font-bold">Confirm Delete</h3>
+			<p class="py-4">Are you sure you want to delete this Equipment?</p>
+			<div class="modal-action">
+				<button type="submit" class="btn btn-error">Delete</button>
+				<button type="button" class="btn" on:click={() => confirmationDelete.close()}>Cancel</button
+				>
+			</div>
+		</div>
+	</form>
+</dialog>
 
-<div class="flex flex-wrap justify-center">
+<dialog bind:this={confirmationAdd} class="modal">
+	<form method="post" action="?/update" use:enhance enctype="multipart/form-data">
+		<div class="modal-box">
+			<h3 class="text-lg font-bold">Add New Equipment</h3>
+			<div class="py-4">
+				<!-- Equipment Name -->
+				<label class="block mb-2">
+					Name:
+					<input
+						type="text"
+						bind:value={newEquipment.name}
+						class="input input-bordered w-full"
+						placeholder="Enter equipment name"
+						name="equipName"
+						required
+					/>
+				</label>
+
+				<!-- Equipment Status Dropdown -->
+				<label class="block mb-2">
+					Status:
+					<select
+						bind:value={newEquipment.status}
+						class="select select-bordered w-full"
+						required
+						name="equipStatus"
+					>
+						<option value="In-Studio">In-Studio</option>
+						<option value="Deployed">Deployed</option>
+						<option value="For Repair">For Repair</option>
+						<option value="For Replacement">For Replacement</option>
+						<option value="For Testing">For Testing</option>
+						<option value="Lost">Lost</option>
+						<option value="Retired">Retired</option>
+					</select>
+				</label>
+
+				<!-- Equipment Condition Dropdown -->
+				<label class="block mb-2">
+					Condition:
+					<select
+						bind:value={newEquipment.Econdition}
+						class="select select-bordered w-full"
+						required
+						name="equipCondition"
+					>
+						<option value="Good-to-Go">Good-to-Go</option>
+						<option value="Requires Cleaning">Requires Cleaning</option>
+						<option value="Minor Damage">Minor Damage</option>
+						<option value="Needs Repair">Needs Repair</option>
+						<option value="End-of-Life">End-of-Life</option>
+						<option value="Under Inspection">Under Inspection</option>
+					</select>
+				</label>
+
+				<!-- Image Upload -->
+				<label class="block mb-2">
+					Upload Image:
+					<input
+						type="file"
+						accept="image/*"
+						class="file-input file-input-bordered w-full"
+						name="equipImage"
+					/>
+				</label>
+			</div>
+			<div class="modal-action">
+				<button type="submit" class="btn btn-success" on:click={() => confirmationAdd.close()}
+					>Add Equipment</button
+				>
+				<button type="button" class="btn" on:click={() => confirmationAdd.close()}> Cancel </button>
+			</div>
+		</div>
+	</form>
+</dialog>
+
+<div class="p-4 mt-4">
+	<button class="btn w-40" on:click={() => confirmationAdd.showModal()}> + Add Equipment </button>
+</div>
+
+<div class="flex flex-wrap justify-center mt-4">
 	{#each data.data as equipment}
 		<div class="card mx-2.5 my-2.5 w-96 bg-base-100">
 			<figure>
 				<img
-					src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
+				src={equipment.imagePath ? equipment.imagePath : "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"}
 					alt="Equipment"
 				/>
 			</figure>
@@ -55,6 +179,7 @@
 							</h2>
 						</div>
 						<div>
+							<p><b>Status</b></p>
 							<input
 								type="text"
 								name="equipStatus"
@@ -65,6 +190,7 @@
 							/>
 						</div>
 						<div>
+							<p><b>Condition</b></p>
 							<input
 								type="text"
 								name="equipCondition"
@@ -84,14 +210,36 @@
 									{/each}
 								</ul>
 							{:else}
-								<span>None</span>
+								<br /><span>None</span>
 							{/if}
 						</div>
 					</div>
 
+					<div class="card-actions justify-end">
+						<button
+							type="submit"
+							class="btn btn-primary flex-1"
+							on:click={(e) => handleEditSaveToggle(e, equipment.id)}
+						>
+							{editModes[equipment.id] ? 'Save' : 'Edit'}
+						</button>
 
+						<button
+							class="btn btn-error flex-1"
+							on:click|preventDefault={() => promptDelete(equipment.id)}
+						>
+							Delete
+						</button>
+					</div>
 				</form>
 			</div>
 		</div>
 	{/each}
 </div>
+
+<style>
+	.equipment {
+		display: flex;
+		
+	}
+</style>
