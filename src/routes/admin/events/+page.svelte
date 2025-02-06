@@ -94,7 +94,7 @@
 		if (isEditMode) {
 			return 'input input-bordered w-full edit-mode'; // Apply the edit-mode class
 		} else {
-			return 'input read-only'; // Apply the read-only class
+			return 'read-only'; // Apply the read-only class
 		}
 	}
 
@@ -245,7 +245,7 @@
 							readonly={!editModes[event.eventID]}
 							class="{inputClasses(editModes[event.eventID])} base w-full mb-4"
 							placeholder="Event Name"
-							style="font-size: 2rem; font-weight: 700; "
+							style="font-size: 2rem; font-weight: 700;"
 						/>
 
 						<!-- Client Name (Full row, second row) -->
@@ -342,8 +342,8 @@
 								<select
 									name="paymentStatus"
 									bind:value={event.paymentStatus}
-									class={inputClasses(true)}
-									style="background-color: transparent; opacity: 1; outline: none;"
+									class="{inputClasses(true)} bg-base-200"
+									style=""
 								>
 									<option value="Pending">Pending</option>
 									<option value="Paid">Paid</option>
@@ -369,7 +369,9 @@
 								bind:value={staffSelections[event.eventID]}
 								placeholder="Select employees"
 								disabled={!editModes[event.eventID]}
-								containerStyles="background-color: transparent; color: black; opacity: 1; outline: none; border:none;"
+								containerStyles={editModes[event.eventID]
+									? 'background: #ebedef00 !important; opacity: 1; outline: none; border: solid 1px;'
+									: 'background: #ebedef00 !important; color: black; opacity: 1; outline: none; border: none;'}
 							/>
 						</div>
 
@@ -383,7 +385,9 @@
 								bind:value={equipmentSelections[event.eventID]}
 								placeholder="Select equipment"
 								disabled={!editModes[event.eventID]}
-								containerStyles="background: #ebedef00 !important; color: black; opacity: 1; outline: none; border:none;"
+								containerStyles={editModes[event.eventID]
+									? 'background: #ebedef00 !important; opacity: 1; outline: none; border: solid 1px;'
+									: 'background: #ebedef00 !important; color: black; opacity: 1; outline: none; border: none;'}
 							/>
 						</div>
 
@@ -396,7 +400,9 @@
 								bind:value={servicesSelections[event.eventID]}
 								placeholder="Select services"
 								disabled={!editModes[event.eventID]}
-								containerStyles="background: #ebedef00 !important; color: black; opacity: 1; outline: none; border:none;"
+								containerStyles={editModes[event.eventID]
+									? 'background: #ebedef00 !important; opacity: 1; outline: none; border: solid 1px;'
+									: 'background: #ebedef00 !important; color: black; opacity: 1; outline: none; border: none;'}
 							/>
 						</div>
 
@@ -466,6 +472,7 @@
 		background-color: #4caf50; /* Example color for the icon */
 		color: white; /* Ensure the icon itself has a contrasting color */
 	}
+
 	input {
 		background-color: transparent;
 		font-size: 1.125rem;
@@ -497,7 +504,6 @@
 		font-weight: 600;
 		padding: 0.5rem;
 		width: 100%;
-		background-color: transparent;
 		outline: none;
 	}
 
