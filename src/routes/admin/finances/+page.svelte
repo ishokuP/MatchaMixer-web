@@ -113,7 +113,7 @@
 				<th class="w-48 p-3 text-xl font-extrabold text-white">Event Name</th>
 				<th class="w-48 p-3 text-xl font-extrabold text-white">Employee Name</th>
 				<th class="w-32 p-3 text-xl font-extrabold text-white">Amount</th>
-				<th class="w-32 p-3 text-xl font-extrabold text-white">Status</th>
+				<th class="last-column w-32 p-3 text-xl font-extrabold text-white">Status</th>
 			</tr>
 		</thead>
 		<tbody>
