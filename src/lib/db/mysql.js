@@ -15,7 +15,7 @@ export function mysqlconnFn() {
       host: "localhost",
       user: "root",
       password: "root",
-      database: "matchamixer",
+      database: "matchadeploy",
     });
   }
 

@@ -116,7 +116,7 @@ export async function load(): Promise<LoadResult> {
                 P.status AS paymentStatus,
                 P.cost AS paymentCost
             FROM 
-                Events E
+                events E
             JOIN 
                 finances P ON E.paymentID = P.id`
 			)
@@ -126,7 +126,7 @@ export async function load(): Promise<LoadResult> {
 					eventDate: parseDate(row.eventDate) // Convert to Date object
 				}));
 			});
-
+            console.log(events);
 		let employeeResults: { [key: number]: Employee[] } = {};
 		let equipmentResults: { [key: number]: Equipment[] } = {};
         let serviceResults: { [key: number]: Services[] } = {};
@@ -270,26 +270,6 @@ export const actions = {
             connection = await mysqlconnFn();
             await connection.beginTransaction();
 
-            // Check if paymentID exists in the payments table
-            if (paymentID) {
-                const [paymentExists] = await connection.query(`SELECT 1 FROM payments WHERE id = ?`, [paymentID]);
-                if (!paymentExists.length) {
-                    // Insert new payment if it doesn't exist
-                    await connection.query(
-                        `INSERT INTO payments (id, status, cost) VALUES (?, ?, ?)`,
-                        [paymentID, paymentStatus, paymentCost]
-                    );
-                } else {
-                    // Update payment details
-                    await connection.query(
-                        `UPDATE payments SET
-                        status = ?,
-                        cost = ?
-                        WHERE id = ?`,
-                        [paymentStatus, paymentCost, paymentID]
-                    );
-                }
-            }
 
             // Check if eventID exists in the events table
             const [eventExists] = await connection.query(`SELECT 1 FROM events WHERE eventID = ?`, [eventID]);
@@ -515,10 +495,6 @@ export const actions = {
             // Delete the event itself
             await connection.query(`DELETE FROM events WHERE eventID = ?`, [eventID]);
 
-            // Optionally, delete the associated payment record if it exists
-            if (paymentID) {
-                await connection.query(`DELETE FROM payments WHERE id = ?`, [paymentID]);
-            }
 
             await connection.commit();
 

@@ -36,6 +36,7 @@
 	}
 </script>
 
+
 <div class="drawer lg:drawer-open flex">
 	<input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
 
