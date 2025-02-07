@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
--- Host: localhost    Database: matchamixer
+-- Host: localhost    Database: matchadeploy
 -- ------------------------------------------------------
 -- Server version	9.1.0
 
@@ -41,7 +41,7 @@ CREATE TABLE `employee` (
 
 LOCK TABLES `employee` WRITE;
 /*!40000 ALTER TABLE `employee` DISABLE KEYS */;
-INSERT INTO `employee` VALUES (1,'Alice Johnson','alice.j@example.com','1234567890','123 Maple Street','AliceJ','password123','Manager'),(2,'Bob Smith','bob.smith@example.com','9876543210','456 Oak Avenue','BobS','securepass','Technician'),(3,'Charlie Brown','charlie.b@example.com','4567891230','789 Pine Road','CharlieB','mypassword','Assistant'),(4,'AdminUser','admin@example.com','242152456252','AdminRoad','AdminTest','adminpassword','Admin');
+INSERT INTO `employee` VALUES (1,'John Doe','john@example.com','1234567890','123 Main St','johndoe_fb','password123','Manager'),(2,'Jane Smith','jane@example.com','0987654321','456 Oak St','janesmith_fb','securepass','Staff'),(3,'Alice Johnson','alice@example.com','1112223333','789 Pine St','alicejohnson_fb','alicepass','Technician'),(4,'AdminUser','admin@example.com','242152456252','AdminRoad','AdminTest','adminpassword','Admin');
 /*!40000 ALTER TABLE `employee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -60,8 +60,8 @@ CREATE TABLE `equipments` (
   `event` int DEFAULT NULL,
   `filepath` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `equipments_ibfk_1` (`event`),
-  CONSTRAINT `equipments_ibfk_1` FOREIGN KEY (`event`) REFERENCES `events` (`eventID`)
+  KEY `fk_equipments_event` (`event`),
+  CONSTRAINT `fk_equipments_event` FOREIGN KEY (`event`) REFERENCES `events` (`eventID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -71,7 +71,7 @@ CREATE TABLE `equipments` (
 
 LOCK TABLES `equipments` WRITE;
 /*!40000 ALTER TABLE `equipments` DISABLE KEYS */;
-INSERT INTO `equipments` VALUES ('21559','woooo','Deployed','Requires Cleaning',NULL,NULL),('311471','q','In-Studio','Good-to-Go',NULL,NULL),('384922','aa','Deployed','Good-to-Go',NULL,NULL),('389','test3','Deployed','Requires Cleaning',NULL,'/uploads/test3_1738311361723.png'),('438507','wwwwwwwweeeeee','Deployed','Requires Cleaning',NULL,NULL),('571477','aa','Deployed','Requires Cleaning',NULL,NULL),('577554','test`','Deployed','Requires Cleaning',NULL,NULL),('768625','woooo','Deployed','Requires Cleaning',NULL,NULL),('843089','aa','Deployed','Good-to-Go',NULL,NULL),('943091','asd','Deployed','Requires Cleaning',NULL,NULL);
+INSERT INTO `equipments` VALUES ('EQ001','Speaker System','Available','Good',1,'images/speaker.jpg'),('EQ002','Wireless Microphone','In Use','Excellent',2,'images/mic.jpg');
 /*!40000 ALTER TABLE `equipments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -86,9 +86,9 @@ CREATE TABLE `eventemployee` (
   `eventID` int NOT NULL,
   `employeeID` int NOT NULL,
   PRIMARY KEY (`eventID`,`employeeID`),
-  KEY `eventemployee_ibfk_2` (`employeeID`),
-  CONSTRAINT `eventemployee_ibfk_1` FOREIGN KEY (`eventID`) REFERENCES `events` (`eventID`),
-  CONSTRAINT `eventemployee_ibfk_2` FOREIGN KEY (`employeeID`) REFERENCES `employee` (`id`)
+  KEY `fk_eventemployee_employee` (`employeeID`),
+  CONSTRAINT `fk_eventemployee_employee` FOREIGN KEY (`employeeID`) REFERENCES `employee` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_eventemployee_event` FOREIGN KEY (`eventID`) REFERENCES `events` (`eventID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -98,7 +98,7 @@ CREATE TABLE `eventemployee` (
 
 LOCK TABLES `eventemployee` WRITE;
 /*!40000 ALTER TABLE `eventemployee` DISABLE KEYS */;
-INSERT INTO `eventemployee` VALUES (1,1),(1609,1),(3800,1),(50338,1),(94047,1),(1,2),(53827,2),(1,3),(53827,3),(1,4);
+INSERT INTO `eventemployee` VALUES (1,1),(2,2),(1,3);
 /*!40000 ALTER TABLE `eventemployee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -113,9 +113,9 @@ CREATE TABLE `eventequipment` (
   `eventID` int NOT NULL,
   `equipmentID` varchar(255) NOT NULL,
   PRIMARY KEY (`eventID`,`equipmentID`),
-  KEY `eventequipment_ibfk_2` (`equipmentID`),
-  CONSTRAINT `eventequipment_ibfk_1` FOREIGN KEY (`eventID`) REFERENCES `events` (`eventID`),
-  CONSTRAINT `eventequipment_ibfk_2` FOREIGN KEY (`equipmentID`) REFERENCES `equipments` (`id`)
+  KEY `fk_eventequipment_equipment` (`equipmentID`),
+  CONSTRAINT `fk_eventequipment_equipment` FOREIGN KEY (`equipmentID`) REFERENCES `equipments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_eventequipment_event` FOREIGN KEY (`eventID`) REFERENCES `events` (`eventID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -125,7 +125,7 @@ CREATE TABLE `eventequipment` (
 
 LOCK TABLES `eventequipment` WRITE;
 /*!40000 ALTER TABLE `eventequipment` DISABLE KEYS */;
-INSERT INTO `eventequipment` VALUES (53827,'21559'),(1,'311471'),(53827,'384922'),(1,'389'),(3800,'571477'),(1,'577554'),(1609,'577554'),(50338,'577554'),(94047,'577554'),(1,'943091');
+INSERT INTO `eventequipment` VALUES (1,'EQ001'),(2,'EQ002');
 /*!40000 ALTER TABLE `eventequipment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -137,8 +137,9 @@ DROP TABLE IF EXISTS `events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `events` (
-  `eventID` int NOT NULL,
+  `eventID` int NOT NULL AUTO_INCREMENT,
   `eventStart` datetime DEFAULT NULL,
+  `eventEnd` datetime DEFAULT NULL,
   `eventName` varchar(255) DEFAULT NULL,
   `eventClientName` varchar(255) DEFAULT NULL,
   `eventClientContact` varchar(255) DEFAULT NULL,
@@ -150,16 +151,12 @@ CREATE TABLE `events` (
   `service` int DEFAULT NULL,
   `employeeAssigned` int DEFAULT NULL,
   `duration` int DEFAULT NULL,
-  `eventEnd` datetime DEFAULT NULL,
   PRIMARY KEY (`eventID`),
-  UNIQUE KEY `eventType` (`eventType`),
-  KEY `paymentID` (`paymentID`),
-  KEY `service` (`service`),
-  KEY `employeeAssigned` (`employeeAssigned`),
-  CONSTRAINT `events_ibfk_1` FOREIGN KEY (`paymentID`) REFERENCES `finances` (`id`),
-  CONSTRAINT `events_ibfk_2` FOREIGN KEY (`service`) REFERENCES `services` (`id`),
-  CONSTRAINT `events_ibfk_3` FOREIGN KEY (`employeeAssigned`) REFERENCES `employee` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `fk_events_service` (`service`),
+  KEY `fk_events_employee` (`employeeAssigned`),
+  CONSTRAINT `fk_events_employee` FOREIGN KEY (`employeeAssigned`) REFERENCES `employee` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_events_service` FOREIGN KEY (`service`) REFERENCES `services` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -168,7 +165,7 @@ CREATE TABLE `events` (
 
 LOCK TABLES `events` WRITE;
 /*!40000 ALTER TABLE `events` DISABLE KEYS */;
-INSERT INTO `events` VALUES (1,'2025-01-15 00:00:00','Annual Conference','John Doe','1234567890','Grand Hall','Conference','Sound System, Lighting Rig','PAY001','VIP setup',1,1,120,'2025-01-15 00:00:00'),(1609,'2025-01-21 03:54:00','sameday2','wevqrewqveq','awevaev','aeva','aeva',NULL,'55215','eav',NULL,NULL,NULL,'2025-01-21 06:55:00'),(3800,'2025-01-21 00:30:00','sameday1','test2','eadavda','aaaaa','aaaa',NULL,'65291','aeva',NULL,NULL,NULL,'2025-01-21 02:30:00'),(50338,'2025-01-21 12:55:00','sameday3','asdvaeaev','aaaaa','a','evae',NULL,'82620','aevaev',NULL,NULL,NULL,'2025-01-21 15:55:00'),(53827,'2025-10-15 08:00:00','Graduation','College of Computer Science','09999951025','PUP','Scholar',NULL,'78995','',NULL,NULL,NULL,'2025-10-15 17:00:00'),(94047,'2024-12-30 15:23:00','test3','ASA','AA','A231','ADA',NULL,'81859','A',NULL,NULL,NULL,'2025-01-10 15:23:00');
+INSERT INTO `events` VALUES (1,'2025-03-15 18:00:00','2025-03-15 23:00:00','Wedding Reception','Michael Lee','5551234567','Grand Hall','Wedding','Speakers, Lights','PAY123','Special Lighting Effects',1,1,5),(2,'2025-04-10 19:00:00','2025-04-10 23:30:00','Corporate Event','Anna Brown','5559876543','Downtown Conference Center','Corporate','Projector, Mic','PAY124','Extra Microphones',2,2,5);
 /*!40000 ALTER TABLE `events` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -194,7 +191,7 @@ CREATE TABLE `finances` (
 
 LOCK TABLES `finances` WRITE;
 /*!40000 ALTER TABLE `finances` DISABLE KEYS */;
-INSERT INTO `finances` VALUES ('55215','Unpaid','01321',NULL),('65291','Unpaid','12131',NULL),('78995','Unpaid','12000',NULL),('81859','Unpaid','1212',NULL),('82620','Unpaid','121321',NULL),('PAY001','Paid','5000',NULL);
+INSERT INTO `finances` VALUES ('FIN001','Paid','1500','2025-03-10 12:00:00'),('FIN002','Pending','2500','2025-04-05 15:30:00'),('PAY123','Paid','1500','2025-03-10 12:00:00'),('PAY124','Pending','2500','2025-04-05 15:30:00');
 /*!40000 ALTER TABLE `finances` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -207,10 +204,10 @@ DROP TABLE IF EXISTS `financesemployees`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `financesemployees` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `eventName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `employeeName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `amount` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `eventName` varchar(255) DEFAULT NULL,
+  `employeeName` varchar(255) DEFAULT NULL,
+  `amount` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -221,7 +218,7 @@ CREATE TABLE `financesemployees` (
 
 LOCK TABLES `financesemployees` WRITE;
 /*!40000 ALTER TABLE `financesemployees` DISABLE KEYS */;
-INSERT INTO `financesemployees` VALUES (1,'Annual Conference','Alice Johnson','1500','Unpaid');
+INSERT INTO `financesemployees` VALUES (1,'Wedding Reception','John Doe','500','Paid'),(2,'Corporate Event','Jane Smith','750','Unpaid'),(3,'Wedding Reception','Alice Johnson','1500','Paid');
 /*!40000 ALTER TABLE `financesemployees` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -235,10 +232,10 @@ DROP TABLE IF EXISTS `serviceequipment`;
 CREATE TABLE `serviceequipment` (
   `serviceID` int DEFAULT NULL,
   `equipmentID` varchar(255) DEFAULT NULL,
-  KEY `serviceequipment_services_FK` (`serviceID`),
-  KEY `serviceequipment_equipments_FK` (`equipmentID`),
-  CONSTRAINT `serviceequipment_equipments_FK` FOREIGN KEY (`equipmentID`) REFERENCES `equipments` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `serviceequipment_services_FK` FOREIGN KEY (`serviceID`) REFERENCES `services` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  KEY `fk_serviceequipment_service` (`serviceID`),
+  KEY `fk_serviceequipment_equipment` (`equipmentID`),
+  CONSTRAINT `fk_serviceequipment_equipment` FOREIGN KEY (`equipmentID`) REFERENCES `equipments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_serviceequipment_service` FOREIGN KEY (`serviceID`) REFERENCES `services` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -248,7 +245,7 @@ CREATE TABLE `serviceequipment` (
 
 LOCK TABLES `serviceequipment` WRITE;
 /*!40000 ALTER TABLE `serviceequipment` DISABLE KEYS */;
-INSERT INTO `serviceequipment` VALUES (NULL,'438507'),(NULL,'438507'),(20578,'384922'),(38025,'438507'),(1,'571477'),(1,'438507'),(1,'389'),(48283,'571477');
+INSERT INTO `serviceequipment` VALUES (1,'EQ001'),(2,'EQ002');
 /*!40000 ALTER TABLE `serviceequipment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -262,10 +259,10 @@ DROP TABLE IF EXISTS `serviceevent`;
 CREATE TABLE `serviceevent` (
   `serviceid` int DEFAULT NULL,
   `eventid` int DEFAULT NULL,
-  KEY `serviceevent_services_FK` (`serviceid`),
-  KEY `serviceevent_events_FK` (`eventid`),
-  CONSTRAINT `serviceevent_events_FK` FOREIGN KEY (`eventid`) REFERENCES `events` (`eventID`),
-  CONSTRAINT `serviceevent_services_FK` FOREIGN KEY (`serviceid`) REFERENCES `services` (`id`)
+  KEY `fk_serviceevent_service` (`serviceid`),
+  KEY `fk_serviceevent_event` (`eventid`),
+  CONSTRAINT `fk_serviceevent_event` FOREIGN KEY (`eventid`) REFERENCES `events` (`eventID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_serviceevent_service` FOREIGN KEY (`serviceid`) REFERENCES `services` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -275,7 +272,7 @@ CREATE TABLE `serviceevent` (
 
 LOCK TABLES `serviceevent` WRITE;
 /*!40000 ALTER TABLE `serviceevent` DISABLE KEYS */;
-INSERT INTO `serviceevent` VALUES (1,1),(2,1),(38025,1);
+INSERT INTO `serviceevent` VALUES (1,1),(2,2);
 /*!40000 ALTER TABLE `serviceevent` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -294,7 +291,7 @@ CREATE TABLE `services` (
   `rate` varchar(255) DEFAULT NULL,
   `imagepath` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=48284 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -303,12 +300,12 @@ CREATE TABLE `services` (
 
 LOCK TABLES `services` WRITE;
 /*!40000 ALTER TABLE `services` DISABLE KEYS */;
-INSERT INTO `services` VALUES (1,'Audio Setup',3000,'Microphones, Speakers','Hourly',NULL),(2,'Lighting Setup',2000,'LED Lights, Stage Effects','Daily',NULL),(20578,'weee',0,'okay','daily',NULL),(38025,'weee',0,'okay','hourly',NULL),(48283,'weee',0,'okay',NULL,NULL);
+INSERT INTO `services` VALUES (1,'Basic Package',1000,'Sound System, Lights','4.5','images/basic.jpg'),(2,'Premium Package',2500,'Sound System, Lights, DJ','5.0','images/premium.jpg');
 /*!40000 ALTER TABLE `services` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Dumping routines for database 'matchamixer'
+-- Dumping routines for database 'matchadeploy'
 --
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -320,4 +317,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-02-06  1:03:51
+-- Dump completed on 2025-02-08  1:45:03
