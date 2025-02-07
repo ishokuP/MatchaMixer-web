@@ -176,7 +176,7 @@
 <div class="flex flex-wrap">
 	{#each data.data as service}
 		<div class=" mx-2.5 my-2.5 w-full self-auto p-2">
-			<div class="card bg-base-100 shadow-xl lg:card-side">
+			<div class="card bg-base-200 lg:card-side font-medium">
 				<figure>
 					<img
 						src={service.imagepath
@@ -194,18 +194,18 @@
 					/> -->
 				</figure>
 				<div class="card-body w-full">
-					<h3 class="card-title text-3xl font-bold">{service.name}</h3>
+					<h3 class="card-title text-3xl font-extrabold mb-5">{service.name}</h3>
 
-					<h6 class="text-lg font-bold">Price</h6>
+					<h6 class="text-xl font-extrabold">Price</h6>
 					<p>{service.price}</p>
 
-					<h6 class="text-lg font-bold">Rate</h6>
+					<h6 class="text-xl font-extrabold">Rate</h6>
 					<p>{service.rate}</p>
 
-					<h6 class="text-lg font-bold">Inclusions</h6>
+					<h6 class="text-xl font-extrabold">Inclusions</h6>
 					<p>{service.inclusion}</p>
 
-					<h6 class="text-lg font-bold">Equipment Needed</h6>
+					<h6 class="text-xl font-extrabold">Equipment Needed</h6>
 					<Select
 						items={equipmentItems}
 						multiple={true}
@@ -221,7 +221,7 @@
 							<div class="modal" class:modal-open={modalOpenState[service.id]}>
 								<div class="modal-box">
 									<div>
-										<h6 class="text-lg font-bold">ID</h6>
+										<h6 class="text-xl font-extrabold">ID</h6>
 
 										<h2>
 											<input
@@ -236,7 +236,7 @@
 									</div>
 									<div class="flex space-x-4">
 										<div>
-											<h6 class="text-lg font-bold">Name</h6>
+											<h6 class="text-xl font-extrabold">Name</h6>
 											<h2>
 												<input
 													type="text"
@@ -246,7 +246,7 @@
 												/>
 											</h2>
 
-											<h6 class="text-lg font-bold">Rate</h6>
+											<h6 class="text-xl font-extrabold">Rate</h6>
 											<select
 												name="serviceRate"
 												class="select select-bordered w-full max-w-xs"
@@ -259,7 +259,7 @@
 									</div>
 									<br />
 									<div>
-										<h6 class="text-lg font-bold">Inclusion</h6>
+										<h6 class="text-xl font-extrabold">Inclusion</h6>
 										<h2>
 											<input
 												type="text"
@@ -270,14 +270,15 @@
 										</h2>
 									</div>
 									<div>
-										<h6 class="text-lg font-bold">Equipment Needed</h6>
+										<h6 class="text-xl font-extrabold">Equipment Needed</h6>
 										<Select
 											items={equipmentItems}
 											multiple={true}
 											name="equipmentNeeded"
 											bind:value={equipmentSelections[newService.id]}
 											placeholder="Select equipment"
-											containerStyles="background: #ebedef00 !important; color: black; opacity: 1; outline: none; border:none;"
+											class="input input-bordered w-full"
+											containerStyles="background: #ebedef00; opacity: 1; border: solid 1px;"
 										/>
 									</div>
 									<br /><br />
@@ -310,3 +311,45 @@
 		</div>
 	{/each}
 </div>
+
+<style>
+	.card {
+		font-size: 1.125rem;
+		font-weight: 600;
+	}
+
+	.card-body {
+		padding: 1.5rem;
+	}
+
+	figure {
+		padding: 1rem;
+		margin-left: 1rem;
+	}
+
+	img {
+		border-radius: 0.75rem;
+	}
+
+	p {
+		padding: 0 0 0 8px;
+		margin-bottom: 1rem;
+	}
+
+	input {
+		/* background-color: transparent; */
+		font-size: 1.125rem;
+		font-weight: 600;
+		padding: 0.5rem;
+		border: 1px solid !important;
+		width: 100%;
+	}
+
+	select {
+		border: 1px solid !important;
+		font-size: 1.125rem;
+		font-weight: 600;
+		width: 100%;
+		outline: none;
+	}
+</style>

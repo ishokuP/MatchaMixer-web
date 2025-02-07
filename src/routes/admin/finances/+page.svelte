@@ -119,7 +119,7 @@
 		<tbody>
 			{#each data.eventResults as payout}
 				{#each payout.employees as employee}
-					<tr class="border-b-2">
+					<tr class="border-b-2 hover">
 						<td class="w-20 p-3">{payout.eventID}</td>
 						<td class="w-48 p-3">{payout.eventName}</td>
 						<td class="w-48 p-3">{employee.employeeName}</td>

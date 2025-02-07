@@ -48,9 +48,9 @@
 
 	function inputClasses(isEditMode) {
 		if (isEditMode) {
-			return 'input input-bordered w-full';
+			return 'input input-bordered w-full edit-mode';
 		} else {
-			return 'bg-transparent border-0 p-0 cursor-default text-base leading-normal';
+			return 'input input-bordered read-only';
 		}
 	}
 
@@ -79,12 +79,12 @@
 			<h3 class="text-lg font-bold">Add New Equipment</h3>
 			<div class="py-4">
 				<!-- Equipment Name -->
-				<label class="block mb-2">
+				<label class="block mb-3 text-xl font-extrabold">
 					Name:
 					<input
 						type="text"
 						bind:value={newEquipment.name}
-						class="input input-bordered w-full"
+						class="input input-bordered name mt-1"
 						placeholder="Enter equipment name"
 						name="equipName"
 						required
@@ -92,11 +92,11 @@
 				</label>
 
 				<!-- Equipment Status Dropdown -->
-				<label class="block mb-2">
+				<label class="block mb-3 text-xl font-extrabold">
 					Status:
 					<select
 						bind:value={newEquipment.status}
-						class="select select-bordered w-full"
+						class="select select-bordered w-full mt-1"
 						required
 						name="equipStatus"
 					>
@@ -111,11 +111,11 @@
 				</label>
 
 				<!-- Equipment Condition Dropdown -->
-				<label class="block mb-2">
+				<label class="block mb-3 text-xl font-extrabold">
 					Condition:
 					<select
 						bind:value={newEquipment.Econdition}
-						class="select select-bordered w-full"
+						class="select select-bordered w-full mt-1"
 						required
 						name="equipCondition"
 					>
@@ -129,12 +129,12 @@
 				</label>
 
 				<!-- Image Upload -->
-				<label class="block mb-2">
+				<label class="block mb-3 text-xl font-extrabold">
 					Upload Image:
 					<input
 						type="file"
 						accept="image/*"
-						class="file-input file-input-bordered w-full"
+						class="file-input file-input-bordered w-full mt-1"
 						name="equipImage"
 					/>
 				</label>
@@ -162,24 +162,25 @@
 					alt="Equipment"
 				/>
 			</figure>
-			<div class="card-body">
+			<div class="card-body bg-base-200">
 				<form method="post" action="?/update" use:enhance>
 					<input type="text" hidden name="equipID" bind:value={equipment.id} />
 					<div class="p-5">
 						<div>
-							<h2 class="card-title text-xl font-bold">
+							<h2 class="card-title">
 								<input
 									type="text"
 									name="equipName"
 									bind:value={equipment.name}
 									readonly={!editModes[equipment.id]}
-									class="{inputClasses(editModes[equipment.id])} text-xl font-bold"
+									class={inputClasses(editModes[equipment.id])}
 									placeholder="Equipment Name"
+									style="font-size: 2rem; font-weight: 700;"
 								/>
 							</h2>
 						</div>
 						<div>
-							<p><b>Status</b></p>
+							<p class="text-xl font-bold"><b>Status</b></p>
 							<input
 								type="text"
 								name="equipStatus"
@@ -190,7 +191,7 @@
 							/>
 						</div>
 						<div>
-							<p><b>Condition</b></p>
+							<p class="text-xl font-bold"><b>Condition</b></p>
 							<input
 								type="text"
 								name="equipCondition"
@@ -202,7 +203,7 @@
 						</div>
 
 						<div>
-							<span class="font-bold">Assigned Events:</span>
+							<span class="text-xl font-extrabold">Assigned Events:</span>
 							{#if equipment.AssignedEvents.length > 0}
 								<ul>
 									{#each equipment.AssignedEvents as event}
@@ -240,6 +241,54 @@
 <style>
 	.equipment {
 		display: flex;
-		
+	}
+
+	.card-body {
+		border-radius: 0rem 0rem 1rem 1rem;
+	}
+
+	.card-title {
+		margin-top: -1.5rem;
+		margin-bottom: 1.5rem;
+		padding: none !important;
+	}
+
+	.select-disabled {
+		background-color: green;
+		color: green;
+		font-weight: bold;
+	}
+
+	input {
+		background-color: transparent;
+		font-size: 1.125rem;
+		font-weight: 600;
+		padding: 0.5rem;
+		border: solid 1px;
+		width: 100%;
+	}
+
+	input[readonly] {
+		background-color: transparent;
+		cursor: default;
+		border: none;
+	}
+
+	input.edit-mode {
+		border: 1px solid;
+	}
+	
+	select {
+		border: 1px solid !important;
+		font-size: 1.125rem;
+		font-weight: 600;
+		padding: 0.5rem;
+		width: 100%;
+		outline: none;
+	}
+
+	.name {
+		border: 1px solid;
+		border-radius: 0.5rem;
 	}
 </style>
