@@ -176,135 +176,137 @@
 <div class="flex flex-wrap">
 	{#each data.data as service}
 		<div class=" mx-2.5 my-2.5 w-full self-auto p-2">
-			<div class="card bg-base-200 lg:card-side font-medium">
-				<figure>
-					<img
-						src={service.imagepath
-							? service.imagepath
-							: 'https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp'}
-						alt="serviceImage"
-						class="h-400 w-400 object-none"
-					/>
+			<div class="shadow-lg rounded-lg overflow-hidden bg-base-200 shadow-border">
+				<div class="card bg-base-200 lg:card-side font-medium">
+					<figure>
+						<img
+							src={service.imagepath
+								? service.imagepath
+								: 'https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp'}
+							alt="serviceImage"
+							class="h-400 w-400 object-none"
+						/>
 
-					<!-- debug stuff ignore  -->
-					<!-- <img
+						<!-- debug stuff ignore  -->
+						<!-- <img
 					src={service.imagepath}
 						alt="serviceImage"
 						class="h-full w-full"
 					/> -->
-				</figure>
-				<div class="card-body w-full">
-					<h3 class="card-title text-3xl font-extrabold mb-5">{service.name}</h3>
+					</figure>
+					<div class="card-body w-full">
+						<h3 class="card-title text-3xl font-extrabold mb-5">{service.name}</h3>
 
-					<h6 class="text-xl font-extrabold">Price</h6>
-					<p>{service.price}</p>
+						<h6 class="text-xl font-extrabold">Price</h6>
+						<p>{service.price}</p>
 
-					<h6 class="text-xl font-extrabold">Rate</h6>
-					<p>{service.rate}</p>
+						<h6 class="text-xl font-extrabold">Rate</h6>
+						<p>{service.rate}</p>
 
-					<h6 class="text-xl font-extrabold">Inclusions</h6>
-					<p>{service.inclusion}</p>
+						<h6 class="text-xl font-extrabold">Inclusions</h6>
+						<p>{service.inclusion}</p>
 
-					<h6 class="text-xl font-extrabold">Equipment Needed</h6>
-					<Select
-						items={equipmentItems}
-						multiple={true}
-						name="equipmentNeeded"
-						disabled
-						bind:value={equipmentSelections[service.id]}
-						placeholder="Select equipment"
-						containerStyles="background: #ebedef00 !important; color: black; opacity: 1; outline: none; border:none;"
-					/>
+						<h6 class="text-xl font-extrabold">Equipment Needed</h6>
+						<Select
+							items={equipmentItems}
+							multiple={true}
+							name="equipmentNeeded"
+							disabled
+							bind:value={equipmentSelections[service.id]}
+							placeholder="Select equipment"
+							containerStyles="background: #ebedef00 !important; color: black; opacity: 1; outline: none; border:none;"
+						/>
 
-					<div class="card-actions justify-end">
-						<form method="post" action="?/update" use:enhance>
-							<div class="modal" class:modal-open={modalOpenState[service.id]}>
-								<div class="modal-box">
-									<div>
-										<h6 class="text-xl font-extrabold">ID</h6>
-
-										<h2>
-											<input
-												type="text"
-												name="serviceID"
-												class="input input-bordered w-full max-w-xs"
-												bind:value={service.id}
-												readonly
-											/>
-										</h2>
-										<br />
-									</div>
-									<div class="flex space-x-4">
+						<div class="card-actions justify-end">
+							<form method="post" action="?/update" use:enhance>
+								<div class="modal" class:modal-open={modalOpenState[service.id]}>
+									<div class="modal-box">
 										<div>
-											<h6 class="text-xl font-extrabold">Name</h6>
+											<h6 class="text-xl font-extrabold">ID</h6>
+
 											<h2>
 												<input
 													type="text"
-													name="serviceName"
+													name="serviceID"
 													class="input input-bordered w-full max-w-xs"
-													bind:value={service.name}
+													bind:value={service.id}
+													readonly
 												/>
 											</h2>
-
-											<h6 class="text-xl font-extrabold">Rate</h6>
-											<select
-												name="serviceRate"
-												class="select select-bordered w-full max-w-xs"
-												bind:value={service.rate}
-											>
-												<option value="Hourly">Hourly</option>
-												<option value="Daily">Daily</option>
-											</select>
+											<br />
 										</div>
-									</div>
-									<br />
-									<div>
-										<h6 class="text-xl font-extrabold">Inclusion</h6>
-										<h2>
-											<input
-												type="text"
-												name="serviceInclusion"
-												class="input input-bordered w-full"
-												bind:value={service.inclusion}
-											/>
-										</h2>
-									</div>
-									<div>
-										<h6 class="text-xl font-extrabold">Equipment Needed</h6>
-										<Select
-											items={equipmentItems}
-											multiple={true}
-											name="equipmentNeeded"
-											bind:value={equipmentSelections[newService.id]}
-											placeholder="Select equipment"
-											class="input input-bordered w-full"
-											containerStyles="background: #ebedef00; opacity: 1; border: solid 1px;"
-										/>
-									</div>
-									<br /><br />
-									<div class="modal-action flex w-full justify-between">
-										<button
-											class="btn btn-primary"
-											on:click={() => toggleModal(service.id)}
-											formaction="?/delete">Delete</button
-										>
 										<div class="flex space-x-4">
-											<button class="btn btn-primary" on:click={() => toggleModal(service.id)}
-												>Save Changes</button
-											>
+											<div>
+												<h6 class="text-xl font-extrabold">Name</h6>
+												<h2>
+													<input
+														type="text"
+														name="serviceName"
+														class="input input-bordered w-full max-w-xs"
+														bind:value={service.name}
+													/>
+												</h2>
+
+												<h6 class="text-xl font-extrabold">Rate</h6>
+												<select
+													name="serviceRate"
+													class="select select-bordered w-full max-w-xs"
+													bind:value={service.rate}
+												>
+													<option value="Hourly">Hourly</option>
+													<option value="Daily">Daily</option>
+												</select>
+											</div>
+										</div>
+										<br />
+										<div>
+											<h6 class="text-xl font-extrabold">Inclusion</h6>
+											<h2>
+												<input
+													type="text"
+													name="serviceInclusion"
+													class="input input-bordered w-full"
+													bind:value={service.inclusion}
+												/>
+											</h2>
+										</div>
+										<div>
+											<h6 class="text-xl font-extrabold">Equipment Needed</h6>
+											<Select
+												items={equipmentItems}
+												multiple={true}
+												name="equipmentNeeded"
+												bind:value={equipmentSelections[newService.id]}
+												placeholder="Select equipment"
+												class="input input-bordered w-full"
+												containerStyles="background: #ebedef00; opacity: 1; border: solid 1px;"
+											/>
+										</div>
+										<br /><br />
+										<div class="modal-action flex w-full justify-between">
 											<button
-												type="button"
-												class="btn btn-error"
-												on:click={() => toggleModal(service.id)}>Close</button
+												class="btn btn-primary"
+												on:click={() => toggleModal(service.id)}
+												formaction="?/delete">Delete</button
 											>
+											<div class="flex space-x-4">
+												<button class="btn btn-primary" on:click={() => toggleModal(service.id)}
+													>Save Changes</button
+												>
+												<button
+													type="button"
+													class="btn btn-error"
+													on:click={() => toggleModal(service.id)}>Close</button
+												>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-						</form>
-						<button class="modal-button btn btn-primary" on:click={() => toggleModal(service.id)}
-							>Details</button
-						>
+							</form>
+							<button class="modal-button btn btn-primary" on:click={() => toggleModal(service.id)}
+								>Details</button
+							>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -352,4 +354,23 @@
 		width: 100%;
 		outline: none;
 	}
+
+	.shadow-border {
+		border-radius: 1rem 1rem 1rem 1rem;
+		box-shadow:
+			0px 8px 8px 0.1px rgba(0, 0, 0, 0.2),
+			8px 0px 8px 0.1px rgba(0, 0, 0, 0.2),
+			-8px 0px 8px 0.1px rgba(0, 0, 0, 0.2),
+			0px -8px 8px 0.1px rgba(0, 0, 0, 0.2);
+	}
+
+	/* img {
+		box-shadow:
+			0px 8px 8px 0.1px rgba(135, 172, 92, 0.2),
+			8px 0px 8px 0.1px rgba(135, 172, 92, 0.2),
+			-8px 0px 8px 0.1px rgba(135, 172, 92, 0.2),
+			0px -8px 8px 0.1px rgba(135, 172, 92, 0.2);
+		overflow: hidden;
+		display: inline-block;
+	} */
 </style>

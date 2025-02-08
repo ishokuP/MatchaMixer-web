@@ -53,7 +53,6 @@
 			return 'input input-bordered read-only';
 		}
 	}
-
 </script>
 
 <!-- <h2 class="text-4xl font-extrabold">Equipments</h2> -->
@@ -153,12 +152,14 @@
 	<button class="btn w-40" on:click={() => confirmationAdd.showModal()}> + Add Equipment </button>
 </div>
 
-<div class="flex flex-wrap justify-center mt-4">
+<div class="flex flex-wrap justify-center gap-20 mt-4">
 	{#each data.data as equipment}
 		<div class="card mx-2.5 my-2.5 w-96 bg-base-100">
 			<figure>
 				<img
-				src={equipment.imagePath ? equipment.imagePath : "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"}
+					src={equipment.imagePath
+						? equipment.imagePath
+						: 'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp'}
 					alt="Equipment"
 				/>
 			</figure>
@@ -173,7 +174,7 @@
 									name="equipName"
 									bind:value={equipment.name}
 									readonly={!editModes[equipment.id]}
-									class={inputClasses(editModes[equipment.id])}
+									class="{inputClasses(editModes[equipment.id])} text-center w-full"
 									placeholder="Equipment Name"
 									style="font-size: 2rem; font-weight: 700;"
 								/>
@@ -245,6 +246,10 @@
 
 	.card-body {
 		border-radius: 0rem 0rem 1rem 1rem;
+		box-shadow:
+		0px 8px 8px 0.1px rgba(0, 0, 0, 0.2),
+			8px 0px 8px 0.1px rgba(0, 0, 0, 0.2),
+			-8px 0px 8px 0.1px rgba(0, 0, 0, 0.2);
 	}
 
 	.card-title {
@@ -277,7 +282,13 @@
 	input.edit-mode {
 		border: 1px solid;
 	}
-	
+
+	input {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
 	select {
 		border: 1px solid !important;
 		font-size: 1.125rem;
@@ -290,5 +301,26 @@
 	.name {
 		border: 1px solid;
 		border-radius: 0.5rem;
+	}
+
+	figure {
+		box-shadow:
+			0px 8px 8px 0.1px rgba(0, 0, 0, 0.2),
+			8px 0px 8px 0.1px rgba(0, 0, 0, 0.2),
+			-8px 0px 8px 0.1px rgba(0, 0, 0, 0.2),
+			0px -8px 8px 0.1px rgba(0, 0, 0, 0.2);
+		overflow: hidden;
+		display: inline-block;
+	}
+
+	figure img {
+		width: 100%;
+		height: 300px;
+		object-fit: cover;
+	}
+
+	.card-title {
+		text-align: center;
+		width: 100%;
 	}
 </style>

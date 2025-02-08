@@ -47,7 +47,7 @@
 			<div class="logo">
 				<div class="flex items-center">
 					<img src="/logo.png" alt="placeholder logo" />
-					<span class="title">Matcha Mixer</span>
+					<span class="title font-extrabold">MatchaMixer</span>
 				</div>
 				<h2 class="subheading-title rounded-md dark:block">Stand-Alone Event Management System</h2>
 			</div>
@@ -68,7 +68,7 @@
 						>
 							<img src="/events.png" alt="events logo" class="categories-img" />
 							<span class="middle-dot">&middot;</span>
-							<span class="title" style="margin-right: 93px;">Events</span>
+							<span class="mngmt-title " style="margin-right: 94.5px;">Events</span>
 						</a>
 					</li>
 					<li class="categories-title">
@@ -80,7 +80,7 @@
 						>
 							<img src="/equipments.png" alt="equipments logo" class="categories-img" />
 							<span class="middle-dot">&middot;</span>
-							<span class="title" style="margin-right: 37.5px;">Equipments</span>
+							<span class="mngmt-title" style="margin-right: 31.5px;">Equipments</span>
 						</a>
 					</li>
 					<li class="categories-title">
@@ -92,7 +92,7 @@
 						>
 							<img src="/employees.png" alt="employees logo" class="categories-img" />
 							<span class="middle-dot">&middot;</span>
-							<span class="title mr-12">Employees</span>
+							<span class="mngmt-title  mr-11">Employees</span>
 						</a>
 					</li>
 					<li class="categories-title">
@@ -104,7 +104,7 @@
 						>
 							<img src="/services.png" alt="services logo" class="categories-img" />
 							<span class="middle-dot">&middot;</span>
-							<span class="title" style="margin-right: 75px;">Services</span>
+							<span class="mngmt-title " style="margin-right: 75px;">Services</span>
 						</a>
 					</li>
 					<li class="categories-title">
@@ -116,7 +116,7 @@
 						>
 							<img src="/finances.png" alt="finances logo" class="categories-img" />
 							<span class="middle-dot">&middot;</span>
-							<span class="title" style="margin-right: 71px;">Finances</span>
+							<span class="mngmt-title " style="margin-right: 70px;">Finances</span>
 						</a>
 					</li>
 				</div>
@@ -268,9 +268,14 @@
 	}
 
 	.title {
-		margin-left: 1rem;
+		margin-left: 0.5rem;
 		font-size: 25px;
-		font-weight: 900;
+	}
+
+	.mngmt-title {
+		margin-left: 1.25rem;
+		font-size: 25px;
+		font-weight: 700;
 	}
 
 	.subheading-title {
