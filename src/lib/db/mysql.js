@@ -12,10 +12,11 @@ export function mysqlconnFn() {
     //   database: "statedata",
     // });
     mysqlconn = mysql.createConnection({
-      host: "localhost",
+      host: "junction.proxy.rlwy.net",
+      port: 30491,
       user: "root",
-      password: "root",
-      database: "matchadeploy",
+      password: "VtKjycSrQrqrdTRYbHfarUqsgvYXdqAI",
+      database: "railway",
     });
   }
 

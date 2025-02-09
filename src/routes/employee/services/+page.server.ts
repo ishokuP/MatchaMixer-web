@@ -53,7 +53,7 @@ export async function load():Promise<LoadResult>{
                   FROM 
                       serviceequipment EEQ 
                   JOIN 
-                      Equipments EQ ON EEQ.equipmentID = EQ.id
+                      equipments EQ ON EEQ.equipmentID = EQ.id
                   WHERE 
                       EEQ.serviceID = ${service.id};`
           )
@@ -64,7 +64,7 @@ export async function load():Promise<LoadResult>{
       await Promise.all(equipmentPromises);
 
       const allEquipment: allEquipOriginal[] = await mysqlconn
-			.query(`SELECT * FROM Equipments`)
+			.query(`SELECT * FROM equipments`)
 			.then(([rows]) => rows);
 
 

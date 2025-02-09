@@ -141,9 +141,9 @@ export async function load(): Promise<LoadResult> {
                     EM.email,
                     EM.number AS contactNumber
                 FROM 
-                    EventEmployee EE 
+                    eventemployee EE 
                 JOIN 
-                    Employee EM ON EE.employeeID = EM.id
+                    employee EM ON EE.employeeID = EM.id
                 WHERE 
                     EE.eventID = ${event.eventID};`
 				)
@@ -161,9 +161,9 @@ export async function load(): Promise<LoadResult> {
                     EQ.status AS equipmentStatus,
                     EQ.Econdition AS equipmentCondition
                 FROM 
-                    EventEquipment EEQ 
+                    eventequipment EEQ 
                 JOIN 
-                    Equipments EQ ON EEQ.equipmentID = EQ.id
+                    equipments EQ ON EEQ.equipmentID = EQ.id
                 WHERE 
                     EEQ.eventID = ${event.eventID};`
 				)
@@ -184,7 +184,7 @@ export async function load(): Promise<LoadResult> {
                     FROM 
                         serviceevent ES
                     JOIN 
-                        Services S ON ES.serviceid = S.ID
+                        services S ON ES.serviceid = S.ID
                     WHERE 
                         ES.eventID = ${event.eventID};`
                 )
@@ -195,13 +195,13 @@ export async function load(): Promise<LoadResult> {
 
 
 		const allEmployees: allEmployOriginal[] = await mysqlconn
-			.query(`SELECT * FROM Employee`)
+			.query(`SELECT * FROM employee`)
 			.then(([rows]) => rows);
 		const allEquipment: allEquipOriginal[] = await mysqlconn
-			.query(`SELECT * FROM Equipments`)
+			.query(`SELECT * FROM equipments`)
 			.then(([rows]) => rows);
         const allServices: Services[] = await mysqlconn
-			.query(`SELECT * FROM Services`)
+			.query(`SELECT * FROM services`)
 			.then(([rows]) => rows);
 
 		// Wait for all promises to complete
