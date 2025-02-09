@@ -8,7 +8,7 @@
 			<div class="logo">
 				<div class="flex items-center">
 					<img src="/logo.png" alt="placeholder logo" />
-					<span class="title-logo">Matcha Mixer</span>
+					<span class="title-logo">MatchaMixer</span>
 				</div>
 			</div>
 			<!-- <h1 class="title">Login</h1> -->
