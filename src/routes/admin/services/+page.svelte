@@ -233,10 +233,9 @@
 													readonly
 												/>
 											</h2>
-											<br />
 										</div>
-										<div class="flex space-x-4">
-											<div>
+										<div class="flex space-x-4 ">
+											<div class="space-y-2 w-full">
 												<h6 class="text-xl font-extrabold">Name</h6>
 												<h2>
 													<input
@@ -253,36 +252,47 @@
 													class="select select-bordered w-full max-w-xs"
 													bind:value={service.rate}
 												>
-													<option value="Hourly">Hourly</option>
-													<option value="Daily">Daily</option>
+													<option value="hourly">hourly</option>
+													<option value="daily">daily</option>
 												</select>
+
+												<h6 class="text-xl font-extrabold">Price</h6>
+												<h2>
+													<input
+														type="text"
+														name="serviceName"
+														class="input input-bordered w-full max-w-xs"
+														bind:value={service.price}
+													/>
+												</h2>
+												<div>
+													<h6 class="text-xl font-extrabold">Inclusion</h6>
+													<h2>
+														<input
+															type="text"
+															name="serviceInclusion"
+															class="input input-bordered w-full"
+															bind:value={service.inclusion}
+														/>
+													</h2>
+												</div>
+												<div>
+													<h6 class="text-xl font-extrabold">Equipment Needed</h6>
+													<Select
+														items={equipmentItems}
+														multiple={true}
+														name="equipmentNeeded"
+														bind:value={equipmentSelections[newService.id]}
+														placeholder="Select equipment"
+														class="input input-bordered w-full"
+														containerStyles="background: #ebedef00; opacity: 1; border: solid 1px;"
+													/>
+												</div>
 											</div>
+											
 										</div>
-										<br />
-										<div>
-											<h6 class="text-xl font-extrabold">Inclusion</h6>
-											<h2>
-												<input
-													type="text"
-													name="serviceInclusion"
-													class="input input-bordered w-full"
-													bind:value={service.inclusion}
-												/>
-											</h2>
-										</div>
-										<div>
-											<h6 class="text-xl font-extrabold">Equipment Needed</h6>
-											<Select
-												items={equipmentItems}
-												multiple={true}
-												name="equipmentNeeded"
-												bind:value={equipmentSelections[newService.id]}
-												placeholder="Select equipment"
-												class="input input-bordered w-full"
-												containerStyles="background: #ebedef00; opacity: 1; border: solid 1px;"
-											/>
-										</div>
-										<br /><br />
+
+
 										<div class="modal-action flex w-full justify-between">
 											<button
 												class="btn btn-primary"

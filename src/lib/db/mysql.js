@@ -11,12 +11,24 @@ export function mysqlconnFn() {
     //   password: "",
     //   database: "statedata",
     // });
+
+
+    // used for development with Docker
+    // mysqlconn = mysql.createConnection({
+    //   host: "junction.proxy.rlwy.net",
+    //   port: 30491,
+    //   user: "root",
+    //   password: "VtKjycSrQrqrdTRYbHfarUqsgvYXdqAI",
+    //   database: "railway",
+    // });
+
+
+    // used for local
     mysqlconn = mysql.createConnection({
-      host: "junction.proxy.rlwy.net",
-      port: 30491,
+      host: "localhost",
       user: "root",
-      password: "VtKjycSrQrqrdTRYbHfarUqsgvYXdqAI",
-      database: "railway",
+      password: "root",
+      database: "matchadeploy",
     });
   }
 

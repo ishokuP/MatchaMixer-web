@@ -53,7 +53,7 @@ export const actions = {
         }
         
         // Use the function to generate a random equipmentID
-        const equipmentID = generateRandomID();
+        const equipmentID = form.get('equipID') || generateRandomID();
         
         const name = form.get('equipName');
         const status = form.get('equipStatus');
@@ -93,10 +93,9 @@ export const actions = {
                     UPDATE equipments SET
                         name = ?,
                         status = ?,
-                        Econdition = ?,
-                        filepath = COALESCE(?, imagePath) 
+                        Econdition = ?
                     WHERE id = ?`, 
-                    [name, status, Econdition, imagePath, equipmentID]);
+                    [name, status, Econdition, equipmentID]);
 
                 console.log("Equipment updated successfully");
 

@@ -58,13 +58,13 @@
 <!-- <h2 class="text-4xl font-extrabold">Equipments</h2> -->
 
 <dialog bind:this={confirmationDelete} class="modal">
-	<form method="post" action="?/delete" use:enhance>
+	<form method="post" action="?/delete">
 		<input type="hidden" name="equipID" value={currentDeletingEvent} />
 		<div class="modal-box">
 			<h3 class="text-lg font-bold">Confirm Delete</h3>
 			<p class="py-4">Are you sure you want to delete this Equipment?</p>
 			<div class="modal-action">
-				<button type="submit" class="btn btn-error">Delete</button>
+				<button type="submit" class="btn btn-error on:click={() => confirmationDelete.close()}">Delete</button>
 				<button type="button" class="btn" on:click={() => confirmationDelete.close()}>Cancel</button
 				>
 			</div>
@@ -182,25 +182,64 @@
 						</div>
 						<div>
 							<p class="text-xl font-bold"><b>Status</b></p>
-							<input
-								type="text"
-								name="equipStatus"
-								bind:value={equipment.status}
-								readonly={!editModes[equipment.id]}
-								class={inputClasses(editModes[equipment.id])}
-								placeholder="Equipment Status"
-							/>
+
+
+							{#if editModes[equipment.id]}
+								<select
+									name="equipStatus"
+									bind:value={equipment.status}
+									disabled={!editModes[equipment.id]}
+									class={inputClasses(editModes[equipment.id])}
+									placeholder="Equipment Status"
+								>
+									<option value="In-Studio">In-Studio</option>
+									<option value="Deployed">Deployed</option>
+									<option value="For Repair">For Repair</option>
+									<option value="For Replacement">For Replacement</option>
+									<option value="For Testing">For Testing</option>
+									<option value="Lost">Lost</option>
+									<option value="Retired">Retired</option>
+								</select>
+							{:else}
+								<input
+									type="text"
+									name="equipStatus"
+									bind:value={equipment.status}
+									readonly={!editModes[equipment.id]}
+									class={inputClasses(editModes[equipment.id])}
+									placeholder="Equipment Status"
+								/>
+							{/if}
+
 						</div>
 						<div>
 							<p class="text-xl font-bold"><b>Condition</b></p>
-							<input
-								type="text"
-								name="equipCondition"
-								bind:value={equipment.Econdition}
-								readonly={!editModes[equipment.id]}
-								class={inputClasses(editModes[equipment.id])}
-								placeholder="Equipment Condition"
-							/>
+
+							{#if editModes[equipment.id]}
+								<select
+									name="equipCondition"
+									bind:value={equipment.Econdition}
+									disabled={!editModes[equipment.id]}
+									class={inputClasses(editModes[equipment.id])}
+									placeholder="Equipment Condition"
+								>
+									<option value="Good-to-Go">Good-to-Go</option>
+									<option value="Requires Cleaning">Requires Cleaning</option>
+									<option value="Minor Damage">Minor Damage</option>
+									<option value="Needs Repair">Needs Repair</option>
+									<option value="End-of-Life">End-of-Life</option>
+									<option value="Under Inspection">Under Inspection</option>
+								</select>
+							{:else}
+								<input
+									type="text"
+									name="equipCondition"
+									bind:value={equipment.Econdition}
+									readonly={!editModes[equipment.id]}
+									class={inputClasses(editModes[equipment.id])}
+									placeholder="Equipment Condition"
+								/>
+							{/if}
 						</div>
 
 						<div>
