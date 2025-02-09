@@ -4,22 +4,24 @@ import { mysqlconnFn } from "$lib/db/mysql";
 export const authenticateUser = async (event: RequestEvent) => {
     const { cookies } = event;
     const userToken = cookies.get("auth");
+    const userEmail = cookies.get("user_email");
 
-    if (!userToken) return null;
+    if (!userToken || !userEmail) return null;
 
-    let role = "EMPLOYEE"; // Default to EMPLOYEE
-
+    let role: string;
     if (userToken === "adminusertoken") {
-        role = "ADMIN"; // Set to ADMIN if the token matches
-    } else if (userToken !== "employeeusertoken") {
-        return null; // Reject unknown tokens
+        role = "ADMIN";
+    } else if (userToken === "employeeusertoken") {
+        role = "Employee";
+    } else {
+        return null;
     }
 
     try {
         const mysqlconn = await mysqlconnFn();
         const [rows]: any = await mysqlconn.query(
-            "SELECT name, email FROM employee WHERE role = ? LIMIT 1",
-            [role]
+            "SELECT name, email, role FROM employee WHERE email = ? LIMIT 2",
+            [userEmail]
         );
 
         if (rows.length === 0) return null;

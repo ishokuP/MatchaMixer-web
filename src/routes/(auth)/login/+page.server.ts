@@ -20,8 +20,8 @@ export const actions: Actions = {
 
 		try {
 			const connection = await mysqlconnFn();
-			const [rows] = await connection.query(
-				"SELECT * FROM employee WHERE email = ? AND password = ?",
+			const [rows]: any = await connection.query(
+				"SELECT name, email, role FROM employee WHERE email = ? AND password = ?",
 				[email, password]
 			);
 
@@ -30,17 +30,23 @@ export const actions: Actions = {
 			}
 
 			const user = rows[0];
-			const token = user.role === 'Admin' ? 'adminusertoken' : 'employeeusertoken';
+
+			const userRole = user.role.toLowerCase(); 
+			const token = userRole === 'admin' ? 'adminusertoken' : 'employeeusertoken';
 
 			cookies.set("auth", token, {
 				path: "/",
 				httpOnly: true,
 				sameSite: "strict",
 				secure: process.env.NODE_ENV === "production",
-				maxAge: 60 * 60 * 24 * 7, // 1 week
+				maxAge: 60 * 60 * 24 * 7,
 			});
 
-			throw redirect(303, "/"); // Change to /admin if that's the correct redirect path
+			cookies.set("user_role", user.role, { path: "/", httpOnly: true });
+			cookies.set("user_name", user.name, { path: "/", httpOnly: true });
+			cookies.set("user_email", user.email, { path: "/", httpOnly: true });
+
+			throw redirect(303, "/"); 
 		} catch (error) {
 			console.error("Login failed:", error);
 			return fail(500, { error: "Internal server error." });

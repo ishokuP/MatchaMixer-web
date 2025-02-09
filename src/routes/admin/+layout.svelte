@@ -193,7 +193,7 @@
 
 			<div class="flex items-center gap-1 justify-center rounded-box bg-base-300 p-2 shadow-2xl">
 				<!-- Theme Selector Row -->
-				<span class="font-semibold text-base-content">Theme ></span>
+				<span class="font-semibold text-base-content ml-2">Theme ></span>
 				<div class="flex gap-1 w-52">
 					<input
 						type="radio"

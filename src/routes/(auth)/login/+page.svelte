@@ -1,5 +1,5 @@
 <script>
-	const bgImage = '/login-background.png'; // Replace with your actual image path
+	const bgImage = '/login-background.png';
 </script>
 
 <div class="login-container" style="background-image: url({bgImage});">
