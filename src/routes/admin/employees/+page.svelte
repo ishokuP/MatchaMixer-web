@@ -66,7 +66,7 @@
 		<tbody>
 			{#each data.data as Employee (Employee.id)}
 				<tr class="hover">
-					<th>{Employee.id}</th>
+					<th class="font-bold text-lg">{Employee.id}</th>
 					<td>{Employee.name}</td>
 					<td>{Employee.address}</td>
 					<td>{Employee.role}</td>
@@ -224,5 +224,10 @@
 		padding: 0.5rem;
 		border: 1px solid !important;
 		width: 100%;
+	}
+
+	td {
+		font-size: 1.125rem;
+		font-weight: 600; 
 	}
 </style>

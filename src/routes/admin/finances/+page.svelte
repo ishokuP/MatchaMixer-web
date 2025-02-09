@@ -166,4 +166,9 @@
 	.last-column {
 		border-top-right-radius: 1rem;
 	}
+
+	td {
+		font-size: 1.125rem;
+		font-weight: 600;
+	}
 </style>
