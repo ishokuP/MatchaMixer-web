@@ -73,7 +73,7 @@
 </dialog>
 
 <dialog bind:this={confirmationAdd} class="modal">
-	<form method="post" action="?/update" use:enhance enctype="multipart/form-data">
+	<form method="post" action="?/add" use:enhance enctype="multipart/form-data">
 		<div class="modal-box">
 			<h3 class="text-lg font-bold">Add New Equipment</h3>
 			<div class="py-4">

@@ -1,7 +1,19 @@
 import { mysqlconnFn } from '$lib/db/mysql';
-import fs from 'fs/promises';
-import path from 'path';
+import { v2 as cloudinary } from 'cloudinary';
 import { fail, redirect } from '@sveltejs/kit';
+
+// Configure Cloudinary using environment variables
+/*cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});*/
+
+cloudinary.config({
+    cloud_name: "dw0yb2ova",
+    api_key: "786712415546285",
+    api_secret: "e7WkI-Pi09e9AUnacjZudinlhqM"
+});
 
 export async function load() {
     let mysqlconn = await mysqlconnFn();
@@ -30,7 +42,7 @@ export async function load() {
                     name: row.EquipmentName,
                     status: row.EquipmentStatus,
                     Econdition: row.EquipmentCondition,
-                    imagePath: row.EquipmentImagePath,
+                    imagePath: row.EquipmentImagePath,  // Now stores Cloudinary URL
                     AssignedEvents: row.AssignedEvents ? row.AssignedEvents.split(', ') : []
                 }));
             });
@@ -38,8 +50,7 @@ export async function load() {
             data: results
         };
     } catch (error) {
-        console.error('Got an error!!!');
-        console.log(error);
+        console.error('Error fetching data:', error);
         return error;
     }
 }
@@ -48,129 +59,121 @@ export async function load() {
 export const actions = {
     update: async ({ request }) => {
         const form = await request.formData();
-        function generateRandomID(): number {
-            return Math.floor(Math.random() * 1000000);  // Generates a random number between 0 and 999,999
-        }
         
-        // Use the function to generate a random equipmentID
-        const equipmentID = form.get('equipID') || generateRandomID();
-        
+        const equipmentID = form.get('equipID');
         const name = form.get('equipName');
         const status = form.get('equipStatus');
         const Econdition = form.get('equipCondition');
         const image = form.get('equipImage') as File;
-        console.log("Form Data for Save:", { equipmentID, name, status, Econdition, image });
+
+        console.log("Form Data for Update:", { equipmentID, name, status, Econdition, image });
 
         let imagePath: string | null = null;
 
         try {
             const connection = await mysqlconnFn();
-                        // Handle Image Upload
-                        if (image && image.name) {
-                            const uploadDir = path.join('static/uploads/');
-                            await fs.mkdir(uploadDir, { recursive: true });
-            
-                            // Rename file (sanitize name, add timestamp)
-                            const fileExtension = path.extname(image.name);
-                            const sanitizedFilename = String(name).replace(/\s+/g, '_'); // Replace spaces with underscores
-                            const newFilename = `${sanitizedFilename}_${Date.now()}${fileExtension}`;
-                            const filePath = path.join(uploadDir, newFilename);
-            
-                            // Save file
-                            const buffer = Buffer.from(await image.arrayBuffer());
-                            await fs.writeFile(filePath, buffer);
-            
-                            // Set relative path for DB storage
-                            imagePath = `/uploads/${newFilename}`;
-                        }
 
-            // Check if the equipmentID exists
-            const [rows] = await connection.query('SELECT 1 FROM equipments WHERE id = ?', [equipmentID]);
+            // Handle Cloudinary Upload if a new image is provided
+            if (image && image.name) {
+                const buffer = Buffer.from(await image.arrayBuffer());
+                const base64String = buffer.toString('base64');
+                
+                const uploadResponse = await cloudinary.uploader.upload(`data:image/png;base64,${base64String}`, {
+                    folder: 'equipment_images',
+                    public_id: `${name}_${Date.now()}`
+                });
 
-            if (rows.length > 0) {
-                // If exists, update
-                await connection.execute(`
-                    UPDATE equipments SET
-                        name = ?,
-                        status = ?,
-                        Econdition = ?
-                    WHERE id = ?`, 
-                    [name, status, Econdition, equipmentID]);
-
-                console.log("Equipment updated successfully");
-
-            } else {
-                // Insert new record
-                await connection.execute(`
-                    INSERT INTO equipments (id, name, status, Econdition, filepath)
-                    VALUES (?, ?, ?, ?, ?)`, 
-                    [equipmentID, name, status, Econdition, imagePath]);
-
-                console.log("Equipment added successfully");
+                imagePath = uploadResponse.secure_url;
             }
 
-            return {
-                status: 200, // OK, indicating successful operation
-                headers: { Location: '/success' }
-            };
+            // Update equipment in MySQL
+            await connection.execute(`
+                UPDATE equipments SET
+                    name = ?,
+                    status = ?,
+                    Econdition = ?,
+                    filepath = COALESCE(?, filepath)
+                WHERE id = ?`, 
+                [name, status, Econdition, imagePath, equipmentID]
+            );
+
+            console.log("Equipment updated successfully");
+            return { status: 200, headers: { Location: '/success' } };
         } catch (error) {
-            console.error('Failed to save equipment:', error);
-            return { status: 500, body: { error: 'Failed to save equipment.' } };
+            console.error('Failed to update equipment:', error);
+            return { status: 500, body: { error: 'Failed to update equipment.' } };
         }
     },
+
     delete: async ({ request }) => {
         const form = await request.formData();
         const equipmentID = form.get('equipID');
+
         console.log("Form Data for Deletion:", { equipmentID });
 
         try {
             const connection = await mysqlconnFn();
-            await connection.execute(`
-                DELETE FROM equipments WHERE id = ?
-            `, [equipmentID]);
+            await connection.execute(`DELETE FROM equipments WHERE id = ?`, [equipmentID]);
 
             console.log("Equipment deleted successfully");
-
-            return {
-                status: 204, // No Content, indicating successful deletion
-                headers: { Location: '/success' }
-            };
+            return { status: 204, headers: { Location: '/success' } };
         } catch (error) {
-            console.error('Failed to save equipment:', error);
-            return { 
-                status: 500, 
-                body: { error: 'Failed to save equipment.' } 
-            };
+            console.error('Failed to delete equipment:', error);
+            return { status: 500, body: { error: 'Failed to delete equipment.' } };
         }
     },
+
     add: async ({ request }) => {
         const form = await request.formData();
         const name = form.get('equipName');
         const status = form.get('equipStatus');
         const Econdition = form.get('equipCondition');
+        const image = form.get('equipImage') as File;
 
-        console.log("Form Data for New Equipment:", { name, status, Econdition });
+        console.log("Form Data for New Equipment:", { name, status, Econdition, image });
+
+        let imagePath: string | null = null;
 
         try {
             const connection = await mysqlconnFn();
+            
+            const [rows]: any = await connection.execute(
+                `SELECT id FROM equipments ORDER BY id DESC LIMIT 1`
+            );
+    
+            let newId = "eq001"; // Default if no records exist
+    
+            if (rows.length > 0) {
+                const lastId = rows[0].id;  // e.g., "eq002"
+                const numPart = parseInt(lastId.substring(2)); // Extract "002" -> 2
+                const nextNum = (numPart + 1).toString().padStart(3, '0'); // "3" -> "003"
+                newId = `eq${nextNum}`; // Format back to "eq003"
+            }
+            // Upload image to Cloudinary
+            if (image && image.name) {
+                const buffer = Buffer.from(await image.arrayBuffer());
+                const base64String = buffer.toString('base64');
 
-            // Insert new equipment into the database
-            const [result] = await connection.execute(`
-                INSERT INTO equipments (name, status, Econdition)
-                VALUES (?, ?, ?)`, [name, status, Econdition]);
+                const uploadResponse = await cloudinary.uploader.upload(`data:image/png;base64,${base64String}`, {
+                    folder: 'equipment_images',
+                    public_id: `${name}_${Date.now()}`
+                });
 
+                imagePath = uploadResponse.secure_url;
+            }
+
+            // Insert new equipment into MySQL
+            await connection.execute(`
+                INSERT INTO equipments (id, name, status, Econdition, filepath)
+                VALUES (?,?, ?, ?, ?)`, 
+                [newId,name, status, Econdition, imagePath]);
+
+            console.log("Cloudinary URL:", imagePath);
             console.log("New equipment added successfully");
-
-            return {
-                status: 200,
-                headers: { Location: '/success' }
-            };
+            return { status: 200, headers: { Location: '/success' } };
         } catch (error) {
             console.error('Failed to add new equipment:', error);
-            return { 
-                status: 500, 
-                body: { error: 'Failed to add new equipment.' } 
-            };
+            return { status: 500, body: { error: 'Failed to add new equipment.' } };
         }
     }
 };
