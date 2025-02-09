@@ -243,7 +243,6 @@ export const actions = {
         const eventStart = convertToMySQLDateTime(eventStartRaw)
         const eventEnd = convertToMySQLDateTime(eventEndRaw);
         // const eventDate = formatDateToMySQL(eventDateRaw);  // Ensure this conversion is correct
-        const eventTime = getStringValue(form, 'eventTime');
         const eventClientName = getStringValue(form, 'clientName');
         const eventClientContact = getStringValue(form, 'clientNum');
         const eventVenue = getStringValue(form, 'eventVenue');
@@ -270,15 +269,21 @@ export const actions = {
             connection = await mysqlconnFn();
             await connection.beginTransaction();
 
+            let duration;
+
+            const startDate = new Date(eventStart);
+            const endDate = new Date(eventEnd);
+            duration = endDate.getTime() - startDate.getTime();
+
 
             // Check if eventID exists in the events table
             const [eventExists] = await connection.query(`SELECT 1 FROM events WHERE eventID = ?`, [eventID]);
             if (!eventExists.length) {
                 // Insert new event if it doesn't exist
                 await connection.query(
-                    `INSERT INTO events (eventID, eventName, eventStart, eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID, eventEnd)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                    [eventID, eventName, eventStart, eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID, eventEnd]
+                    `INSERT INTO events (eventID, eventName, eventStart, eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID, eventEnd, duration)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    [eventID, eventName, eventStart, eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID, eventEnd, duration]
                 );
             } else {
                 // Update existing event details
@@ -292,11 +297,16 @@ export const actions = {
                     eventVenue = ?,
                     eventType = ?,
                     additionalRequests = ?,
-                    paymentID = ?
+                    paymentID = ?,
+                    duration = ?
                     WHERE eventID = ?`,
-                    [eventName, eventStart,eventEnd , eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID, eventID]
+                    [eventName, eventStart,eventEnd , eventClientName, eventClientContact, eventVenue, eventType, additionalRequests, paymentID, eventID, duration]
                 );
             }
+
+                        // Clear and reassign employees
+await connection.query(`DELETE FROM eventemployee WHERE eventID = ?`, [eventID]);
+
 
             for (const employee of employeesNeeded) {
                 const [overlapResult] = await connection.query(
@@ -436,6 +446,7 @@ export const actions = {
 
 
 
+
             // Clear and reassign equipment
             await connection.query(`DELETE FROM eventequipment WHERE eventID = ?`, [eventID]);
             for (const equipment of equipmentNeeded) {
@@ -448,8 +459,61 @@ export const actions = {
             }
 
             // Computing the final total
-            // await connection.query(``
+            // commit the payment id along with the cost
+            // compute the total cost of the event first Total = EmployeeFee(N) + EquipmentFee(N) + ServiceFee(Rate)
 
+            let totalcost = 0;
+
+            // Fetch the number of employees assigned
+            const [employees] = await connection.query(`SELECT COUNT(*) as count FROM eventemployee WHERE eventID = ?`, [eventID]);
+            const employeeCount = employees[0].count;
+            const employeeFee = employeeCount * 1500;
+            
+            // Fetch the number of equipment used
+            const [equipment] = await connection.query(`SELECT COUNT(*) as count FROM eventequipment WHERE eventID = ?`, [eventID]);
+            const equipmentCount = equipment[0].count;
+            const equipmentFee = equipmentCount * 2000;
+            
+            // Fetch service details
+            const [serviceData] = await connection.query(`
+                SELECT s.price, s.rate
+                FROM services s
+                JOIN serviceevent se ON s.id = se.serviceid
+                WHERE se.eventid = ?
+            `, [eventID]);
+            let serviceFee = 0;
+            console.log("serviceData:", serviceData);
+            if (serviceData.length > 0) {
+                const { price, rate } = serviceData[0];
+                const durationInHours = duration / (1000 * 60 * 60); // Convert ms to hours
+            
+                if (rate === "hourly") {
+                    serviceFee = price * durationInHours;
+                } else if (rate === "daily") {
+                    serviceFee = price * Math.ceil(durationInHours / 6); // Charge per 6-hour block
+                }
+            }
+            
+            // Compute the final total cost
+            console.log("Employee Fee:", employeeFee);
+            console.log("Equipment Fee:", equipmentFee);
+            console.log("Service Fee:", serviceFee);
+            console.log("Duration:", duration);
+            totalcost = employeeFee + equipmentFee + serviceFee;
+
+
+            console.log("Total Cost:", totalcost);
+
+
+            // Computation for totalcost
+
+
+            // Connections
+            await connection.query(`DELETE FROM finances WHERE id = ?`, [paymentID]);
+            await connection.query(`INSERT INTO finances (id,status, cost, date) VALUES (?, ?,?,?)`, [paymentID, paymentStatus,totalcost,eventStart]);
+
+
+            console.log("Committing....")
             await connection.commit();
 
             return {

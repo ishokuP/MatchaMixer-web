@@ -41,7 +41,7 @@ CREATE TABLE `employee` (
 
 LOCK TABLES `employee` WRITE;
 /*!40000 ALTER TABLE `employee` DISABLE KEYS */;
-INSERT INTO `employee` VALUES (1,'John Doe','john@example.com','1234567890','123 Main St','johndoe_fb','password123','Manager'),(2,'Jane Smith','jane@example.com','0987654321','456 Oak St','janesmith_fb','securepass','Staff'),(3,'Alice Johnson','alice@example.com','1112223333','789 Pine St','alicejohnson_fb','alicepass','Technician'),(4,'AdminUser','admin@example.com','242152456252','AdminRoad','AdminTest','adminpassword','Admin');
+INSERT INTO `employee` VALUES (1,'John Doe','john@example.com','1234567890','123 Main St','johndoe_fb','password123','Employee'),(2,'Jane Smith','jane@example.com','0987654321','456 Oak St','janesmith_fb','securepass','Staff'),(3,'Alice Johnson','alice@example.com','1112223333','789 Pine St','alicejohnson_fb','alicepass','Technician'),(4,'AdminUser','admin@example.com','242152456252','AdminRoad','AdminTest','adminpassword','Admin');
 /*!40000 ALTER TABLE `employee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -71,7 +71,7 @@ CREATE TABLE `equipments` (
 
 LOCK TABLES `equipments` WRITE;
 /*!40000 ALTER TABLE `equipments` DISABLE KEYS */;
-INSERT INTO `equipments` VALUES ('EQ001','Speaker System','Available','Good',1,'images/speaker.jpg'),('EQ002','Wireless Microphone','In Use','Excellent',2,'images/mic.jpg');
+INSERT INTO `equipments` VALUES ('EQ001','Speaker System','In-Studio','Minor Damage',1,'/uploads/speaker.jpg'),('EQ002','Wireless Microphone','Deployed','Good-to-Go',2,'/uploads/mic.jpg');
 /*!40000 ALTER TABLE `equipments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -98,7 +98,7 @@ CREATE TABLE `eventemployee` (
 
 LOCK TABLES `eventemployee` WRITE;
 /*!40000 ALTER TABLE `eventemployee` DISABLE KEYS */;
-INSERT INTO `eventemployee` VALUES (1,1),(2,2),(1,3);
+INSERT INTO `eventemployee` VALUES (1,1),(14077,1),(18719,1),(2,2),(1,3);
 /*!40000 ALTER TABLE `eventemployee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -125,7 +125,7 @@ CREATE TABLE `eventequipment` (
 
 LOCK TABLES `eventequipment` WRITE;
 /*!40000 ALTER TABLE `eventequipment` DISABLE KEYS */;
-INSERT INTO `eventequipment` VALUES (1,'EQ001'),(2,'EQ002');
+INSERT INTO `eventequipment` VALUES (1,'EQ001'),(14077,'EQ001'),(18719,'EQ001'),(2,'EQ002');
 /*!40000 ALTER TABLE `eventequipment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -156,7 +156,7 @@ CREATE TABLE `events` (
   KEY `fk_events_employee` (`employeeAssigned`),
   CONSTRAINT `fk_events_employee` FOREIGN KEY (`employeeAssigned`) REFERENCES `employee` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `fk_events_service` FOREIGN KEY (`service`) REFERENCES `services` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=81854 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -165,7 +165,7 @@ CREATE TABLE `events` (
 
 LOCK TABLES `events` WRITE;
 /*!40000 ALTER TABLE `events` DISABLE KEYS */;
-INSERT INTO `events` VALUES (1,'2025-03-15 18:00:00','2025-03-15 23:00:00','Wedding Reception','Michael Lee','5551234567','Grand Hall','Wedding','Speakers, Lights','PAY123','Special Lighting Effects',1,1,5),(2,'2025-04-10 19:00:00','2025-04-10 23:30:00','Corporate Event','Anna Brown','5559876543','Downtown Conference Center','Corporate','Projector, Mic','PAY124','Extra Microphones',2,2,5);
+INSERT INTO `events` VALUES (1,'2025-03-15 18:00:00','2025-03-15 23:00:00','Wedding Reception','Michael Lee','5551234567','Grand Hall','Wedding','Speakers, Lights','PAY123','Special Lighting Effects',1,1,5),(2,'2025-04-10 19:00:00','2025-04-10 23:30:00','Corporate Event','Anna Brown','5559876543','Downtown Conference Center','Corporate','Projector, Mic','PAY124','Extra Microphones',2,2,5),(14077,'2025-02-09 19:25:00','2025-02-09 19:29:00','New Event','Sample Client','09296663521','Sample Venue','Graduation',NULL,'54113','a',NULL,NULL,NULL),(18719,'2025-02-11 19:24:00','2025-01-28 19:24:00','Sample Event 4','Sample Client','09296663521','Sample Venue','Graduation',NULL,'73765','',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `events` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -209,7 +209,7 @@ CREATE TABLE `financesemployees` (
   `amount` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -218,7 +218,7 @@ CREATE TABLE `financesemployees` (
 
 LOCK TABLES `financesemployees` WRITE;
 /*!40000 ALTER TABLE `financesemployees` DISABLE KEYS */;
-INSERT INTO `financesemployees` VALUES (1,'Wedding Reception','John Doe','500','Paid'),(2,'Corporate Event','Jane Smith','750','Unpaid'),(3,'Wedding Reception','Alice Johnson','1500','Paid');
+INSERT INTO `financesemployees` VALUES (1,'Wedding Reception','John Doe','500','Paid'),(2,'Corporate Event','Jane Smith','750','Paid'),(3,'Wedding Reception','Alice Johnson','1500','Paid'),(4,'Sample Event','John Doe','1500','Unpaid');
 /*!40000 ALTER TABLE `financesemployees` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -245,7 +245,7 @@ CREATE TABLE `serviceequipment` (
 
 LOCK TABLES `serviceequipment` WRITE;
 /*!40000 ALTER TABLE `serviceequipment` DISABLE KEYS */;
-INSERT INTO `serviceequipment` VALUES (1,'EQ001'),(2,'EQ002');
+INSERT INTO `serviceequipment` VALUES (1,'EQ001'),(2,'EQ002'),(84200,'EQ001');
 /*!40000 ALTER TABLE `serviceequipment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -272,7 +272,7 @@ CREATE TABLE `serviceevent` (
 
 LOCK TABLES `serviceevent` WRITE;
 /*!40000 ALTER TABLE `serviceevent` DISABLE KEYS */;
-INSERT INTO `serviceevent` VALUES (1,1),(2,2);
+INSERT INTO `serviceevent` VALUES (1,1),(2,2),(1,14077),(1,18719);
 /*!40000 ALTER TABLE `serviceevent` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -291,7 +291,7 @@ CREATE TABLE `services` (
   `rate` varchar(255) DEFAULT NULL,
   `imagepath` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=84201 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -300,7 +300,7 @@ CREATE TABLE `services` (
 
 LOCK TABLES `services` WRITE;
 /*!40000 ALTER TABLE `services` DISABLE KEYS */;
-INSERT INTO `services` VALUES (1,'Basic Package',1000,'Sound System, Lights','4.5','images/basic.jpg'),(2,'Premium Package',2500,'Sound System, Lights, DJ','5.0','images/premium.jpg');
+INSERT INTO `services` VALUES (1,'Basic Package',1000,'Sound System, Lights','4.5','/uploads/basic.jpg'),(2,'Premium Package',2500,'Sound System, Lights, DJ','5.0','/uploads/premium.jpg'),(84200,'Sample Package 2',5000,'na','hourly','/uploads/Sample_Package_2_1739100476862.jpg');
 /*!40000 ALTER TABLE `services` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -317,4 +317,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-02-08  1:45:03
+-- Dump completed on 2025-02-09 19:42:57
