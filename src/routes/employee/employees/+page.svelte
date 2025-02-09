@@ -49,11 +49,7 @@ $: data.data.forEach(employee => {
 </script>
 <!-- <h2 class="text-4xl font-extrabold">Employees</h2> -->
 
-<div class="p-4 mt-4">
-  <button class="btn w-40" on:click={addNewEvent}>
-    + Add Employee
-  </button>
-</div>
+
 <br>
 <div class="w-auto">
 	<table class="table">
@@ -63,7 +59,7 @@ $: data.data.forEach(employee => {
 				<th class="p-3 text-xl font-extrabold text-white">Name</th>
 				<th class="p-3 text-xl font-extrabold text-white">Job</th>
 				<th class="p-3 text-xl font-extrabold text-white">Role</th>
-        <th class="last-column p-3 text-xl font-extrabold text-white">Actions</th>
+        <th class="last-column p-3 text-xl font-extrabold text-white"></th>
 			</tr>
 		</thead>
     <tbody>
@@ -153,7 +149,6 @@ $: data.data.forEach(employee => {
                     </div>
                 </div>
                 </form>
-                  <button class="modal-button btn" on:click={() => toggleModal(Employee.id)}>Details</button>
 
               </td>
           </tr>

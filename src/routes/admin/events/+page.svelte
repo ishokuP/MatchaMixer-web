@@ -71,7 +71,7 @@
 		allServices: allServicesOriginal[];
 	};
 
-	console.log(data.serviceResults);
+	// console.log(data.serviceResults);
 
 	function formatTime(time: string): string {
 		const [hours, minutes] = time.split(':');

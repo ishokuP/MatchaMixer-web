@@ -149,9 +149,6 @@
 	</form>
 </dialog>
 
-<div class="p-4 mt-4">
-	<button class="btn w-40" on:click={() => confirmationAdd.showModal()}> + Add Equipment </button>
-</div>
 
 <div class="flex flex-wrap justify-center mt-4">
 	{#each data.data as equipment}
@@ -215,22 +212,6 @@
 						</div>
 					</div>
 
-					<div class="card-actions justify-end">
-						<button
-							type="submit"
-							class="btn btn-primary flex-1"
-							on:click={(e) => handleEditSaveToggle(e, equipment.id)}
-						>
-							{editModes[equipment.id] ? 'Save' : 'Edit'}
-						</button>
-
-						<button
-							class="btn btn-error flex-1"
-							on:click|preventDefault={() => promptDelete(equipment.id)}
-						>
-							Delete
-						</button>
-					</div>
 				</form>
 			</div>
 		</div>

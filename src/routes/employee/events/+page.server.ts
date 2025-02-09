@@ -126,7 +126,7 @@ export async function load(): Promise<LoadResult> {
 					eventDate: parseDate(row.eventDate) // Convert to Date object
 				}));
 			});
-            console.log(events);
+            // console.log(events);
 		let employeeResults: { [key: number]: Employee[] } = {};
 		let equipmentResults: { [key: number]: Equipment[] } = {};
         let serviceResults: { [key: number]: Services[] } = {};

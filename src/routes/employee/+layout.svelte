@@ -61,8 +61,8 @@
 					</div>
 					<li class="categories-title">
 						<a
-							href="/admin/events"
-							class="sidebar-title btn btn-ghost {$page.url.pathname === '/admin/events'
+							href="/employee/events"
+							class="sidebar-title btn btn-ghost {$page.url.pathname === '/employee/events'
 								? 'active'
 								: ''}"
 						>
@@ -73,8 +73,8 @@
 					</li>
 					<li class="categories-title">
 						<a
-							href="/admin/equipment"
-							class="sidebar-title btn btn-ghost {$page.url.pathname === '/admin/equipment'
+							href="/employee/equipment"
+							class="sidebar-title btn btn-ghost {$page.url.pathname === '/employee/equipment'
 								? 'active'
 								: ''}"
 						>
@@ -85,8 +85,8 @@
 					</li>
 					<li class="categories-title">
 						<a
-							href="/admin/employees"
-							class="sidebar-title btn btn-ghost {$page.url.pathname === '/admin/employees'
+							href="/employee/employees"
+							class="sidebar-title btn btn-ghost {$page.url.pathname === '/employee/employees'
 								? 'active'
 								: ''}"
 						>
@@ -97,8 +97,8 @@
 					</li>
 					<li class="categories-title">
 						<a
-							href="/admin/services"
-							class="sidebar-title btn btn-ghost {$page.url.pathname === '/admin/services'
+							href="/employee/services"
+							class="sidebar-title btn btn-ghost {$page.url.pathname === '/employee/services'
 								? 'active'
 								: ''}"
 						>
@@ -107,18 +107,7 @@
 							<span class="title" style="margin-right: 75px;">Services</span>
 						</a>
 					</li>
-					<li class="categories-title">
-						<a
-							href="/admin/finances"
-							class="sidebar-title btn btn-ghost {$page.url.pathname === '/admin/finances'
-								? 'active'
-								: ''}"
-						>
-							<img src="/finances.png" alt="finances logo" class="categories-img" />
-							<span class="middle-dot">&middot;</span>
-							<span class="title" style="margin-right: 71px;">Finances</span>
-						</a>
-					</li>
+
 				</div>
 				<div class="flex-grow"></div>
 

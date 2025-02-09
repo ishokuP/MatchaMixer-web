@@ -71,7 +71,7 @@
 		allServices: allServicesOriginal[];
 	};
 
-	console.log(data.serviceResults);
+	// console.log(data.serviceResults);
 
 	function formatTime(time: string): string {
 		const [hours, minutes] = time.split(':');
@@ -205,24 +205,6 @@
 	}
 </script>
 
-<!-- <h2 class="text-4xl font-extrabold">Events</h2> -->
-<div class="flex items-center justify-between p-4 mt-4 mb-4">
-	<button class="btn w-40" on:click={addNewEvent}> + Add Event </button>
-</div>
-<dialog bind:this={confirmationDelete} class="modal">
-	<form method="post" action="?/delete">
-		<input type="hidden" name="eventID" value={currentDeletingEvent} />
-		<div class="modal-box">
-			<h3 class="text-lg font-bold">Confirm Delete</h3>
-			<p class="py-4">Are you sure you want to delete this event?</p>
-			<div class="modal-action">
-				<button type="submit" class="btn btn-error">Delete</button>
-				<button type="button" class="btn" on:click={() => confirmationDelete.close()}>Cancel</button
-				>
-			</div>
-		</div>
-	</form>
-</dialog>
 
 <div class="flex flex-col space-y-4">
 	{#each data.eventResults as event}
@@ -413,22 +395,7 @@
 						</div>
 					</div>
 
-					<!-- Buttons -->
-					<div class="mt-4 flex justify-between">
-						<button
-							type="submit"
-							class="btn btn-primary flex-1"
-							on:click={(e) => handleEditSaveToggle(e, event.eventID)}
-						>
-							{editModes[event.eventID] ? 'Save' : 'Edit'}
-						</button>
-						<button
-							class="btn btn-error flex-1"
-							on:click|preventDefault={() => promptDelete(event.eventID)}
-						>
-							Delete
-						</button>
-					</div>
+
 				</form>
 			</div>
 		</div>

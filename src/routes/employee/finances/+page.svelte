@@ -16,13 +16,15 @@
 	}
 
 	interface FinanceData {
-		eventResults: EmployeePayout[];
-	}
-
+			eventResults: EmployeePayout[];
+			financesdata: any[];
+		}
 	export let data: FinanceData = {
-		eventResults: []
+		eventResults: [],
+		financesdata: []
 	};
-	console.log(data);
+
+	// console.log(data);
 
 
 	let confirmationDelete: HTMLDialogElement;

@@ -86,10 +86,6 @@
 
 <!-- TODO add if else logic to the image, equipment if possible grab it from the equipment thing?  -->
 <!-- <h2 class="text-4xl font-extrabold">Services</h2> -->
-<div class="p-4 mt-4">
-	<button class="btn w-40" on:click={toggleAddServiceModal}> + Add Service </button>
-</div>
-
 <!-- Add Service Modal -->
 <div class="modal" class:modal-open={addServiceModalOpen}>
 	<div class="modal-box">
@@ -282,15 +278,9 @@
 									</div>
 									<br /><br />
 									<div class="modal-action flex w-full justify-between">
-										<button
-											class="btn btn-primary"
-											on:click={() => toggleModal(service.id)}
-											formaction="?/delete">Delete</button
-										>
+
 										<div class="flex space-x-4">
-											<button class="btn btn-primary" on:click={() => toggleModal(service.id)}
-												>Save Changes</button
-											>
+
 											<button
 												type="button"
 												class="btn btn-error"
