@@ -105,7 +105,7 @@
 <!-- as for the status we its paid or not / change the finances table to have amount, eventid, status, date -->
 <!-- for the cost basically just do add subtract based on whether they're paid or not -->
 <div class="space-y-8 mt-4">
-	<h3 class="text-2xl font-bold">Employee Payouts</h3>
+	<h3 class="text-3xl font-extrabold ml-4 mt-8">Employee Payouts</h3>
 	<table class="table">
 		<thead>
 			<tr class="border-b-2">
