@@ -36,12 +36,11 @@
 	}
 </script>
 
-
 <div class="drawer lg:drawer-open flex">
 	<input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
 
 	<!-- Sidebar -->
-	<div class="drawer-side sidebar flex-none">
+	<div class="drawer-side sidebar flex-none z-50">
 		<label for="my-drawer-2" class="drawer-overlay"></label>
 		<div class="h-full w-80 bg-base-200 text-base-content">
 			<div class="logo">
@@ -68,7 +67,7 @@
 						>
 							<img src="/events.png" alt="events logo" class="categories-img" />
 							<span class="middle-dot">&middot;</span>
-							<span class="mngmt-title " style="margin-right: 94.5px;">Events</span>
+							<span class="mngmt-title" style="margin-right: 94.5px;">Events</span>
 						</a>
 					</li>
 					<li class="categories-title">
@@ -92,7 +91,7 @@
 						>
 							<img src="/employees.png" alt="employees logo" class="categories-img" />
 							<span class="middle-dot">&middot;</span>
-							<span class="mngmt-title  mr-11">Employees</span>
+							<span class="mngmt-title mr-11">Employees</span>
 						</a>
 					</li>
 					<li class="categories-title">
@@ -104,7 +103,7 @@
 						>
 							<img src="/services.png" alt="services logo" class="categories-img" />
 							<span class="middle-dot">&middot;</span>
-							<span class="mngmt-title " style="margin-right: 75px;">Services</span>
+							<span class="mngmt-title" style="margin-right: 75px;">Services</span>
 						</a>
 					</li>
 					<li class="categories-title">
@@ -116,7 +115,7 @@
 						>
 							<img src="/finances.png" alt="finances logo" class="categories-img" />
 							<span class="middle-dot">&middot;</span>
-							<span class="mngmt-title " style="margin-right: 70px;">Finances</span>
+							<span class="mngmt-title" style="margin-right: 70px;">Finances</span>
 						</a>
 					</li>
 				</div>
@@ -125,22 +124,21 @@
 				<!-- User & Logout -->
 				<h2 class="sub-title text-lg py-2 font-bold text-base-content mb-2">Account Logged in</h2>
 				<div class="lowbar flex flex-col gap-2 text-medium">
-					{#if user}
-						<div class="user-box rounded-box bg-base-300 shadow-2xl flex gap-2 justify-center">
-							<img
-								src={user.role === 'ADMIN' ? '/admin.png' : '/employee.png'}
-								alt="User Role"
-								class="role rounded-full"
-							/>
-							<div class="flex flex-col">
-								<span class="font-extrabold">{user.name}</span>
-								<span class="text-sm font-bold">{user.email}</span>
-								<span class="text-xs">
-									{user.role === 'ADMIN' ? 'Admin Privileges' : 'Employee Privileges'}
-								</span>
-							</div>
+					<div class="user-box rounded-box bg-base-300 shadow-2xl flex gap-2 justify-center">
+						<img
+							src={user.role === 'ADMIN' ? '/admin.png' : '/employee.png'}
+							alt="User Role"
+							class="role rounded-full"
+						/>
+						<div class="flex flex-col">
+							<span class="font-extrabold">{user.name}</span>
+							<span class="text-sm font-bold">{user.email}</span>
+							<span class="text-xs">
+								{user.role === 'ADMIN' ? 'Admin Privileges' : 'Employee Privileges'}
+							</span>
 						</div>
-					{/if}
+					</div>
+
 					<div class=" justify-center">
 						<a
 							href="/logout"
@@ -156,7 +154,7 @@
 	</div>
 
 	<!-- Main Content -->
-	<div class="layout-container">
+	<div class="layout-container z-10">
 		<!-- Fixed Header -->
 
 		<header
@@ -185,7 +183,7 @@
 					{#each breadcrumbs as crumb, index}
 						<span class="font-medium">{crumb}</span>
 						{#if index < breadcrumbs.length - 1}
-							<span class="mx-1">&gt;</span> 
+							<span class="mx-1">&gt;</span>
 						{/if}
 					{/each}
 				</nav>
@@ -316,6 +314,7 @@
 	ul {
 		/* border-right: 0.5px outset; */
 		box-shadow: inset -8px -8px 8px 0px rgba(0, 0, 0, 0.08);
+		overflow: hidden;
 	}
 
 	.logo {
@@ -331,7 +330,6 @@
 
 	.user-box {
 		padding: 5px;
-		
 	}
 
 	.role {
