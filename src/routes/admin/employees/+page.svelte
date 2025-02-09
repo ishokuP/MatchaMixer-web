@@ -65,7 +65,7 @@
 		</thead>
 		<tbody>
 			{#each data.data as Employee (Employee.id)}
-				<tr class="hover">
+				<tr class="border-b-2 hover">
 					<th class="font-bold text-lg">{Employee.id}</th>
 					<td>{Employee.name}</td>
 					<td>{Employee.address}</td>
